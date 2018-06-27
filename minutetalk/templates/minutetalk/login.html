@@ -1,30 +1,203 @@
-<div class="form-header">
-  <h1>Account Login</h1>
-</div>
-
-<div class="form-content">
-  <form action="{% url 'minutetalk:login'%}" method="post">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" required="required"/>
-    </div>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required="required"/>
-    </div>
-    {% if error_message %}
-      <div class="alert alert-danger">
-        <strong>{{ error_message }}</strong>
-      </div>
-    {% endif %}
-    <div class="form-group">
-      <label class="form-remember">
-        <input type="checkbox"/>Remember Me
-      </label><a class="form-recovery" href="#">Forgot Password?</a>
-    </div>
-    <div class="form-group">
-      <button type="submit">Log In</button>
-    </div>
-  </form>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+  <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-content>
+            <v-layout row justify-center>
+            <!-- login modal -->
+            <v-dialog transition="scale-transition" v-model="login" persistent width="500px" height="600px" >
+              <v-btn slot="activator" color="primary" dark>Open Dialog</v-btn>
+              <v-content v-model="loginpage" v-if="loginpage">
+                  <v-container>
+                    <v-layout>
+                      <v-flex>
+                        <v-card class="elevation-12">
+                          <v-toolbar dark color="primary">
+                            <v-toolbar-title>Login form</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                          </v-toolbar>
+                          <v-card-text>
+                            <v-form v-model="loginvalid" ref="form">
+                              <v-text-field 
+                              v-model="form.loginusername"
+                              prepend-icon="person" 
+                              name="login" 
+                              label="Username" 
+                              type="text"></v-text-field>
+                              <v-text-field 
+                              v-model="form.loginpassword"
+                              prepend-icon="lock" 
+                              name="password" 
+                              label="Password" 
+                              id="password" 
+                              type="password"></v-text-field>
+                            </v-form>
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="primary" 
+                            @click.prevent="submit" 
+                            @click.native="loginpage=false" 
+                            :disabled="!loginvalid">Sign Up</v-btn>
+                            <v-btn color="primary" 
+                            @click.prevent="submit" 
+                            @click.native="login=false" 
+                            :disabled="!loginvalid">Login</v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-content>
+                <!-- for signup -->
+                <v-content v-if="!loginpage">
+                    <v-container>
+                      <v-layout>
+                        <v-flex>
+                          <v-card class="elevation-12">
+                            <v-toolbar dark color="primary">
+                              <v-toolbar-title>Signup form</v-toolbar-title>
+                              <v-spacer></v-spacer>
+                            </v-toolbar>
+                            <v-card-text>
+                              <v-form ref="form"> 
+                                <v-text-field 
+                                  v-model="form.fname"
+                                  prepend-icon="person" 
+                                  name="fname" 
+                                  label="First Name"
+                                  :rules="firstnameRules"
+                                  type="text"></v-text-field>
+                                <v-text-field 
+                                  v-model="form.lname"
+                                  prepend-icon="person" 
+                                  name="lname" 
+                                  label="Last Name" 
+                                  :rules="lastnameRules"
+                                  type="text"></v-text-field>
+                                <v-text-field 
+                                  v-model="form.email"
+                                  prepend-icon="mail" 
+                                  name="email" 
+                                  label="Email" 
+                                  :rules="emailRules"
+                                  type="text"></v-text-field>
+                                <v-text-field 
+                                  v-model="form.username"
+                                  prepend-icon="person" 
+                                  name="username" 
+                                  label="Username" 
+                                  :rules="usernameRules"
+                                  type="text"></v-text-field>
+                                <v-text-field 
+                                  v-model="form.password"
+                                  prepend-icon="lock" 
+                                  name="password" 
+                                  label="Password" 
+                                  id="password" 
+                                  :rules="passwordRules"
+                                  type="password"></v-text-field>
+                                <v-text-field 
+                                  v-model="form.cpassword"
+                                  prepend-icon="lock" 
+                                  name="cpassword" 
+                                  label="Confirm Password" 
+                                  id="cpassword"
+                                  type="password"></v-text-field>
+                                <v-text-field 
+                                  v-model="form.age"
+                                  prepend-icon="person" 
+                                  name="age" 
+                                  label="Age" 
+                                  id="age" 
+                                  :rules="ageRules"
+                                  type="text"></v-text-field>
+                                <v-select
+                                  prepend-icon="person"
+                                  :items="['Male', 'Female']"
+                                  v-model = "form.gender"
+                                  label = "Gender"
+                                  autocomplete
+                                  required></v-select>                       
+                                </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn color="primary" 
+                              @click.prevent="submit" 
+                              @click.native="login=false, loginpage=true" 
+                              :disabled="!loginvalid">Sign Up</v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-flex>
+                      </v-layout>
+                    </v-container>
+                  </v-content>
+            </v-dialog>
+          </v-layout>
+      </v-content>
+    </v-app>
+  </div>
+ 
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+  <script>
+    new Vue({ 
+      el: '#app',
+      data(){
+        return{
+          form: {
+            fname: '',
+            lname: '',
+            email: '',
+            username: '',
+            password: '',
+            cpassword: '',
+            age: '',
+            gender: '',
+            loginusername: '',
+            loginpassword: ''
+          },
+          login: false,
+          loginpage: true,
+          loginvalid: false,
+          firstnameRules: [
+            v => !!v || 'First Name is required'
+          ],
+          lastnameRules: [
+            v => !!v || 'Last Name is required'
+          ],
+          usernameRules: [
+            v => !!v || 'Username is required'
+          ],
+          passwordRules: [
+            v => !!v || 'Password is required',
+            v => (v && v.length >= 8) || 'Password must be or more than 8 characters'
+          ],
+          emailRules: [
+            v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+          ],
+          confirmRules: [
+            v => v === this.password || 'Passwords do not match'
+          ],
+          ageRules: [
+            v => !!v || 'Age is required',
+            v => (/^\d{1,2}$/ && v >= 18) || 'You must be 18 years old'
+          ],
+        }
+      },
+      methods: {
+        submit(){
+          this.$refs.form.reset()
+        }
+      }
+    })
+  </script>
+</body>
+</html>
