@@ -1,0 +1,30 @@
+<div class="form-header">
+  <h1>Account Login</h1>
+</div>
+
+<div class="form-content">
+  <form action="{% url 'minutetalk:login'%}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required="required"/>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required="required"/>
+    </div>
+    {% if error_message %}
+      <div class="alert alert-danger">
+        <strong>{{ error_message }}</strong>
+      </div>
+    {% endif %}
+    <div class="form-group">
+      <label class="form-remember">
+        <input type="checkbox"/>Remember Me
+      </label><a class="form-recovery" href="#">Forgot Password?</a>
+    </div>
+    <div class="form-group">
+      <button type="submit">Log In</button>
+    </div>
+  </form>
+</div>

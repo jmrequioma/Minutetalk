@@ -1,0 +1,59 @@
+<div class="form-header">
+  <h1>Account Login</h1>
+</div>
+
+<div class="form-content">
+  <form action="{% url 'minutetalk:login'%}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required="required"/>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required="required"/>
+    </div>
+    {% if error_message %}
+      <div class="alert alert-danger">
+        <strong>{{ error_message }}</strong>
+      </div>
+    {% endif %}
+    <div class="form-group">
+      <label class="form-remember">
+        <input type="checkbox"/>Remember Me
+      </label><a class="form-recovery" href="#">Forgot Password?</a>
+    </div>
+    <div class="form-group">
+      <button type="submit">Log In</button>
+    </div>
+  </form>
+</div>
+
+<div class="form-header">
+  <h1>Register Account</h1>
+</div>
+
+{% if errors.errors %}
+    {% for field in errors %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in errors.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="form-content">
+  <form action="{% url 'minutetalk:signup'%}" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-group">
+      <button type="submit">Register</button>
+    </div>
+  </form>
+</div>
