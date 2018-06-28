@@ -54,6 +54,12 @@
   background: url("../images/triangles.png"), rebeccapurple;
 }
 
+.greet {
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+  color: white;
+  font-weight: 400;
+  font-size: 64px;
+}
 /*.toolbar__title {
   font-family: Digital-7;
 }

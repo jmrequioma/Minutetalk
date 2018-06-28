@@ -3,7 +3,7 @@
 <head>
   
   
-  <title>Vuetify Parallax Starter</title>
+  <title>MinuteTalk</title>
 
 
   <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
@@ -27,15 +27,16 @@
       <v-toolbar-title v-text="title"></v-toolbar-title>
     </v-toolbar>
     <v-content>
-          <v-container fluid grid-list-md >
+        
+    </v-content>
+    <v-content fill-height align-content-center>
+        <v-container fluid grid-list-md>
             <v-layout row wrap justify-center>
                 <v-flex d-flex xs12 sm6 md4>
-                  <h1> MiniTalk! It's time for a Mini Talk!</h1>
+                  <h1 class="greet"> MiniTalk! It's time for a Mini Talk!</h1>
                 </v-flex>
             </v-layout>
         </v-container>
-    </v-content>
-    <v-content>
         <v-container fluid grid-list-md>
           <v-layout row wrap justify-center>
               <v-flex d-flex xs12 sm6 md4>
@@ -187,6 +188,7 @@
             </v-layout>
           </v-container>
     </v-content>
+    
   </v-app>
  </div>
  <script src="https://unpkg.com/vue/dist/vue.js"></script>
