@@ -7,12 +7,11 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 class IndexView(generic.View):
-    template_name = 'minutetalk/login.html'
+    template_name = 'minutetalk/index.html'
 
     def get(self, request, *args, **kwargs):
         f = UserProfileForm()
-
-        return render(request, self.template_name, {"form" : f, "error": "asdfasdfsdafsadfsafasdf"})
+        return render(request, self.template_name, {"form" : f})
 
 class LogInView(generic.View):
     model = User
