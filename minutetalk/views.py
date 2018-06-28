@@ -63,6 +63,8 @@ def home(request):
 def r1(request):
     username = request.POST['username']
     password = request.POST['password']
+    print(username)
+    print(password)
     user = authenticate(request, username=username, password=password)
     if user is not None:
         print('Success')
@@ -83,7 +85,6 @@ def r2(request):
             login(request, user)
         return redirect('minutetalk:home')
     else:
-        errors = f.errors
         print(f.errors)
         print('Fail')
         return render(request,'minutetalk/login.html')

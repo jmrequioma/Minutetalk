@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+  < <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
   <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <link href="../../static/minutetalk/floating-labels.css" rel="stylesheet" type="text/css">
+
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 <body>
@@ -33,6 +39,7 @@
                             <form action="{% url 'minutetalk:r1'%}" method="post" ref="form">
                               {% csrf_token %}
                               <v-text-field 
+                              name="username"
                               v-model="form.loginusername"
                               prepend-icon="person" 
                               label="Username" 
@@ -40,20 +47,20 @@
                               <v-text-field 
                               v-model="form.loginpassword"
                               prepend-icon="lock" 
+                              name="password"
                               label="Password" 
                               id="password" 
                               type="password"></v-text-field>
                               <v-btn type="submit"
                               round
                               flat
-                              @click.prevent="submit"                         
                               @click.native="login=false">
                             Login</v-btn>
                             </form>
                           </v-card-text>
                           <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="primary" 
+                            <v-btn 
                             round
                             flat
                             @click.prevent="submit" 
@@ -145,7 +152,6 @@
                                  round
                                  flat
                                  type="submit" 
-                                 @click.prevent="submit" 
                                  @click.native="login=false, loginpage=true" 
                                   >Sign Up</v-btn>                    
                                 </form>
