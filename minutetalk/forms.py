@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 class UserProfileForm(forms.ModelForm):
     GENDER_CHOICES = (
-        ("M" , "Male"),
-        ("F" , "Female")
+        ("Male" , "Male"),
+        ("Female" , "Female")
     )
     age = forms.IntegerField(label="How old are you")
     email = forms.EmailField(label = "Email Address")
@@ -22,8 +22,14 @@ class UserProfileForm(forms.ModelForm):
 
     def save(self, commit=True):
         data = self.cleaned_data
-        user = User(email=data['email'], first_name=data['first_name'], username=data["username"],
+        user = User.objects.create_user(email=data['email'], first_name=data['first_name'], username=data["username"],
         last_name=data['last_name'], password=data['password1'])
         user.save()
         userProfile = UserProfile(user=user,gender=data['gender'], age=data["age"])
         userProfile.save()
+
+    def clean_username(self):
+        data = self.cleaned_data['username']
+        if(User.objects.filter(username=data).exists()):
+            raise forms.ValidationError("Username is already taken")
+        return data

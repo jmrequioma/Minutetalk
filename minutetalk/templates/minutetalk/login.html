@@ -22,11 +22,12 @@
                             <v-spacer></v-spacer>
                           </v-toolbar>
                           <v-card-text>
-                            <v-form v-model="loginvalid" ref="form">
+                            <form action="{% url 'minutetalk:r1'%}" method="post" ref="form">
+                              {% csrf_token %}
                               <v-text-field 
                               v-model="form.loginusername"
                               prepend-icon="person" 
-                              name="login" 
+                              name="username" 
                               label="Username" 
                               type="text"></v-text-field>
                               <v-text-field 
@@ -36,19 +37,18 @@
                               label="Password" 
                               id="password" 
                               type="password"></v-text-field>
-                            </v-form>
+                              <v-btn type="submit" color="primary"                            
+                              @click.native="login=false">
+                            Login</v-btn>
+
+                            </form>
                           </v-card-text>
                           <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color="primary" 
                             @click.prevent="submit" 
                             @click.native="loginpage=false" 
-                            :disabled="!loginvalid">Sign Up</v-btn>
-                            <v-btn color="primary" 
-                            @click.prevent="submit" 
-                            @click.native="login=false" 
-                            :disabled="!loginvalid">Login</v-btn>
-                          </v-card-actions>
+                            >Sign Up</v-btn></v-card-actions>
                         </v-card>
                       </v-flex>
                     </v-layout>
@@ -63,18 +63,19 @@
                               <v-spacer></v-spacer>
                             </v-toolbar>
                             <v-card-text>
-                              <v-form ref="form"> 
+                              <form action="{% url 'minutetalk:r2'%}" method="post" ref="form"> 
+                                {% csrf_token %}
                                 <v-text-field 
                                   v-model="form.fname"
                                   prepend-icon="person" 
-                                  name="fname" 
+                                  name="first_name" 
                                   label="First Name"
                                   :rules="firstnameRules"
                                   type="text"></v-text-field>
                                 <v-text-field 
                                   v-model="form.lname"
                                   prepend-icon="person" 
-                                  name="lname" 
+                                  name="last_name" 
                                   label="Last Name" 
                                   :rules="lastnameRules"
                                   type="text"></v-text-field>
@@ -95,7 +96,7 @@
                                 <v-text-field 
                                   v-model="form.password"
                                   prepend-icon="lock" 
-                                  name="password" 
+                                  name="password1" 
                                   label="Password" 
                                   id="password" 
                                   :rules="passwordRules"
@@ -103,7 +104,7 @@
                                 <v-text-field 
                                   v-model="form.cpassword"
                                   prepend-icon="lock" 
-                                  name="cpassword" 
+                                  name="password2" 
                                   label="Confirm Password" 
                                   id="cpassword"
                                   type="password"></v-text-field>
@@ -117,20 +118,14 @@
                                   type="text"></v-text-field>
                                 <v-select
                                   prepend-icon="person"
+                                  name="gender"
                                   :items="['Male', 'Female']"
                                   v-model = "form.gender"
                                   label = "Gender"
                                   autocomplete
-                                  required></v-select>                       
-                                </v-form>
-                            </v-card-text>
-                            <v-card-actions>
-                              <v-spacer></v-spacer>
-                              <v-btn color="primary" 
-                              @click.prevent="submit" 
-                              @click.native="login=false, loginpage=true" 
-                              :disabled="!loginvalid">Sign Up</v-btn>
-                            </v-card-actions>
+                                  required></v-select>   
+                                 <v-btn type="submit" color="primary">Sign Up</v-btn>                    
+                                </form>
                           </v-card>
                         </v-flex>
                       </v-layout>
