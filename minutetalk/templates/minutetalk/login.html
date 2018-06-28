@@ -18,7 +18,15 @@
                       <v-flex>
                         <v-card class="elevation-12">
                           <v-toolbar dark color="primary">
-                            <v-toolbar-title>Login form</v-toolbar-title>
+                              <v-btn 
+                              color="transparent" 
+                              icon 
+                              dark 
+                              @click.native="login = false" 
+                              @click.prevent="reset">
+                                  <v-icon>close</v-icon>
+                                </v-btn>                      
+                            <v-toolbar-title>LOGIN FORM</v-toolbar-title>
                             <v-spacer></v-spacer>
                           </v-toolbar>
                           <v-card-text>
@@ -27,25 +35,27 @@
                               <v-text-field 
                               v-model="form.loginusername"
                               prepend-icon="person" 
-                              name="username" 
                               label="Username" 
                               type="text"></v-text-field>
                               <v-text-field 
                               v-model="form.loginpassword"
                               prepend-icon="lock" 
-                              name="password" 
                               label="Password" 
                               id="password" 
                               type="password"></v-text-field>
-                              <v-btn type="submit" color="primary"                            
+                              <v-btn type="submit"
+                              round
+                              flat
+                              @click.prevent="submit"                         
                               @click.native="login=false">
                             Login</v-btn>
-
                             </form>
                           </v-card-text>
                           <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color="primary" 
+                            round
+                            flat
                             @click.prevent="submit" 
                             @click.native="loginpage=false" 
                             >Sign Up</v-btn></v-card-actions>
@@ -58,10 +68,18 @@
                       <v-layout>
                         <v-flex>
                           <v-card class="elevation-12">
-                            <v-toolbar dark color="primary">
-                              <v-toolbar-title>Signup form</v-toolbar-title>
-                              <v-spacer></v-spacer>
-                            </v-toolbar>
+                              <v-toolbar>
+                                  <v-btn 
+                                  class= "close" 
+                                  icon 
+                                  dark 
+                                  @click.native="login = false, loginpage=true"
+                                  @click.prevent="reset">
+                                    <v-icon>close</v-icon>
+                                  </v-btn>                      
+                                  <v-toolbar-title>SIGNUP FORM</v-toolbar-title>
+                                  <v-spacer></v-spacer>
+                                </v-toolbar>    
                             <v-card-text>
                               <form action="{% url 'minutetalk:r2'%}" method="post" ref="form"> 
                                 {% csrf_token %}
@@ -70,14 +88,12 @@
                                   prepend-icon="person" 
                                   name="first_name" 
                                   label="First Name"
-                                  :rules="firstnameRules"
                                   type="text"></v-text-field>
                                 <v-text-field 
                                   v-model="form.lname"
                                   prepend-icon="person" 
                                   name="last_name" 
                                   label="Last Name" 
-                                  :rules="lastnameRules"
                                   type="text"></v-text-field>
                                 <v-text-field 
                                   v-model="form.email"
@@ -107,6 +123,7 @@
                                   name="password2" 
                                   label="Confirm Password" 
                                   id="cpassword"
+                                  :rules="confirmRules"
                                   type="password"></v-text-field>
                                 <v-text-field 
                                   v-model="form.age"
@@ -123,8 +140,14 @@
                                   v-model = "form.gender"
                                   label = "Gender"
                                   autocomplete
-                                  required></v-select>   
-                                 <v-btn type="submit" color="primary">Sign Up</v-btn>                    
+                                  ></v-select>   
+                                 <v-btn 
+                                 round
+                                 flat
+                                 type="submit" 
+                                 @click.prevent="submit" 
+                                 @click.native="login=false, loginpage=true" 
+                                  >Sign Up</v-btn>                    
                                 </form>
                           </v-card>
                         </v-flex>
@@ -139,7 +162,7 @@
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
   <script>
-    new Vue({ 
+    var a = new Vue({ 
       el: '#app',
       data(){
         return{
@@ -175,7 +198,7 @@
             v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
           ],
           confirmRules: [
-            v => v === this.password || 'Passwords do not match'
+            v => v == this.form.password || 'Passwords do not match'
           ],
           ageRules: [
             v => !!v || 'Age is required',
@@ -185,10 +208,37 @@
       },
       methods: {
         submit(){
-          this.$refs.form.reset()
+            this.form.fname =  '';
+            this.form.lname= '';
+            this.form.email= '';
+            this.form.username= '';
+            this.form.password= '';
+            this.form.cpassword= '';
+            this.form.age= '';
+            this.form.gender= '';
+            this.form.loginusername= '';
+            this.form.loginpassword= '';
+          // add submit forms here
+        },
+        reset(){
+            this.form.fname =  '';
+            this.form.lname= '';
+            this.form.email= '';
+            this.form.username= '';
+            this.form.password= '';
+            this.form.cpassword= '';
+            this.form.age= '';
+            this.form.gender= '';
+            this.form.loginusername= '';
+            this.form.loginpassword= '';
+        },
+        equal(){
+
         }
+
       }
     })
+
   </script>
 </body>
 </html>
