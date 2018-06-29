@@ -1,1 +1,106 @@
-<h1>WELCOME TO HOME PAGE</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <title>MinuteTalk</title>
+
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+  <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+
+  <link href="../../static/minutetalk/css/stream.css" rel="stylesheet" type="text/css">
+  <link href="../../static/minutetalk/css/floating-labels.css" rel="stylesheet" type="text/css">
+
+
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+    <div id="app">
+        <v-app id="inspire">
+          <v-navigation-drawer
+            fixed
+            :clipped="$vuetify.breakpoint.mdAndUp"
+            app
+            v-model="drawer">
+            <v-list dense>
+            	<v-spacer></v-spacer>
+                <v-btn icon large>
+              <v-avatar size="80px" tile>
+                <img
+                  src="https://i.pinimg.com/originals/0d/2c/e7/0d2ce7de833e651e0bf4191c16e2d693.png"
+                  alt="Avatar"
+                >
+              </v-avatar>
+            </v-btn>
+            </v-list>
+          </v-navigation-drawer>
+          <v-toolbar
+            color="blue darken-3"
+            dark
+            app
+            :clipped-left="$vuetify.breakpoint.mdAndUp"
+            fixed>
+            <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
+              <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+              <span class="hidden-sm-and-down">MinuteTalk</span>
+            </v-toolbar-title>
+            <v-text-field
+              flat
+              solo-inverted
+              prepend-icon="search"
+              label="Search"
+              class="hidden-sm-and-down"
+            ></v-text-field>
+            <v-spacer></v-spacer>
+            <v-btn icon>
+              <v-icon>notifications</v-icon>
+            </v-btn>
+            <v-btn icon large>
+              <v-avatar size="32px" tile>
+                <img
+                  src="https://i.pinimg.com/originals/0d/2c/e7/0d2ce7de833e651e0bf4191c16e2d693.png"
+                  alt="Avatar"
+                >
+              </v-avatar>
+            </v-btn>
+          </v-toolbar>
+          <v-content>
+            <v-container class="videoarea" fluid fill-height >
+            	<div id="videos">
+    				<div id="subscriber"></div>
+					<div id="publisher"></div>
+				</div>
+              <v-layout justify-center align-center>
+                <v-tooltip right>
+                	
+                </v-tooltip>
+              </v-layout>
+            </v-container>
+          </v-content>
+        </v-app>
+      </div>
+
+
+ <script src="https://unpkg.com/vue/dist/vue.js"></script>
+ <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+ <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
+ <script src="../../static/minutetalk/js/stream.js"></script>
+
+ <script>
+   new Vue({
+  el: '#app',
+  data: () => ({
+      dialog: false,
+      drawer: null,
+    }),
+})
+
+ </script>
+</body>
+</html>

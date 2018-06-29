@@ -4,9 +4,10 @@
 }
 
 .content--wrap {
-  background: url("/static/images/bg-pattern.png"), #D46A6A;
-  background: url("/static/images/bg-pattern.png"), -webkit-linear-gradient(to right, #D46A6A, #FFAAAA);
-  background: url("/static/images/bg-pattern.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
+  background: url("../../images/bg-pattern.png"), #D46A6A;
+  background: url("../../images/bg-pattern.png"), -webkit-linear-gradient(to right, #D46A6A, #FFAAAA);
+  background: url("../../images/bg-pattern.png"), linear-gradient(to right, #D46A6A, #FFAAAA);*
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
 
 }
 
@@ -14,15 +15,25 @@
   border-radius: 15px;
 }
 
+.hidden-sm-and-down {
+  font-family: Digital-7;
+}
+
+.titlename {
+  font-family: Digital-7;
+}
+
 .application .theme--light.toolbar, .theme--light .toolbar{
   color: white;
-  background: url("../images/triangles.png"), #D46A6A;
-  background: url("../images/triangles.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
+  background: url("../../images/triangles.png"), #D46A6A;
+  background: url("../../images/triangles.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
   font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
 }
 
 .btn__content:before{
-  background: url("../images/bg-pattern.png"), linear-gradient(to left, #D46A6A, #FFAAAA);
+  background: url("../../images/bg-pattern.png"), linear-gradient(to left, #D46A6A, #FFAAAA);
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
   opacity: .45;
   font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
 
@@ -36,7 +47,7 @@
 
 .btn--active .btn__content:before, .btn:focus .btn__content:before, .btn:hover .btn__content:before{
   color: white; 
-  background: url("../images/triangles.png"),  #D46A6A;
+  background: url("../../images/triangles.png"),  #D46A6A;
   font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
 }
 
@@ -51,7 +62,7 @@
 
 .application .theme--light.toolbar, .theme--light .toolbar .white{
   color: white;
-  background: url("../images/triangles.png"), rebeccapurple;
+  background: url("../../images/triangles.png"), rebeccapurple;
 }
 
 .greet {
@@ -64,8 +75,3 @@
   font-family: Digital-7;
 }
 */
-
-/* .application .theme--light.card, .theme--light .card {
-  background: url("../images/triangles.png"), #D46A6A;
-  background: url("../images/bg-pattern.png"), linear-gradient(to right, #FF9A9A, #FFE6E6);
-} */
