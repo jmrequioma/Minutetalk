@@ -12,13 +12,12 @@ class UserProfileForm(forms.ModelForm):
     gender = forms.ChoiceField(label="Your gender preference", choices=GENDER_CHOICES)
     username = forms.CharField(label="Your Username")
     password1 = forms.CharField(label="Your Password",widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Repeat Your Password", widget=forms.PasswordInput)
     first_name = forms.CharField(label = "Name")
     last_name = forms.CharField(label = "Surname")
  
     class Meta:
         model = UserProfile
-        fields = ("first_name", "last_name", "email", "username", "password1", "password2", "age","gender")
+        fields = ("first_name", "last_name", "email", "username", "password1",  "age","gender")
 
     def save(self, commit=True):
         data = self.cleaned_data

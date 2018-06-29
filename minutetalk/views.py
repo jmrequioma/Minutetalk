@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
+from django.http import JsonResponse
+
 class IndexView(generic.View):
     template_name = 'minutetalk/index.html'
 
@@ -14,29 +16,27 @@ class IndexView(generic.View):
         return render(request, self.template_name)
 
 class LogInView(generic.View):
-    model = User
     template_name = 'minutetalk/index.html'
 
     def post(self, request, *args, **kwargs):
         username = request.POST['username']
         password = request.POST['password']
+        print(username)
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('minutetalk:home')
+            return JsonResponse({})
         context = {
-        	"login_error" : "Incorrect username or password"
+            "error": "Username or Password is incorrect"
         }
-        print("fail")
-        return render(request, self.template_name, context)
+        return JsonResponse(context)
 
 class SignUpView(generic.View):
     model = User
-    template_name = 'minutetalk/index.html'
-
+    
     def get(self, request, *args, **kwargs):
         f = UserProfileForm()
-        return render(request, self.template_name,{"form" : f})
+        return render(request, 'minutetalk/index.html' ,{"form" : f})
         
     def post(self, request, *args, **kwargs):
         username = request.POST['username']
@@ -48,9 +48,12 @@ class SignUpView(generic.View):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('minutetalk:home')
-        else:
-            return render(request,'minutetalk/index.html',{'signup_error': 'Username is already taken'})
+                return JsonResponse({})
+        print(f.errors)
+        context = {
+            "error": "Username is already taken"
+        }
+        return JsonResponse(context)
 
 def home(request):
     return render(request, 'minutetalk/home.html')

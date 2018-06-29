@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,8 +14,9 @@
   <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 
-  <link href="../../static/minutetalk/css/floating-labels.css" rel="stylesheet" type="text/css">
 
+  <link href="../../static/minutetalk/css/floating-labels.css" rel="stylesheet" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +44,7 @@
         <v-container fluid grid-list-md>
           <v-layout row wrap justify-center>
               <v-flex d-flex xs12 sm6 md4>
-                    <v-dialog transition="scale-transition" v-model="login" persistent width="500px" height="600px" >
+                    <v-dialog transition="scale-transition" v-model="auth_modal" persistent width="500px" height="600px" >
                         <v-btn slot="activator" round flat>Go Talk!</v-btn>
                         <v-content v-model="loginpage" v-if="loginpage">
                               <v-layout>
@@ -53,19 +55,17 @@
                                         color="transparent" 
                                         icon 
                                         dark 
-                                        @click.native="login = false" 
+                                        @click.native="auth_modal = false" 
                                         @click.prevent="reset">
                                             <v-icon>close</v-icon>
                                           </v-btn>                      
                                       <v-toolbar-title>LOGIN FORM</v-toolbar-title>
-                                      <v-spacer></v-spacer>
                                     </v-toolbar>
                                     <v-card-text>
-                                      {% if login_error %}
-                                      <h3>{{ login_error }}</h3>
-                                      {% endif %}
                                       
-                                      <form action="{% url 'minutetalk:login'%}" method="post" ref="form">
+                                      <h3>[[login_error]]</h3>
+                                      
+                                      <form method="post" ref="login_form" >
                                         {% csrf_token %}
                                         <v-text-field 
                                         name="username"
@@ -80,10 +80,11 @@
                                         label="Password" 
                                         id="password" 
                                         type="password"></v-text-field>
-                                        <v-btn type="submit"
+                                        <v-btn 
                                         round
                                         flat
-                                        @click.native="login=false">
+                                        @click="login"
+                                        :disabled="invalidLogin">
                                       Login</v-btn>
                                       </form>
                                     </v-card-text>
@@ -92,7 +93,6 @@
                                       <v-btn 
                                       round
                                       flat
-                                      @click.prevent="submit" 
                                       @click.native="loginpage=false" 
                                       >Sign Up</v-btn></v-card-actions>
                                   </v-card>
@@ -109,7 +109,7 @@
                                             class= "close" 
                                             icon 
                                             dark 
-                                            @click.native="login = false, loginpage=true"
+                                            @click.native="auth_modal = false, loginpage=true"
                                             @click.prevent="reset">
                                               <v-icon>close</v-icon>
                                             </v-btn>                      
@@ -117,23 +117,24 @@
                                             <v-spacer></v-spacer>
                                           </v-toolbar>    
                                       <v-card-text>
-                                        {% if signup_error %}
-                                          <h3>{{ signup_error }}</h3>
-                                        {% endif %}
-                                      
-                                        <form action="{% url 'minutetalk:signup'%}" method="post" ref="form"> 
+                                        
+                                        <h3>[[signup_error]]</h3>
+                                        
+                                        <form  method="post" ref="signup_form"> 
                                           {% csrf_token %}
                                           <v-text-field 
                                             v-model="form.fname"
                                             prepend-icon="person" 
                                             name="first_name" 
                                             label="First Name"
+                                            :rules="firstnameRules"
                                             type="text"></v-text-field>
                                           <v-text-field 
                                             v-model="form.lname"
                                             prepend-icon="person" 
                                             name="last_name" 
                                             label="Last Name" 
+                                            :rules="lastnameRules"
                                             type="text"></v-text-field>
                                           <v-text-field 
                                             v-model="form.email"
@@ -184,8 +185,9 @@
                                            <v-btn 
                                            round
                                            flat
-                                           type="submit" 
-                                           @click.native="login=false, loginpage=true" 
+                                           @click="signup"
+                                           @click.native="auth_modal=false, loginpage=true"
+                                            :disabled="invalidSignup"
                                             >Sign Up</v-btn>                    
                                           </form>
                                     </v-card>
@@ -203,98 +205,6 @@
  </div>
  <script src="https://unpkg.com/vue/dist/vue.js"></script>
  <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
- <script>
-  
-  
-   var a = new Vue({ 
-      el: '#app',
-      data(){
-        return{
-          form: {
-            fname: '',
-            lname: '',
-            email: '',
-            username: '',
-            password: '',
-            cpassword: '',
-            age: '',
-            gender: '',
-            loginusername: '',
-            loginpassword: ''
-          },
-          login: false,
-          loginpage: true,
-          loginvalid: false,
-          title: 'MinuteTalk',
-          firstnameRules: [
-            v => !!v || 'First Name is required'
-          ],
-          lastnameRules: [
-            v => !!v || 'Last Name is required'
-          ],
-          usernameRules: [
-            v => !!v || 'Username is required'
-          ],
-          passwordRules: [
-            v => !!v || 'Password is required',
-            v => (v && v.length >= 8) || 'Password must be or more than 8 characters'
-          ],
-          emailRules: [
-            v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
-          ],
-          confirmRules: [
-            v => v == this.form.password || 'Passwords do not match'
-          ],
-          ageRules: [
-            v => !!v || 'Age is required',
-            v => (/^\d{1,2}$/ && v >= 18) || 'You must be 18 years old'
-          ],
-        }
-      },
-      methods: {
-        submit(){
-            this.form.fname =  '';
-            this.form.lname= '';
-            this.form.email= '';
-            this.form.username= '';
-            this.form.password= '';
-            this.form.cpassword= '';
-            this.form.age= '';
-            this.form.gender= '';
-            this.form.loginusername= '';
-            this.form.loginpassword= '';
-          // add submit forms here
-        },
-        reset(){
-            this.form.fname =  '';
-            this.form.lname= '';
-            this.form.email= '';
-            this.form.username= '';
-            this.form.password= '';
-            this.form.cpassword= '';
-            this.form.age= '';
-            this.form.gender= '';
-            this.form.loginusername= '';
-            this.form.loginpassword= '';
-        },
-        equal(){
-
-        }
-
-      }
-    })
-  var url = window.location.href
-  
-  if(url.indexOf("/login") > -1){
-    a.login = true  
-  }
-  console.log(url.indexOf("/signup"))
-  if(url.indexOf("/signup") > -1){
-    console.log(":asdgsadghasfd")
-    a.login = true
-    a.loginpage = false
-  }
-
- </script>
+ <script type="text/javascript" src="{% static 'minutetalk/js/login.js' %}"></script>
 </body>
 </html>
