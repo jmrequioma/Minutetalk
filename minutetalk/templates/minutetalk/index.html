@@ -21,6 +21,8 @@
 
 </head>
 <body>
+  
+
  <div id="app">
    <v-app light>
     <v-toolbar class="white" >
@@ -59,7 +61,11 @@
                                       <v-spacer></v-spacer>
                                     </v-toolbar>
                                     <v-card-text>
-                                      <form action="{% url 'minutetalk:r1'%}" method="post" ref="form">
+                                      {% if login_error %}
+                                      <h3>{{ login_error }}</h3>
+                                      {% endif %}
+                                      
+                                      <form action="{% url 'minutetalk:login'%}" method="post" ref="form">
                                         {% csrf_token %}
                                         <v-text-field 
                                         name="username"
@@ -111,7 +117,11 @@
                                             <v-spacer></v-spacer>
                                           </v-toolbar>    
                                       <v-card-text>
-                                        <form action="{% url 'minutetalk:r2'%}" method="post" ref="form"> 
+                                        {% if signup_error %}
+                                          <h3>{{ signup_error }}</h3>
+                                        {% endif %}
+                                      
+                                        <form action="{% url 'minutetalk:signup'%}" method="post" ref="form"> 
                                           {% csrf_token %}
                                           <v-text-field 
                                             v-model="form.fname"
@@ -194,6 +204,8 @@
  <script src="https://unpkg.com/vue/dist/vue.js"></script>
  <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
  <script>
+  
+  
    var a = new Vue({ 
       el: '#app',
       data(){
@@ -271,6 +283,17 @@
 
       }
     })
+  var url = window.location.href
+  
+  if(url.indexOf("/login") > -1){
+    a.login = true  
+  }
+  console.log(url.indexOf("/signup"))
+  if(url.indexOf("/signup") > -1){
+    console.log(":asdgsadghasfd")
+    a.login = true
+    a.loginpage = false
+  }
 
  </script>
 </body>
