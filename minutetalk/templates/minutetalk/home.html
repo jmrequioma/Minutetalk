@@ -341,16 +341,26 @@
 
   },
   methods: {
+  	dropdown: function(option){
+  		if(option == "Settings"){
+  			console.log('Settings')
+  		} else if (option == "Logout"){
+        	window.location.href= "logout"
+
+  		}
+  	},
+
   	a: function(x, y){
   		this.display[x].data[y].show = !this.display[x].data[y].show
   		console.log(this.display[x].data[y].show)
-
+  		
   	}, 
   	b: function(x, y){
   		return this.display[x].data[y].show
   	}
-  }
-  
+
+  },
+ 
 })
 
  </script>
