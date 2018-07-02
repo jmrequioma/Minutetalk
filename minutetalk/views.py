@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class IndexView(generic.View):
     template_name = 'minutetalk/index.html'
@@ -13,7 +14,7 @@ class IndexView(generic.View):
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
 
-class LogInView(generic.View):
+class LogInView(LoginRequiredMixin, generic.View):
     template_name = 'minutetalk/index.html'
 
     def post(self, request, *args, **kwargs):
@@ -28,7 +29,7 @@ class LogInView(generic.View):
         }
         return JsonResponse(context)
 
-class SignUpView(generic.View):
+class SignUpView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         f = UserProfileForm()
         return render(request, 'minutetalk/index.html' ,{"form" : f})
@@ -41,20 +42,24 @@ class SignUpView(generic.View):
             context = {"error": "Username is already taken"}
             return JsonResponse(context)
         else:
-            user = User.objects.create_user(email=data['email'], first_name=data['first_name'], username=data["username"],
-            last_name=data['last_name'], password=data['password1'])
+            user = User.objects.create_user(username=data["username"],password=data['password1'],email=data['email'], first_name=data['first_name'], last_name=data['last_name'])
             userProfile = UserProfile(user=user,gender=data['gender'], age=data["age"])
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 userProfile.save()
                 user.save()
                 login(request, user)
-                return JsonResponse({})
+                return JsonResponse({"userProfile" : userProfile})
             return JsonResponse({"error": "Some error occured during sign up"})
 
-
-def home(request):
-    return render(request, 'minutetalk/home.html')
+class HomeView(LoginRequiredMixin, generic.View):
+    def get(self, request, *args, **kwargs):
+        context = {
+            'user', request.user
+        }
+        request.test = "CIONG TV"
+        print(request.test)
+        return render(request, 'minutetalk/home.html')
 
 def sign_out(request):
     logout(request)

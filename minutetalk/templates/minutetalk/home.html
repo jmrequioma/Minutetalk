@@ -34,7 +34,7 @@
                   alt="Avatar"
                 >
               </v-avatar>
-              <v-spacer class="username">[[user.name]]</v-spacer>
+              <v-spacer class="username">{{request.user.username}}</v-spacer>
               <v-spacer class="supportdetails">[[user.gender]], [[user.age]]</v-spacer>
 			  <v-subheader>MY CHANNELS</v-subheader>
 			  <template v-for="(item, index) in user.mychannels">
@@ -322,7 +322,20 @@
   	}
 
 
-  } 
+
+  },
+  methods: {
+  	dropdown: function(option){
+  		if(option == "Settings"){
+  			console.log('Settings')
+  		} else if (option == "Logout"){
+        	window.location.href= "logout"
+
+  		}
+  	}
+  },
+ 
+
 })
 
  </script>
