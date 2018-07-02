@@ -8,6 +8,7 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=20)
     age = models.IntegerField()
     gender = models.CharField(max_length=6)
+    img_src = models.FileField(upload_to='users/',default='users/noprof.jpg')
 
     def __str__(self):
         return self.user.username

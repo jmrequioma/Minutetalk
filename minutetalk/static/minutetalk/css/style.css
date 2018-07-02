@@ -165,6 +165,13 @@
   color: #550000;   
 }
 
+img {
+  width: 30%;
+  margin: auto;
+  display: block;
+  margin-bottom: 10px;
+}
+
 /*.v-list iconlist{
   background-color: maroon;
 }

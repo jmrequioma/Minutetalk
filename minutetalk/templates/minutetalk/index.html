@@ -121,8 +121,20 @@
                                         
                                         <h3>[[signup_error]]</h3>
                                         
-                                        <form  method="post" ref="signup_form"> 
+                                        <form  method="post" enctype="multipart/form-data" ref="signup_form"> 
                                           {% csrf_token %}
+                                          <div v-if="!image">
+                                            <h2>Select an image</h2>
+                                            <input type="file" @change="onFileChange">
+                                          </div>
+                                          <div v-else>
+                                            <img :src="image" />
+                                            <v-btn 
+                                            round
+                                            flat
+                                            @click.prevent="removeImage"
+                                            >Remove Image</v-btn>  
+                                          </div>
                                           <v-text-field 
                                             v-model="form.fname"
                                             prepend-icon="person" 
