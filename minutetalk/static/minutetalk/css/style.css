@@ -21,6 +21,14 @@
 
 }
 
+.v-toolbar__content {
+  color: white;
+  background: url("/static/images/triangles.png"), #D46A6A;
+  background: url("/static/images/triangles.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+}
+
 .v-btn--active:before .v-btn:focus:before, .v-btn:hover:before .v-toolbar__content {
   color: white;
   background: url("/static/images/triangles.png"), #D46A6A;
