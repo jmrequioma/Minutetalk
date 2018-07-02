@@ -21,7 +21,23 @@
 
 }
 
-.v-toolbar__content {
+.v-btn--active:before .v-btn:focus:before, .v-btn:hover:before .v-toolbar__content {
+  color: white;
+  background: url("/static/images/triangles.png"), #D46A6A;
+  background: url("/static/images/triangles.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+.btn-style {
+  color: white;
+  background: url("/static/images/triangles.png"), #D46A6A;
+  background: url("/static/images/triangles.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+.v-btn:before {
   color: white;
   background: url("/static/images/triangles.png"), #D46A6A;
   background: url("/static/images/triangles.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
@@ -37,7 +53,7 @@
   font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
 }
 
-.btn__content:before{
+.v-btn__content:before{
   background: url("/static/images/bg-pattern.png"), linear-gradient(to left, #D46A6A, #FFAAAA);
   background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
   opacity: .45;
@@ -62,19 +78,25 @@
 }
 
 
-.close .btn__content:before{
+.close .v-btn__content:before{
   opacity: .45;
   font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
 
 } 
 
-.btn--active .btn__content:before, .btn:focus .btn__content:before, .btn:hover .btn__content:before{
+.button .v-btn .v-btn--flat .v-btn--round::before {
   color: white; 
   background: url("/static/images/triangles.png"),  #D46A6A;
   font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
 }
 
-.btn--active .btn__content:before, .btn:focus .btn__content:before, .btn:hover .btn__content:before .close{
+.v-btn--active .v-btn__content:before, .v-btn:focus .v-btn__content:before, .v-btn:hover .v-btn__content:before{
+  color: white; 
+  background: url("/static/images/triangles.png"),  #D46A6A;
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+.v-btn--active .v-btn__content:before, .v-btn:focus .v-btn__content:before, .v-btn:hover .v-btn__content:before .close{
   color: white; 
    font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
 }
