@@ -324,31 +324,7 @@
   	}
 
 
-  },
-  methods: {
-  	dropdown: function(option){
-  		if(option == "Settings"){
-  			console.log('Settings')
-  		} else if (option == "Logout"){
-        	window.location.href= "logout"
-
-  		}
-  	}
-  },
-  computed: {
-  	notHeaders: function() {
-  		return this.display.filter(function(u) {
-  			return !u.header
-  		})
-	  },
-	headers: function() {
-		return this.display.filter(function(u) {
-			return u.header
-		})
-
-	    // contains items not header
-		}
-  }
+  } 
 })
 
  </script>
