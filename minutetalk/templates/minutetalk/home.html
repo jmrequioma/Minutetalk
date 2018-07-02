@@ -139,36 +139,36 @@
             </v-container>
           </v-content> -->
           <v-content>
-          <v-container fluid grid-list-xl>
-          	<template v-for="(item, index) in display">
-          	<v-spacer
-          	v-if="item.header"  
-          	:key="item.header"><h1>[[item.header]]</h1>
-          	</v-spacer>
-           	<v-layout row wrap v-else>
-          	<v-flex d-flex xs10 sm3 >
-          	<v-card >
-	        <v-card-media
-	          :src="item.src"
-	          height="200px"
-	        ></v-card-media>
+	          <v-container fluid grid-list-xl>
+	          	<template v-for="(item, index) in display">
+		          	<v-spacer
+		          	v-if="item.header"  
+		          	:key="item.header"><h1>[[item.header]]</h1>
+		          	</v-spacer>
+		           	<v-layout row wrap v-else>
+			          	<v-flex d-flex xs10 sm3>
+				          	<v-card>
+						        <v-card-media
+						          :src="item.src"
+						          height="200px"
+						        ></v-card-media>
 
-	        <v-card-title primary-title>
-	          <div>
-	            <h3 class="headline mb-0">[[item.title]]</h3>
-	            <span>There are [[item.online]] users online</span>
-	          </div>
-	        </v-card-title>
+						        <v-card-title primary-title>
+						          <div>
+						            <h3 class="headline mb-0">[[item.title]]</h3>
+						            <span>There are [[item.online]] users online</span>
+						          </div>
+						        </v-card-title>
 
-		        <v-card-actions>
-		          <v-btn flat color="red">Join Channel</v-btn>
-		        </v-card-actions>
-		      </v-card>
-		    </v-flex>
-		</v-layout>
-		</template>
-          </v-container>
-      </v-content>
+						        <v-card-actions>
+						          <v-btn flat color="red">Join Channel</v-btn>
+						        </v-card-actions>
+					      	</v-card>
+					    </v-flex>
+					</v-layout>
+				</template>
+	          </v-container>
+      	</v-content>
         </v-app>
       </div>
 
