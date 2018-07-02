@@ -1,0 +1,144 @@
+@font-face {
+  src: url('/static/fonts/digital-7.ttf') format("truetype"); 
+  font-family: Digital-7;
+}
+
+@font-face {
+  src: url('/static/fonts/BebasNeue-Regular.ttf') format("truetype"); 
+  font-family: BebasNeue;
+}
+
+@font-face {
+  src: url('/static/fonts/CODE Bold.ttf') format("truetype"); 
+  font-family: Code;
+}
+
+.v-content__wrap {
+  background: url("/static/images/bg-pattern.png"), #D46A6A;
+  background: url("/static/images/bg-pattern.png"), -webkit-linear-gradient(to right, #D46A6A, #FFAAAA);
+  background: url("/static/images/bg-pattern.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
+
+}
+
+.v-toolbar__content {
+  color: white;
+  background: url("/static/images/triangles.png"), #D46A6A;
+  background: url("/static/images/triangles.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+.application .theme--light.toolbar, .theme--light .toolbar{
+  color: white;
+  background: url("/static/images/triangles.png"), #D46A6A;
+  background: url("/static/images/triangles.png"), linear-gradient(to right, #D46A6A, #FFAAAA);
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+.btn__content:before{
+  background: url("/static/images/bg-pattern.png"), linear-gradient(to left, #D46A6A, #FFAAAA);
+  background-color: linear-gradient(to right, #D46A6A, #FFAAAA);
+  opacity: .45;
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+
+} 
+
+.toolbar__title {
+    font-size: 30px;
+}
+
+.dialog{
+  border-radius: 15px;
+}
+
+.hidden-sm-and-down {
+  font-family: Digital-7;
+}
+
+.titlename {
+  font-family: Digital-7;
+}
+
+
+.close .btn__content:before{
+  opacity: .45;
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+
+} 
+
+.btn--active .btn__content:before, .btn:focus .btn__content:before, .btn:hover .btn__content:before{
+  color: white; 
+  background: url("/static/images/triangles.png"),  #D46A6A;
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+.btn--active .btn__content:before, .btn:focus .btn__content:before, .btn:hover .btn__content:before .close{
+  color: white; 
+   font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+.primary--text input, .primary--text textarea {
+  caret-color: #550000 !important;
+}
+
+.application .theme--light.toolbar, .theme--light .toolbar .white{
+  color: white;
+  background: url("/static/images/triangles.png"), rebeccapurple;
+}
+
+.drawer{
+  background: url("/static/images/triangles.png"), white;
+}
+
+.greet {
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+  color: white;
+  font-weight: 400;
+  font-size: 64px;
+}
+.avatarimage{
+
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.username{
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+  font-weight: bold;
+  font-size: 15px;
+  text-transform: uppercase;
+  padding-top: 15px;
+  text-align: center;
+}
+.supportdetails{
+  font-family: 'Montserrat', 'Helvetica', 'Arial', 'sans-serif';
+  font-size: 11px;
+  color: #550000;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  padding-bottom: 20px;  
+}
+
+.mychanneltitle{
+  font-family: 'Roboto', 'Arial', 'sans-serif';
+  font-size: 14px;
+  color: #550000; 
+  text-transform: uppercase;  
+}
+
+.myfriendstitle{
+  font-family: 'Roboto', 'Arial', 'sans-serif';
+  font-size: 12px;
+  color: #550000;   
+}
+
+/*.v-list iconlist{
+  background-color: maroon;
+}
+*//*.toolbar__title {
+  font-family: Digital-7;
+}
+*/

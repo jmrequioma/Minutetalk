@@ -2,10 +2,11 @@
 <html>
 <head>
   
-  
+  {% load static %}
   <title>MinuteTalk</title>
 
 
+  <link href="static/minutetalk/css/style.css" rel="stylesheet" type="text/css">
   <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
   <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -13,7 +14,6 @@
   <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 
-  <link href="../../static/minutetalk/css/floating-labels.css" rel="stylesheet" type="text/css">
 
 
   <meta charset="utf-8">
@@ -39,7 +39,7 @@
                 </v-flex>
             </v-layout>
         </v-container>
-        <v-container fluid grid-list-md>
+        <v-container fluid grid-list-md class="holder">
           <v-layout row wrap justify-center>
               <v-flex d-flex xs12 sm6 md4>
                     <v-dialog transition="scale-transition" v-model="login" persistent width="500px" height="600px" >
@@ -65,7 +65,7 @@
                                       <h3>{{ login_error }}</h3>
                                       {% endif %}
                                       
-                                      <form action="{% url 'minutetalk:login'%}" method="post" ref="form">
+                                      <form action="{% url 'minutetalk:login' %}" method="post" ref="form">
                                         {% csrf_token %}
                                         <v-text-field 
                                         name="username"
