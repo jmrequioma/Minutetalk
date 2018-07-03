@@ -53,10 +53,19 @@
 			    <v-subheader>MY FAVORITED FRIENDS</v-subheader>
 			  <template v-for="(item, index) in user.myfriends">
 			  	<v-list-tile :key="item.title" ripple @click="">
-			  		<v-list-tile-avatar size="30px">
-                		<img :src="item.avatar">
-              		</v-list-tile-avatar>
-	              	<v-list-tile-content>
+						<!-- check here if online -->
+						<v-badge color="green" bottom overlap >
+								<v-icon class="checker"
+								slot="badge"
+								dark
+								style="font-size: 10px"
+							>done</v-icon>
+							<!-- until here ang pagpagawas sa online -->
+							<v-list-tile-avatar size="30px">
+								<img :src="item.avatar">	
+							</v-list-tile-avatar>
+						</v-badge>
+									<v-list-tile-content>
 	                	<v-list-tile-title class="myfriendstitle">[[item.title]]</v-list-tile-title>
 	              	</v-list-tile-content>
               	</v-list-tile>
@@ -120,6 +129,7 @@
 			                  		<v-list-tile-title>[[item.title]]</v-list-tile-title>
 			                	</v-list-tile>
                 		</v-list>
+
 	          	</v-card>
 	          	
       		</v-menu>
@@ -159,11 +169,16 @@
 
 						        <v-card-actions>
 						          <v-btn flat color="red">Join Channel</v-btn>
+						          <v-btn icon @click="a(key, index)">
+						          	<v-icon>[[ b(key, index) ? 'keyboard_arrow_down' : 'keyboard_arrow_up' ]]</v-icon>
+						          </v-btn>
 						        </v-card-actions>
 
-						          <v-card-text>
-						            [[c.desc]]
+						        <v-slide-y-transition>
+						          <v-card-text v-show="b(key, index)">
+						            I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
 						          </v-card-text>
+						        </v-slide-y-transition>
 					      	</v-card>
 					    </v-flex>
 					</v-layout>
@@ -216,7 +231,7 @@
 				},
 				{
 					title: 'Netflix and Chill',
-					avatar: 'https://i0.wp.com/www.indyscan.com/wordpress/wp-content/uploads/2018/03/Netflix-Logo.png?fit=400%2C300&ssl=1'
+					avatar: 'https://i0.wp.com/www.indyscan.com/wordpress/wp-content/uploads/2018/03/Netflix-Logo.png?fit=400%2C300&ssl=1'	
 				}      					
 	      	],
 	     	myfriends: [
@@ -265,32 +280,32 @@
 			  			title: 'Autotelic Gigs',
 					  	src: 'http://payload486.cargocollective.com/1/12/391449/12025306/Daniel-Behance-autotelic03_670.jpg',
 					  	online: '101',
-  						desc: "I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape."
+  						show: false,
 
 	  				},
 	  				{	
 			  			title: 'Paramore Tour 4',
 					  	src: 'https://www.billboard.com/files/media/05-paramore-press-photo-Lindsey-Byrnes-billboard-1548.jpg',
 					  	online: '10003',
-					  	desc: "ivjeiojfojvioav"
+  						show: false,
 		  			}, 
 		  			{
 					  	title: 'Shanti Dope-rst',
 					  	src: 'https://images.genius.com/7b330b6ab79b5f7efbd66e7547c40d6d.1000x525x1.jpg',
 					  	online: '234',
-					  	desc: "ivjeiojfojvioav"
+  						show: false,
 			 		},
 				 	{
 					  	title: 'One Directioners',
 					  	src: 'http://www.kiss925.com/wp-content/uploads/sites/59/2017/07/one-direction-up-all-night-album-artwork-billboard-1548-e1500836795682-1024x576.jpg',
 					  	online: '143',
-					  	desc: "ivjeiojfojvioav"
+  						show: false,
 					},
 					{
 					  	title: 'Chicsers Unite',
 					  	src: 'https://i.ytimg.com/vi/xaidwirHE10/maxresdefault.jpg',
 					  	online: '1',
-					  	desc: "ivjeiojfojvioav"
+  						show: false,
 					},
 	  			]
 	  		},
@@ -301,38 +316,32 @@
 	  				{
 			  			title: 'Silicon Valley',
 			  			src: 'https://cdn-images-1.medium.com/max/1280/1*c4NYXft8lyS7bkpaaMWREQ.jpeg',
-			  			online: '34243',
-			  			desc: "ivjeiojfojvioav"
+			  			online: '34243'
 			  		},
 				  	{
 					  	title: 'Big Bang Theory',
 					  	src: 'http://hotcountry1035.com/wp-content/uploads/2016/11/bbt.png',
-					  	online: '45345',
-					  	desc: "ivjeiojfojvioav"
+					  	online: '45345'
 				 	},
 				  	{
 					  	title: 'Friends',
 					  	src: 'https://cdn.24.co.za/files/Cms/General/d/4320/28d1220097b54f79907f2d810b51ad0b.jpg',
-					  	online: '5345345',
-					  	desc: "ivjeiojfojvioav"
+					  	online: '5345345'
 				  	},
 				  	{
 					  	title: 'How I Met Your Mother',
 					  	src: 'http://digitalspyuk.cdnds.net/17/20/768x384/landscape-1494944662-himym.jpg',
-					  	online: '123322',
-					  	desc: "ivjeiojfojvioav"
+					  	online: '123322'
 				 	},
 				  	{
 					  	title: 'You\'re The Worst',
 					  	src: 'https://cdn-static.sidereel.com/tv_shows/57394/giant_2x/281776-4.jpg',
-					  	online: '56234',
-					  	desc: "ivjeiojfojvioav"
+					  	online: '56234'
 				  	},
 				  	{
 					  	title: 'Suits',
 					  	src: 'https://www.thesouthafrican.com/wp-content/uploads/2017/08/suits-season-7-episode-7-696x391.jpg',
-					  	online: '12323',
-					  	desc: "ivjeiojfojvioav"
+					  	online: '12323'
 				  	},
 				] 	
 	  		}
