@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <title>MinuteTalk</title>
+
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+  <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+
+  <link href="../../static/minutetalk/css/stream.css" rel="stylesheet" type="text/css">
+  <link href="../../static/minutetalk/css/style.css" rel="stylesheet" type="text/css">
+
+
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+    <div id="app">
+        <v-app id="inspire">
+          <v-navigation-drawer
+            fixed
+            :clipped="$vuetify.breakpoint.mdAndUp"
+            app
+            v-model="drawer" class=drawer>
+            <v-list dense>
+            	<v-spacer></v-spacer>
+              <v-avatar size="80px"  class="avatarimage">
+                <img
+                  :src="user.avatar"
+                  alt="Avatar"
+                >
+              </v-avatar>
+              <v-spacer class="username">[[user.name]]</v-spacer>
+              <v-spacer class="supportdetails">[[user.gender]], [[user.age]]</v-spacer>
+			  <v-subheader>MY CHANNELS</v-subheader>
+			  <template v-for="(item, index) in user.mychannels">
+			  	<v-list-tile :key="item.title" ripple @click="">
+			  		<v-list-tile-avatar size="30px">
+                		<img :src="item.avatar">
+              		</v-list-tile-avatar>
+	              	<v-list-tile-content>
+	                	<v-list-tile-title class="mychanneltitle">[[item.title]]</v-list-tile-title>
+	              	</v-list-tile-content>
+              	</v-list-tile>
+			  </template>
+			    <v-divider class="divide"></v-divider>
+			    <v-subheader>MY FAVORITED FRIENDS</v-subheader>
+			  <template v-for="(item, index) in user.myfriends">
+			  	<v-list-tile :key="item.title" ripple @click="">
+			  		<v-list-tile-avatar size="30px">
+                		<img :src="item.avatar">
+              		</v-list-tile-avatar>
+	              	<v-list-tile-content>
+	                	<v-list-tile-title class="myfriendstitle">[[item.title]]</v-list-tile-title>
+	              	</v-list-tile-content>
+              	</v-list-tile>
+			  </template>
+				        
+            </v-list>
+          </v-navigation-drawer>
+          <v-toolbar
+            color="blue darken-3"
+            dark
+            app
+            :clipped-left="$vuetify.breakpoint.mdAndUp"
+            fixed>
+            <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
+              <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+              <span class="hidden-sm-and-down">MinuteTalk</span>
+            </v-toolbar-title>
+           
+            <v-spacer></v-spacer>
+            <v-btn icon>
+              <v-icon>notifications</v-icon>
+            </v-btn>
+            <v-menu 
+            v-model=menupopout
+            :close-on-content-click="false"
+            :nudge-width="50"
+            offset-y>
+	            <v-btn 
+	            icon 
+	            slot="activator">
+	              <v-avatar size="32px" >
+	                <img
+	                  :src="user.avatar"
+	                  alt="Avatar"
+	                >
+	              </v-avatar>	
+	          	</v-btn>
+	          	<v-card class=usericonright>
+	          		<v-list>
+	          			<v-list-tile avatar>
+	          				<v-list-tile-avatar>
+	          					<img
+				                  :src="user.avatar"
+				                  alt="Avatar"
+	                			>
+	          				</v-list-tile-avatar>
+	          				<v-list-tile-content>
+	          					<v-list-tile-title>[[user.name]]</v-list-tile-title>
+	          					<v-list-tile-sub-title>[[user.gender]], [[user.age]]</v-list-tile-sub-title>
+	          				</v-list-tile-content>
+	          				</v-list-tile-action>
+	          			</v-list-tile>
+	          		</v-list>
+	          		<v-divider></v-divider>
+	          		  <v-spacer></v-spacer>
+	          			<v-list class="v-list iconlist">
+			                	<v-list-tile v-for="(item, i) in iconlist" :key="i" ripple @click="">
+			                		<v-list-tile-action>
+          								<v-icon>[[item.icon]]</v-icon>
+       								 </v-list-tile-action>
+			                  		<v-list-tile-title>[[item.title]]</v-list-tile-title>
+			                	</v-list-tile>
+                		</v-list>
+
+	          	</v-card>
+	          	
+      		</v-menu>
+          </v-toolbar>
+          <v-content>
+              
+            <v-container class="videoarea" fluid fill-height >
+            	<div id="videos">
+    				<div id="subscriber"></div>
+					<div id="publisher"></div>
+                </div>
+            <v-container class="questions">
+                <div class="question" >
+                        <v-list class="questionlist">
+							<v-subheader>MY QUESTIONS</v-subheader>
+                            <template v-for="(item, index) in myquestion">
+								<v-list-tile :key="item.title" ripple @click="">
+									<v-list-tile-content>
+										<v-list-tile-title class="myquestion">[[item.question]]</v-list-tile-title>
+									</v-list-tile-content>
+									<v-list-tile-avatar size="30px">
+											<img :src="user.avatar">
+									</v-list-tile-avatar>
+								</v-list-tile>
+							</template>
+							<v-divider></v-divider>
+							<v-subheader>INCOMING QUESTIONS</v-subheader>
+							<template v-for="(item, index) in otherquestion">
+									<v-list-tile :key="item.title" >
+										<v-list-tile-avatar size="30px">
+											<img :src="otheruser.avatar">
+										</v-list-tile-avatar>
+										<v-list-tile-content>
+										  <v-list-tile-title class="otherquestion">[[item.question]]</v-list-tile-title>
+										</v-list-tile-content>
+									</v-list-tile>
+								</template>
+                        </v-list>
+                </div>
+            </v-container>
+            </v-container>
+            </v-container>
+          </v-content>
+
+        </v-app>
+      </div>
+
+
+ <script src="https://unpkg.com/vue/dist/vue.js"></script>
+ <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+ <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
+ <script src="../../static/minutetalk/js/stream.js"></script>
+
+ <script>
+  new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#app',
+  data(){
+  	return{
+      dialog: false,
+      drawer: null,
+      menupopout: false,
+      user: {
+      	name: 'Jerome Requioma',
+      	age: '18',
+      	gender: 'Male',
+      	avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/10471023_881626701899395_3510172724376167713_n.jpg?_nc_cat=0&oh=a034d8e1ad4d530839d9e56ccd6aed9b&oe=5BA2F9F0',	
+      	mychannels: [
+		{
+			title: 'Dota 2',
+			avatar: 'https://steamuserimages-a.akamaihd.net/ugc/559884055410135065/429CE099233669AB4C0322F6F211053A0B589094/'
+		},
+		{
+			title: 'Taylor Swift',
+			avatar: 'https://orig00.deviantart.net/463a/f/2013/093/a/c/taylor_swift_png_icon_by_aubreyondeviantart-d60dk5k.png'
+		},
+		{
+			title: 'Volleyball',
+			avatar: 'http://www.pngmart.com/files/4/Volleyball-PNG-Free-Download.png'
+		},
+		{
+			title: 'Power Gym',
+			avatar: 'https://www.brandcrowd.com/gallery/brands/pictures/picture14268688597609.png'
+		},
+		{
+			title: 'Marathon',
+			avatar: 'http://kahunabailbonds.com/wp-content/uploads/2016/04/run-up-clipart-running-icon-on-transparent-background-md.png'
+		},
+		{
+			title: 'Netflix and Chill',
+			avatar: 'https://i0.wp.com/www.indyscan.com/wordpress/wp-content/uploads/2018/03/Netflix-Logo.png?fit=400%2C300&ssl=1'	
+		}      					
+      ],
+	  
+      myfriends: [
+		{
+			title: 'Mark Louis Cobo',
+			avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/16508724_257346621359911_2391502370336370422_n.jpg?_nc_cat=0&oh=f6e2cad0a00a655f673463ac3fd2c509&oe=5BA041B1'
+		},
+		{
+			title: 'Timothy River Paler',
+			avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/16143076_1541011595912411_6397090310466530141_n.jpg?_nc_cat=0&oh=e4ea26d2f4c31fca3178ed4d2207c734&oe=5BE31199'
+		},
+		{
+			title: 'Tehillah Leigh Lapura',
+			avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/29027146_1896065663759969_1964858795305730048_n.jpg?_nc_cat=0&oh=634e6feff88eb698b253fd14d93e763e&oe=5BB2F176'
+		},
+		{
+			title: 'Marie Curie Salera',
+			avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/22853443_1689141051097186_4885884491507680611_n.jpg?_nc_cat=0&oh=217127d24ad65e5ae3a53d9241e968d2&oe=5BAE5931'
+		},
+		{
+			title: 'Arvin Bonganay',
+			avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-1/12745457_877244785726525_7184995272760411538_n.jpg?_nc_cat=0&oh=e49f68033dee373ea129200c5a6ab14e&oe=5BA133C2'
+		},
+		{
+			title: 'Earl Timothy Malaki',
+			avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/34069062_2466558426703414_1702227162972553216_n.jpg?_nc_cat=0&oh=8b73a50f399d18b7b5416f240e95f6a8&oe=5B9DA59F'	
+		}	      					
+      ],
+      },
+	  otheruser: {
+		  name: 'Marie Curie Salera',
+		  avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/22853443_1689141051097186_4885884491507680611_n.jpg?_nc_cat=0&oh=217127d24ad65e5ae3a53d9241e968d2&oe=5BAE5931'
+	  },
+      iconlist:[
+      {
+      	title: 'Settings', 
+      	icon: 'settings'
+      },
+      {
+      	title: 'Logout',
+      	icon: 'exit_to_app'
+      }
+	  ],
+	  display:[
+	  {
+	  	header: 'Music'
+	  },
+	  {
+	  	title: 'Autotelic Gigs',
+	  	src: 'http://payload486.cargocollective.com/1/12/391449/12025306/Daniel-Behance-autotelic03_670.jpg',
+	  	online: '101'
+	  },
+	  {
+	  	title: 'Paramore Tour 4',
+	  	src: 'https://www.billboard.com/files/media/05-paramore-press-photo-Lindsey-Byrnes-billboard-1548.jpg',
+	  	online: '10003'
+	  },
+	  {
+	  	title: 'Shanti Dope-rst',
+	  	src: 'https://images.genius.com/7b330b6ab79b5f7efbd66e7547c40d6d.1000x525x1.jpg',
+	  	online: '234'
+	  },
+	  {
+	  	title: 'One Directioners',
+	  	src: 'http://www.kiss925.com/wp-content/uploads/sites/59/2017/07/one-direction-up-all-night-album-artwork-billboard-1548-e1500836795682-1024x576.jpg',
+	  	online: '143'
+	  },
+	  {
+	  	title: 'Chicsers Unite',
+	  	src: 'https://i.ytimg.com/vi/xaidwirHE10/maxresdefault.jpg',
+	  	online: '1'
+	  },
+	  {
+	  	header: 'TV Series'
+	  },
+	  {
+	  	title: 'Silicon Valley',
+	  	src: 'https://cdn-images-1.medium.com/max/1280/1*c4NYXft8lyS7bkpaaMWREQ.jpeg',
+	  	online: '34243'
+	  },
+	  {
+	  	title: 'Big Bang Theory',
+	  	src: 'http://hotcountry1035.com/wp-content/uploads/2016/11/bbt.png',
+	  	online: '45345'
+	  },
+	  {
+	  	title: 'Friends',
+	  	src: 'https://cdn.24.co.za/files/Cms/General/d/4320/28d1220097b54f79907f2d810b51ad0b.jpg',
+	  	online: '5345345'
+	  },
+	  {
+	  	title: 'How I Met Your Mother',
+	  	src: 'http://digitalspyuk.cdnds.net/17/20/768x384/landscape-1494944662-himym.jpg',
+	  	online: '123322'
+	  },
+	  {
+	  	title: 'You\'re The Worst',
+	  	src: 'https://cdn-images-1.medium.com/max/1280/1*c4NYXft8lyS7bkpaaMWREQ.jpeg',
+	  	online: '56234'
+	  },
+	  {
+	  	title: 'Suits',
+	  	src: 'https://www.thesouthafrican.com/wp-content/uploads/2017/08/suits-season-7-episode-7-696x391.jpg',
+	  	online: '12323'
+	  }
+	  ],
+      myquestion: [
+        { question: 'How are you?'},
+		{ question: 'Are you okay?'},
+		{ question: 'How\'s life?'},
+      ],
+	  otherquestion: [
+	  	{ question: 'Where are you from?'},
+		{ question: 'What are your hobbies?'},
+		{ question: 'How\'s your day?'},
+	  ]
+	        
+  }
+	  }
+})
+
+ </script>
+</body>
+</html>	
