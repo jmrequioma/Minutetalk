@@ -147,37 +147,8 @@
               </v-layout>
             </v-container>
           </v-content> -->
-          <v-content>
-	          <v-container fluid grid-list-xl>
-	          	<v-flex xs12 sm6 md3 ><v-text-field  class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field></v-flex>
-	          	<template v-for="(item, key) in display">
-	          		<v-spacer><h1>[[item.header]]</h1></v-spacer>
-		           	<v-layout row wrap>
-			          	<v-flex d-flex xs10 sm3 v-for="(c, index) in item.data">
-				          	<v-card >
-				          		<v-card-media  :src="c.src" height="200px" width="25%">
-						        	<v-card-text class="description">
-						        		[[c.desc]]
-						        	</v-card-text>
-						        </v-card-media>
-						        <v-card-title primary-title>
-						          <div>
-						            <h3 class="headline mb-0">[[c.title]]</h3>
-						            <span>There are [[c.online]] users online</span>
-						          </div>
-						        </v-card-title>
-
-						        <v-card-actions>
-						          <v-btn flat color="red">Join Channel</v-btn>
-						        </v-card-actions>
-
-						         
-					      	</v-card>
-					    </v-flex>
-					</v-layout>
-				</template>
-	          </v-container>
-      	</v-content>
+          {% block content %}
+          {% endblock %}
         </v-app>
       </div>
 

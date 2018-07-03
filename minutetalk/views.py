@@ -54,7 +54,7 @@ class SignUpView(generic.View):
 
 
 def home(request):
-    return render(request, 'minutetalk/home.html')
+    return render(request, 'minutetalk/channel_view.html')
 
 def sign_out(request):
     logout(request)

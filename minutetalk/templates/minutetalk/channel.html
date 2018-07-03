@@ -1,0 +1,23 @@
+{% extends 'minutetalk/home.html' %}
+
+{% block content %}
+<v-content>
+  <v-container fluid grid-list-xl>
+  	<v-flex xs12 sm6 md3 ><v-text-field  class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field></v-flex>
+  	<template>
+  		<v-spacer><h1>People on this Channel</h1></v-spacer>
+       	<v-layout row wrap>
+          	<v-flex d-flex xs10 sm3 v-for="(item, key) in user.myfriends">
+          		<div>
+					<v-list-tile-avatar size="200px">
+						<img :src="item.avatar">
+						<p class="name">[[item.title]]</p>
+					</v-list-tile-avatar>
+					<v-btn round>Talk!</v-btn>
+				</div>
+		    </v-flex>
+		</v-layout>
+	</template>
+  </v-container>
+</v-content>
+{% endblock %}

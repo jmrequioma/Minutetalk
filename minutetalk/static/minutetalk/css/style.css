@@ -202,3 +202,24 @@
   background: rgba(255, 255, 255, 0.7);
   
 }
+
+.name {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    margin: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: black;
+    transition: .5s all;
+
+
+}
+
+.name:hover{
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 200px;
+  text-align: center;
+  
+}
