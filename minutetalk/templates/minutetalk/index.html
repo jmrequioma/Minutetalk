@@ -5,7 +5,7 @@
   
   <title>MinuteTalk</title>
 
-{% load static %}
+  {% load static %}
 
   <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
   <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
@@ -66,21 +66,21 @@
                                       
                                       <h3>[[login_error]]</h3>
                                       
-                                      <form method="post" ref="login_form" >
+                                      <form method="post" ref="login_form">
                                         {% csrf_token %}
                                         <v-text-field 
                                         name="username"
                                         v-model="form.loginusername"
                                         prepend-icon="person" 
                                         label="Username" 
-                                        type="text"></v-text-field>
+                                        type="text" v-on:keyup.enter="login"></v-text-field>
                                         <v-text-field 
                                         v-model="form.loginpassword"
                                         prepend-icon="lock" 
                                         name="password"
                                         label="Password" 
                                         id="password" 
-                                        type="password"></v-text-field>
+                                        type="password" v-on:keyup.enter="login"></v-text-field>
                                         <v-btn 
                                         round
                                         flat
