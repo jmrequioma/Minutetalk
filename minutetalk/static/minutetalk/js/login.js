@@ -16,7 +16,7 @@ var a = new Vue({
         age: '',
         gender: '',
         loginusername: '',
-        loginpassword: ''
+        loginpassword: '',
         test: ''
       },
       auth_modal: false,
@@ -93,7 +93,6 @@ var a = new Vue({
       this.reset()
     },
     signup: function() {
-      console.log("asdjkfhsadjfhsadjfsadj")
       $.ajax({
         url : 'minutetalk/signup',
         type : 'POST',
@@ -113,9 +112,9 @@ var a = new Vue({
             this.loginpage = false 
             this.signup_error = response['error']
           } else {
+            console.log("REDIRECTING")
             window.location.href= "minutetalk/home"
           }
-
         }
       })   
       this.reset()   

@@ -16,7 +16,7 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  {% load static %}
 </head>
 <body>
     <div id="app">
@@ -148,20 +148,21 @@
           <v-content>
 	          <v-container fluid grid-list-xl>
 	          	<v-flex xs12 sm6 md3 ><v-text-field  class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field></v-flex>
-	          	<template v-for="(item, key) in display">
-	          		<v-spacer><h1>[[item.header]]</h1></v-spacer>
+	          	
+				{% for channeltype in channels_list%}
+	          		<v-spacer><h1>{{channeltype.name}}</h1></v-spacer>
 		           	<v-layout row wrap>
-			          	<v-flex d-flex xs10 sm3 v-for="(c, index) in item.data">
+	          		{% for channel in channeltype.channel_set.all %}
+			          	<v-flex d-flex xs10 sm3>
 				          	<v-card>
 						        <v-card-media
-						          :src="c.src"
 						          height="200px"
+						          src="/media/{{ channel.img_src }}"
 						        ></v-card-media>
-
 						        <v-card-title primary-title>
 						          <div>
-						            <h3 class="headline mb-0">[[c.title]]</h3>
-						            <span>There are [[c.online]] users online</span>
+						            <h3 class="headline mb-0">{{ channel.title}}</h3>
+						            <span>There are 0 users online</span>
 						          </div>
 						        </v-card-title>
 
@@ -170,18 +171,17 @@
 						        </v-card-actions>
 
 						          <v-card-text>
-						            [[c.desc]]
+						            {{ channel.description}}}
 						          </v-card-text>
 					      	</v-card>
 					    </v-flex>
+	          		{% endfor %}
 					</v-layout>
-				</template>
+	          	{% endfor %}
 	          </v-container>
       	</v-content>
         </v-app>
       </div>
-
-
  <script src="https://unpkg.com/vue/dist/vue.js"></script>
  <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
  <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>

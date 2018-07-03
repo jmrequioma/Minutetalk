@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
-from .models import UserProfile
+from .models import UserProfile, ChannelType
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -14,7 +14,7 @@ class IndexView(generic.View):
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
 
-class LogInView(LoginRequiredMixin, generic.View):
+class LogInView(generic.View):
     template_name = 'minutetalk/index.html'
 
     def post(self, request, *args, **kwargs):
@@ -29,7 +29,7 @@ class LogInView(LoginRequiredMixin, generic.View):
         }
         return JsonResponse(context)
 
-class SignUpView(LoginRequiredMixin, generic.View):
+class SignUpView(generic.View):
     def get(self, request, *args, **kwargs):
         f = UserProfileForm()
         return render(request, 'minutetalk/index.html' ,{"form" : f})
@@ -49,17 +49,18 @@ class SignUpView(LoginRequiredMixin, generic.View):
                 userProfile.save()
                 user.save()
                 login(request, user)
-                return JsonResponse({"userProfile" : userProfile})
+                return JsonResponse({})
             return JsonResponse({"error": "Some error occured during sign up"})
 
 class HomeView(LoginRequiredMixin, generic.View):
+
     def get(self, request, *args, **kwargs):
+        channels_list = ChannelType.objects.all()
         context = {
-            'user', request.user
+            'user': request.user,
+            'channels_list' : channels_list,
         }
-        request.test = "CIONG TV"
-        print(request.test)
-        return render(request, 'minutetalk/home.html')
+        return render(request, 'minutetalk/home.html',context)
 
 def sign_out(request):
     logout(request)
