@@ -149,7 +149,7 @@
           </v-content> -->
           <v-content>
 	          <v-container fluid grid-list-xl>
-	          	<v-flex xs12 sm6 md3 ><v-text-field  class="ml-2" label="Search..." append-icon="search" :append-icon-cb="() => (openSearch = !openSearch)" hide-details dark></v-text-field></v-flex>
+	          	<v-flex xs12 sm6 md3 ><v-text-field  class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field></v-flex>
 	          	<template v-for="(item, key) in display">
 	          		<v-spacer><h1>[[item.header]]</h1></v-spacer>
 		           	<v-layout row wrap>
