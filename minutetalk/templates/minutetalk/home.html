@@ -29,13 +29,10 @@
             <v-list dense>
             	<v-spacer></v-spacer>
               <v-avatar size="80px"  class="avatarimage">
-                <img
-                  :src="user.avatar"
-                  alt="Avatar"
-                >
+                <img src="/media/{{ request.user.userprofile.img_src }}">
               </v-avatar>
               <v-spacer class="username">{{request.user.username}}</v-spacer>
-              <v-spacer class="supportdetails">[[user.gender]], [[user.age]]</v-spacer>
+              <v-spacer class="supportdetails">{{request.user.userprofile.gender}}, {{request.user.userprofile.age}}</v-spacer>
 			  <v-subheader>MY CHANNELS</v-subheader>
 			  <template v-for="(item, index) in user.mychannels">
 			  	<v-list-tile :key="item.title" ripple @click="">
@@ -96,7 +93,7 @@
 	            slot="activator">
 	              <v-avatar size="32px" >
 	                <img
-	                  :src="user.avatar"
+	                  src="/media/{{request.user.userprofile.img_src}}"
 	                  alt="Avatar"
 	                >
 	              </v-avatar>	
@@ -106,13 +103,12 @@
 	          			<v-list-tile avatar>
 	          				<v-list-tile-avatar>
 	          					<img
-				                  :src="user.avatar"
-				                  alt="Avatar"
+				                  src="/media/{{request.user.userprofile.img_src}}"
 	                			>
 	          				</v-list-tile-avatar>
 	          				<v-list-tile-content>
-	          					<v-list-tile-title>[[user.name]]</v-list-tile-title>
-	          					<v-list-tile-sub-title>[[user.gender]], [[user.age]]</v-list-tile-sub-title>
+	          					<v-list-tile-title>{{request.user.userprofile.username}}</v-list-tile-title>
+	          					<v-list-tile-sub-title>{{request.user.userprofile.gender}},{{request.user.userprofile.age}}</v-list-tile-sub-title>
 	          				</v-list-tile-content>
 	          				</v-list-tile-action>
 	          			</v-list-tile>
