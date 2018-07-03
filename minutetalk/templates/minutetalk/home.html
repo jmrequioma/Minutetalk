@@ -154,12 +154,12 @@
 	          		<v-spacer><h1>[[item.header]]</h1></v-spacer>
 		           	<v-layout row wrap>
 			          	<v-flex d-flex xs10 sm3 v-for="(c, index) in item.data">
-				          	<v-card>
-						        <v-card-media
-						          :src="c.src"
-						          height="200px"
-						        ></v-card-media>
-
+				          	<v-card >
+				          		<v-card-media  :src="c.src" height="200px" width="25%">
+						        	<v-card-text class="description">
+						        		[[c.desc]]
+						        	</v-card-text>
+						        </v-card-media>
 						        <v-card-title primary-title>
 						          <div>
 						            <h3 class="headline mb-0">[[c.title]]</h3>
@@ -171,9 +171,7 @@
 						          <v-btn flat color="red">Join Channel</v-btn>
 						        </v-card-actions>
 
-						          <v-card-text>
-						            [[c.desc]]
-						          </v-card-text>
+						         
 					      	</v-card>
 					    </v-flex>
 					</v-layout>
@@ -275,7 +273,8 @@
 			  			title: 'Autotelic Gigs',
 					  	src: 'http://payload486.cargocollective.com/1/12/391449/12025306/Daniel-Behance-autotelic03_670.jpg',
 					  	online: '101',
-  						desc: 'Lorem ipsum eu pariatur dolor et cupidatat id magna velit laborum et adipisicing nostrud sit.'
+  						desc: 'Lorem ipsum eu pariatur dolor et cupidatat id magna velit laborum et adipisicing nostrud sit.',
+  						show:false
 
 	  				},
 	  				{	
@@ -367,7 +366,10 @@
   	}, 
   	b: function(x, y){
   		return this.display[x].data[y].show
-  	}
+  	},
+  	mouseover: function(x, y){
+    	this.display[x].data[y].show = true
+    },
 
   },
  

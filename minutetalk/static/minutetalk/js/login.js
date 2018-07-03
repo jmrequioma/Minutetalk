@@ -15,8 +15,8 @@ var a = new Vue({
         age: '',
         gender: '',
         loginusername: '',
-        loginpassword: ''
-        test: ''
+        loginpassword: '',
+        test: '',
       },
       auth_modal: false,
       loginpage: true,
