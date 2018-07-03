@@ -51,10 +51,19 @@
 			    <v-subheader>MY FAVORITED FRIENDS</v-subheader>
 			  <template v-for="(item, index) in user.myfriends">
 			  	<v-list-tile :key="item.title" ripple @click="">
-			  		<v-list-tile-avatar size="30px">
-                		<img :src="item.avatar">
-              		</v-list-tile-avatar>
-	              	<v-list-tile-content>
+						<!-- check here if online -->
+						<v-badge color="green" bottom overlap >
+								<v-icon class="checker"
+								slot="badge"
+								dark
+								style="font-size: 10px"
+							>done</v-icon>
+							<!-- until here ang pagpagawas sa online -->
+							<v-list-tile-avatar size="30px">
+								<img :src="item.avatar">	
+							</v-list-tile-avatar>
+						</v-badge>
+									<v-list-tile-content>
 	                	<v-list-tile-title class="myfriendstitle">[[item.title]]</v-list-tile-title>
 	              	</v-list-tile-content>
               	</v-list-tile>
@@ -138,10 +147,11 @@
           </v-content> -->
           <v-content>
 	          <v-container fluid grid-list-xl>
+	          	<v-flex xs12 sm6 md3 ><v-text-field  class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field></v-flex>
 	          	<template v-for="(item, key) in display">
 	          		<v-spacer><h1>[[item.header]]</h1></v-spacer>
 		           	<v-layout row wrap>
-			          	<v-flex d-flex xs10 sm3 v-for="c in item.data">
+			          	<v-flex d-flex xs10 sm3 v-for="(c, index) in item.data">
 				          	<v-card>
 						        <v-card-media
 						          :src="c.src"
@@ -158,6 +168,10 @@
 						        <v-card-actions>
 						          <v-btn flat color="red">Join Channel</v-btn>
 						        </v-card-actions>
+
+						          <v-card-text>
+						            [[c.desc]]
+						          </v-card-text>
 					      	</v-card>
 					    </v-flex>
 					</v-layout>
@@ -179,7 +193,7 @@
   el: '#app',
   data(){
   	return{
-	    dialog: false,
+  		dialog: false,
 	    drawer: null,
 	    menupopout: false,
 	    user: {
@@ -258,27 +272,33 @@
   					{
 			  			title: 'Autotelic Gigs',
 					  	src: 'http://payload486.cargocollective.com/1/12/391449/12025306/Daniel-Behance-autotelic03_670.jpg',
-					  	online: '101'
+					  	online: '101',
+  						desc: 'Lorem ipsum eu pariatur dolor et cupidatat id magna velit laborum et adipisicing nostrud sit.'
+
 	  				},
 	  				{	
 			  			title: 'Paramore Tour 4',
 					  	src: 'https://www.billboard.com/files/media/05-paramore-press-photo-Lindsey-Byrnes-billboard-1548.jpg',
-					  	online: '10003'
+					  	online: '10003',
+  						desc: 'Lorem ipsum eu occaecat laboris ut proident cillum eu elit reprehenderit cillum minim.'
 		  			}, 
 		  			{
 					  	title: 'Shanti Dope-rst',
 					  	src: 'https://images.genius.com/7b330b6ab79b5f7efbd66e7547c40d6d.1000x525x1.jpg',
-					  	online: '234'
+					  	online: '234',
+  						desc: 'Lorem ipsum officia reprehenderit id laboris velit duis qui ut minim ut anim cillum consequat est eiusmod dolore pariatur.'
 			 		},
 				 	{
 					  	title: 'One Directioners',
 					  	src: 'http://www.kiss925.com/wp-content/uploads/sites/59/2017/07/one-direction-up-all-night-album-artwork-billboard-1548-e1500836795682-1024x576.jpg',
-					  	online: '143'
+					  	online: '143',
+  						desc: 'Pariatur ut ullamco dolore voluptate tempor quis esse deserunt dolor non.'
 					},
 					{
 					  	title: 'Chicsers Unite',
 					  	src: 'https://i.ytimg.com/vi/xaidwirHE10/maxresdefault.jpg',
-					  	online: '1'
+					  	online: '1',
+  						desc: 'Magna velit in veniam ex ex nostrud sed ullamco qui nulla.'
 					},
 	  			]
 	  		},
@@ -289,39 +309,43 @@
 	  				{
 			  			title: 'Silicon Valley',
 			  			src: 'https://cdn-images-1.medium.com/max/1280/1*c4NYXft8lyS7bkpaaMWREQ.jpeg',
-			  			online: '34243'
+			  			online: '34243',
+			  			desc: 'Ut occaecat ad reprehenderit mollit ut fugiat ut anim duis est aliquip voluptate excepteur aliquip.'
 			  		},
 				  	{
 					  	title: 'Big Bang Theory',
 					  	src: 'http://hotcountry1035.com/wp-content/uploads/2016/11/bbt.png',
-					  	online: '45345'
+					  	online: '45345',
+					  	desc: 'Amet dolore amet do ut dolore occaecat nostrud deserunt cillum mollit.'
 				 	},
 				  	{
 					  	title: 'Friends',
 					  	src: 'https://cdn.24.co.za/files/Cms/General/d/4320/28d1220097b54f79907f2d810b51ad0b.jpg',
-					  	online: '5345345'
+					  	online: '5345345',
+					  	desc: 'Do consectetur ut officia et id qui commodo nisi pariatur reprehenderit dolor.'
 				  	},
 				  	{
 					  	title: 'How I Met Your Mother',
 					  	src: 'http://digitalspyuk.cdnds.net/17/20/768x384/landscape-1494944662-himym.jpg',
-					  	online: '123322'
+					  	online: '123322',
+					  	desc: 'Adipisicing eiusmod culpa ea officia labore dolore veniam reprehenderit veniam tempor ut.'
 				 	},
 				  	{
 					  	title: 'You\'re The Worst',
 					  	src: 'https://cdn-static.sidereel.com/tv_shows/57394/giant_2x/281776-4.jpg',
-					  	online: '56234'
+					  	online: '56234',
+					  	desc: 'Voluptate laborum magna minim sint ullamco id adipisicing incididunt eiusmod cupidatat ex excepteur pariatur.'
 				  	},
 				  	{
 					  	title: 'Suits',
 					  	src: 'https://www.thesouthafrican.com/wp-content/uploads/2017/08/suits-season-7-episode-7-696x391.jpg',
-					  	online: '12323'
+					  	online: '12323',
+					  	desc: 'Elit deserunt occaecat velit deserunt id et ut qui laborum.'
 				  	},
 				] 	
 	  		}
   		]
   	}
-
-
 
   },
   methods: {
@@ -332,10 +356,19 @@
         	window.location.href= "logout"
 
   		}
+  	},
+
+  	a: function(x, y){
+  		this.display[x].data[y].show = !this.display[x].data[y].show
+  		console.log(this.display[x].data[y].show)
+  		
+  	}, 
+  	b: function(x, y){
+  		return this.display[x].data[y].show
   	}
+
   },
  
-
 })
 
  </script>

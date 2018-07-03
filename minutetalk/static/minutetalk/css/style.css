@@ -165,6 +165,7 @@
   color: #550000;   
 }
 
+
 img {
   width: 30%;
   margin: auto;
@@ -172,6 +173,21 @@ img {
   margin-bottom: 10px;
 }
 
+
+.v-badge__badge{
+  font-size: 10px;
+}
+
+.v-badge--overlap.v-badge--bottom .v-badge__badge {
+  bottom: 0px;
+}
+.v-badge--overlap .v-badge__badge {
+  right: 22px;
+}
+.v-badge__badge {
+  height: 14px;
+  width: 14px;
+}
 /*.v-list iconlist{
   background-color: maroon;
 }
@@ -179,3 +195,4 @@ img {
   font-family: Digital-7;
 }
 */
+

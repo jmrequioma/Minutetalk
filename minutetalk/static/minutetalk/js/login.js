@@ -1,3 +1,5 @@
+Vue.config.keyCodes.atsign = 50;
+
 var a = new Vue({ 
   delimiters: ['[[', ']]'],
   el: '#app',
@@ -15,6 +17,7 @@ var a = new Vue({
         gender: '',
         loginusername: '',
         loginpassword: ''
+        test: ''
       },
       auth_modal: false,
       loginpage: true,
