@@ -14,6 +14,8 @@
   <link href="../../static/minutetalk/css/stream.css" rel="stylesheet" type="text/css">
   <link href="../../static/minutetalk/css/style.css" rel="stylesheet" type="text/css">
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {% load static %}
@@ -309,13 +311,25 @@
   		}
   	},
   	join_channel: function(channel){
-  		window.location.href = channel.replace(/ /g, "_")
-  	}
-
- 
+  		window.location.href = channel.source.replace(/ /g, "_")
+	},
+	search: function() {
+		var query = $('#search').val();
+		$.ajax({
+			url: '{% url "minutetalk:search_channel" %}',
+			data : {
+				'query' : query,
+			},
+			success: function (data) {
+				for (i in data.titles) {
+					console.log(data.titles[i])
+				}
+			}
+		});
+	}
   },
- 
-})
+});
+
 
  </script>
 </body>

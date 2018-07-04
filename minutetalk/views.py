@@ -1,12 +1,14 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
-from .models import UserProfile, ChannelType
+from .models import UserProfile, ChannelType, Channel
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
+import json
+
 
 class IndexView(generic.View):
     template_name = 'minutetalk/index.html'
@@ -69,3 +71,8 @@ def sign_out(request):
 def join_channel(request, channel):
     return render(request, 'minutetalk/channel.html', {'channel':channel})
 
+def search_channel(request):
+    username = request.GET.get('query')
+    data = Channel.objects.filter(title__contains=username)
+    context = [(x.title,x.description,x.img_src.name) for x in data]
+    return JsonResponse({'titles' : context });

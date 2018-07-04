@@ -10,5 +10,6 @@ urlpatterns = [
     path('signup', views.SignUpView.as_view(), name='signup'),
     path('home', views.HomeView.as_view(), name='home'),
     path('logout', views.sign_out, name='logout'),
-    path('<str:channel>', views.join_channel, name='join_channel')
+    path('<str:channel>', views.join_channel, name='join_channel'),
+    path('ajax/search/', views.search_channel, name='search_channel'),
 ]

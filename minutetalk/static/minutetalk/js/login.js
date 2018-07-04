@@ -116,7 +116,7 @@ var a = new Vue({
             window.location.href= "minutetalk/home"
           }
         }
-      })   
+      })
       this.reset()   
     },
     is_valid_field: function(v) {
