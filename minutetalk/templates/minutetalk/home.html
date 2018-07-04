@@ -225,9 +225,7 @@
 			  			title: 'Autotelic Gigs',
 					  	src: 'http://payload486.cargocollective.com/1/12/391449/12025306/Daniel-Behance-autotelic03_670.jpg',
 					  	online: '101',
-  						desc: 'Lorem ipsum eu pariatur dolor et cupidatat id magna velit laborum et adipisicing nostrud sit.',
-  						show:false
-
+  						desc: 'Lorem ipsum eu pariatur dolor et cupidatat id magna velit laborum et adipisicing nostrud sit.'
 	  				},
 	  				{	
 			  			title: 'Paramore Tour 4',
@@ -310,19 +308,11 @@
 
   		}
   	},
+  	join_channel: function(channel){
+  		window.location.href = channel.replace(/ /g, "_")
+  	}
 
-  	a: function(x, y){
-  		this.display[x].data[y].show = !this.display[x].data[y].show
-  		console.log(this.display[x].data[y].show)
-  		
-  	}, 
-  	b: function(x, y){
-  		return this.display[x].data[y].show
-  	},
-  	mouseover: function(x, y){
-    	this.display[x].data[y].show = true
-    },
-
+ 
   },
  
 })
