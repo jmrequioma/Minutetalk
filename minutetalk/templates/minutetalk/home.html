@@ -31,7 +31,7 @@
               <v-avatar size="80px"  class="avatarimage">
                 <img src="/media/{{ request.user.userprofile.img_src }}">
               </v-avatar>
-              <v-spacer class="username">{{request.user.username}}</v-spacer>
+              <v-spacer class="username">{{request.user.first_name}} {{request.user.last_name}}</v-spacer>
               <v-spacer class="supportdetails">{{request.user.userprofile.gender}}, {{request.user.userprofile.age}}</v-spacer>
 			  <v-subheader>MY CHANNELS</v-subheader>
 			  <template v-for="(item, index) in user.mychannels">
@@ -107,7 +107,7 @@
 	                			>
 	          				</v-list-tile-avatar>
 	          				<v-list-tile-content>
-	          					<v-list-tile-title>{{request.user.userprofile.username}}</v-list-tile-title>
+	          					<v-list-tile-title>{{request.user.first_name}} {{request.user.last_name}}</v-list-tile-title>
 	          					<v-list-tile-sub-title>{{request.user.userprofile.gender}},{{request.user.userprofile.age}}</v-list-tile-sub-title>
 	          				</v-list-tile-content>
 	          				</v-list-tile-action>
