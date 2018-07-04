@@ -14,11 +14,9 @@
   <link href="../../static/minutetalk/css/stream.css" rel="stylesheet" type="text/css">
   <link href="../../static/minutetalk/css/style.css" rel="stylesheet" type="text/css">
 
-
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  {% load static %}
 </head>
 <body>
     <div id="app">
@@ -31,13 +29,10 @@
             <v-list dense>
             	<v-spacer></v-spacer>
               <v-avatar size="80px"  class="avatarimage">
-                <img
-                  :src="user.avatar"
-                  alt="Avatar"
-                >
+                <img src="/media/{{ request.user.userprofile.img_src }}">
               </v-avatar>
-              <v-spacer class="username">[[user.name]]</v-spacer>
-              <v-spacer class="supportdetails">[[user.gender]], [[user.age]]</v-spacer>
+              <v-spacer class="username">{{request.user.first_name}} {{request.user.last_name}}</v-spacer>
+              <v-spacer class="supportdetails">{{request.user.userprofile.gender}}, {{request.user.userprofile.age}}</v-spacer>
 			  <v-subheader>MY CHANNELS</v-subheader>
 			  <template v-for="(item, index) in user.mychannels">
 			  	<v-list-tile :key="item.title" ripple @click="">
@@ -98,7 +93,7 @@
 	            slot="activator">
 	              <v-avatar size="32px" >
 	                <img
-	                  :src="user.avatar"
+	                  src="/media/{{request.user.userprofile.img_src}}"
 	                  alt="Avatar"
 	                >
 	              </v-avatar>	
@@ -108,13 +103,12 @@
 	          			<v-list-tile avatar>
 	          				<v-list-tile-avatar>
 	          					<img
-				                  :src="user.avatar"
-				                  alt="Avatar"
+				                  src="/media/{{request.user.userprofile.img_src}}"
 	                			>
 	          				</v-list-tile-avatar>
 	          				<v-list-tile-content>
-	          					<v-list-tile-title>[[user.name]]</v-list-tile-title>
-	          					<v-list-tile-sub-title>[[user.gender]], [[user.age]]</v-list-tile-sub-title>
+	          					<v-list-tile-title>{{request.user.first_name}} {{request.user.last_name}}</v-list-tile-title>
+	          					<v-list-tile-sub-title>{{request.user.userprofile.gender}},{{request.user.userprofile.age}}</v-list-tile-sub-title>
 	          				</v-list-tile-content>
 	          				</v-list-tile-action>
 	          			</v-list-tile>
@@ -134,25 +128,12 @@
 	          	
       		</v-menu>
           </v-toolbar>
-<!--           <v-content>
-            <v-container class="videoarea" fluid fill-height >
-            	<div id="videos">
-    				<div id="subscriber"></div>
-					<div id="publisher"></div>
-				</div>
-              <v-layout justify-center align-center>
-                <v-tooltip right>
-                	
-                </v-tooltip>
-              </v-layout>
-            </v-container>
-          </v-content> -->
+
           {% block content %}
           {% endblock %}
+
         </v-app>
       </div>
-
-
  <script src="https://unpkg.com/vue/dist/vue.js"></script>
  <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
  <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>

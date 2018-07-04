@@ -1,11 +1,12 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
-from .models import UserProfile
+from .models import UserProfile, ChannelType
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class IndexView(generic.View):
     template_name = 'minutetalk/index.html'
@@ -41,8 +42,7 @@ class SignUpView(generic.View):
             context = {"error": "Username is already taken"}
             return JsonResponse(context)
         else:
-            user = User.objects.create_user(email=data['email'], first_name=data['first_name'], username=data["username"],
-            last_name=data['last_name'], password=data['password1'])
+            user = User.objects.create_user(username=data["username"],password=data['password1'],email=data['email'], first_name=data['first_name'], last_name=data['last_name'])
             userProfile = UserProfile(user=user,gender=data['gender'], age=data["age"])
             user = authenticate(request, username=username, password=password)
             if user is not None:
@@ -52,9 +52,15 @@ class SignUpView(generic.View):
                 return JsonResponse({})
             return JsonResponse({"error": "Some error occured during sign up"})
 
+class HomeView(LoginRequiredMixin, generic.View):
 
-def home(request):
-    return render(request, 'minutetalk/channel_view.html')
+    def get(self, request, *args, **kwargs):
+        channels_list = ChannelType.objects.all()
+        context = {
+            'user': request.user,
+            'channels_list' : channels_list,
+        }
+        return render(request, 'minutetalk/channel_view.html',context)
 
 def sign_out(request):
     logout(request)

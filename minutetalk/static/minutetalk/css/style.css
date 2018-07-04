@@ -165,6 +165,15 @@
   color: #550000;   
 }
 
+
+img {
+  width: 30%;
+  margin: auto;
+  display: block;
+  margin-bottom: 10px;
+}
+
+
 .v-badge__badge{
   font-size: 10px;
 }
@@ -181,10 +190,6 @@
 }
 
 
-.media:hover{
-  -webkit-filter: blur(2px);
-  filter: blur(2px);
-}
 .description {
     position: absolute;
     width: 100%;

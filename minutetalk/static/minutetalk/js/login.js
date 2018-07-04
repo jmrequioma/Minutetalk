@@ -5,6 +5,7 @@ var a = new Vue({
   el: '#app',
   data(){
     return{
+      image: '',
       form: {
         fname: '',
         lname: '',
@@ -50,6 +51,25 @@ var a = new Vue({
     }
   },
   methods: {
+    onFileChange(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length)
+        return;
+      this.createImage(files[0]);
+    },
+    createImage(file) {
+      var image = new Image();
+      var reader = new FileReader();
+      var vm = this;
+
+      reader.onload = (e) => {
+        vm.image = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+    removeImage: function (e) {
+      this.image = '';
+    },
     login : function(){
       $.ajax({
          url : 'minutetalk/login',
@@ -73,7 +93,6 @@ var a = new Vue({
       this.reset()
     },
     signup: function() {
-      console.log("asdjkfhsadjfhsadjfsadj")
       $.ajax({
         url : 'minutetalk/signup',
         type : 'POST',
@@ -93,9 +112,9 @@ var a = new Vue({
             this.loginpage = false 
             this.signup_error = response['error']
           } else {
+            console.log("REDIRECTING")
             window.location.href= "minutetalk/home"
           }
-
         }
       })   
       this.reset()   
