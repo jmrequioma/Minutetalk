@@ -8,6 +8,7 @@ urlpatterns = [
     path('login', views.LogInView.as_view(), name='login'),
     path('signup', views.SignUpView.as_view(), name='signup'),
     path('home', views.home, name='home'),
-    path('logout', views.sign_out, name='logout')
+    path('logout', views.sign_out, name='logout'),
+    path('<str:channel>', views.join_channel, name='join_channel')
  
 ]

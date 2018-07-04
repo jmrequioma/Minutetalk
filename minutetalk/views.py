@@ -59,3 +59,7 @@ def home(request):
 def sign_out(request):
     logout(request)
     return redirect('minutetalk:index')
+
+def join_channel(request, channel):
+    return render(request, 'minutetalk/channel.html', {'channel':channel})
+
