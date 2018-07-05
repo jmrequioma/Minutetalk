@@ -6,6 +6,7 @@ var a = new Vue({
   data(){
     return{
       image: '',
+      alert: true,
       form: {
         fname: '',
         lname: '',
@@ -145,6 +146,8 @@ var a = new Vue({
       this.form.gender = ''
       this.form.loginusername = ''
       this.form.loginpassword = ''
+      this.login_error = ''
+      this.signup_error = ''
     }
   },
 

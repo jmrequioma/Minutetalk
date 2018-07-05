@@ -32,7 +32,7 @@
       <v-toolbar-title v-text="title" class ="titlename"></v-toolbar-title>
     </v-toolbar>
     <v-content>
-        
+       
     </v-content>
     <v-content fill-height align-content-center>
         <v-container fluid grid-list-md>
@@ -48,9 +48,11 @@
                     <v-dialog transition="scale-transition" v-model="auth_modal" persistent width="500px" height="600px" >
                         <v-btn slot="activator" round flat>Go Talk!</v-btn>
                         <v-content v-model="loginpage" v-if="loginpage">
+                          
                               <v-layout>
                                 <v-flex>
                                   <v-card class="elevation-12">
+
                                     <v-toolbar dark color="primary">
                                         <v-btn 
                                         color="transparent" 
@@ -63,9 +65,14 @@
                                       <v-toolbar-title>LOGIN FORM</v-toolbar-title>
                                     </v-toolbar>
                                     <v-card-text>
-                                      
-                                      <h3>[[login_error]]</h3>
-                                      
+                                    <v-alert v-if="!!login_error"
+                                      v-model="alert"
+                                      type="error"
+                                      outline
+                                      transition="scale-transition"
+                                    >
+                                      [[login_error]]
+                                    </v-alert>
                                       <form method="post" ref="login_form">
                                         {% csrf_token %}
                                         <v-text-field 
@@ -119,7 +126,16 @@
                                           </v-toolbar>    
                                       <v-card-text>
                                         
-                                        <h3>[[signup_error]]</h3>
+                                        <!-- <h3>[[signup_error]]</h3>
+                                         -->
+                                        <v-alert v-if="!!signup_error"
+                                        v-model="alert"
+                                        type="error"
+                                        outline
+                                        transition="scale-transition"
+                                        >
+                                        [[signup_error]]
+                                        </v-alert>
                                         
                                         <form  method="post" enctype="multipart/form-data" ref="signup_form"> 
                                           {% csrf_token %}
@@ -129,7 +145,7 @@
                                           </div>
                                           <div v-else>
                                             <img :src="image" />
-                                            <v-btn 
+                                            <v-btn class="removeimage" 
                                             round
                                             flat
                                             @click.prevent="removeImage"
@@ -187,14 +203,13 @@
                                             id="age" 
                                             :rules="ageRules"
                                             type="text"></v-text-field>
-                                          <v-select
+                                          <v-autocomplete
                                             prepend-icon="person"
                                             name="gender"
                                             :items="['Male', 'Female']"
                                             v-model = "form.gender"
                                             label = "Gender"
-                                            autocomplete
-                                            ></v-select>   
+                                            ></v-autocomplete>   
                                            <v-btn 
                                            round
                                            flat
