@@ -74,5 +74,16 @@ def join_channel(request, channel):
 def search_channel(request):
     username = request.GET.get('query')
     data = Channel.objects.filter(title__contains=username)
-    context = [(x.title,x.description,x.img_src.name) for x in data]
+    context = []
+    for x in data:
+
+        d = {
+            'title' : x.title,
+            'description' : x.description,
+            'src' : x.img_src.name,
+            'id' : x.id        
+        }
+        context.append(d)
+    print(context)
+    # context = [(x.title,x.description,x.img_src.name,x.id) for x in data]
     return JsonResponse({'titles' : context });
