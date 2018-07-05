@@ -129,7 +129,128 @@
 	          	</v-card>
 	          	
       		</v-menu>
-          </v-toolbar>
+		  </v-toolbar>
+		  
+		  <v-dialog transition="scale-transition" v-model="editprofile" no-click-animation persistent width="500px" height="1000px" >
+				<v-layout>
+					<v-flex>
+					<v-card class="elevation-12">
+
+						<v-toolbar dark color="primary">
+							<v-btn 
+							color="transparent" 
+							icon 
+							@click.native="editprofile = false" 
+							@click.prevent="reset">
+								<v-icon>close</v-icon>
+							</v-btn>                      
+						
+						<v-toolbar-title>EDIT PROFILE</v-toolbar-title>
+						<v-spacer></v-spacer>
+						<v-btn 
+							color="transparent" 
+							icon 
+							@click.prevent="isEditing = !isEditing"
+						>
+							<v-icon>edit</v-icon>
+						</v-btn>
+						</v-toolbar>
+						<v-card-text>
+						<form>
+							<v-text-field
+							color="pink accent-4" 
+							v-model="form.fname"
+							prepend-icon="person" 
+							name="first_name" 
+							label="First Name"
+							:rules="firstnameRules"
+							:disabled="!isEditing"
+							type="text"></v-text-field>
+							<v-text-field 
+							color="pink accent-4"  
+							v-model="form.lname"
+							prepend-icon="person" 
+							name="last_name" 
+							label="Last Name" 
+							:rules="lastnameRules"
+							:disabled="!isEditing"
+							type="text"></v-text-field>
+							<v-text-field 
+							color="pink accent-4"
+							v-model="form.email"
+							prepend-icon="mail" 
+							name="email" 
+							label="Email" 
+							:rules="emailRules"
+							:disabled="true"
+							type="text"></v-text-field>
+							<v-text-field 
+							color="pink accent-4"
+							v-model="form.username"
+							prepend-icon="person" 
+							name="username" 
+							label="Username" 
+							:rules="usernameRules"
+							:disabled="true"
+							type="text"></v-text-field>
+							<v-text-field 
+							color="pink accent-4"  
+							v-model="form.password"
+							prepend-icon="lock" 
+							name="password1" 
+							label="Password" 
+							id="password" 
+							:rules="passwordRules"
+							:type="password"
+							:disabled="!isEditing"
+							></v-text-field>
+							<v-text-field 
+							color="pink accent-4"
+							v-model="form.cpassword"
+							prepend-icon="lock" 
+							name="password2" 
+							label="Confirm Password" 
+							id="cpassword"
+							:rules="confirmRules"
+							:type="password"
+							:disabled="!isEditing"
+							></v-text-field>
+							<v-text-field 
+							color="pink accent-4"
+							v-model="form.age"
+							prepend-icon="person" 
+							name="age" 
+							label="Age" 
+							id="age" 
+							:rules="ageRules"
+							:disabled="!isEditing"
+							type="text"></v-text-field>
+							<v-autocomplete
+							color="pink accent-4"
+							prepend-icon="person"
+							name="gender"
+							:items="['Male', 'Female']"
+							v-model = "form.gender"
+							label = "Gender"
+							:disabled="!isEditing"
+							></v-autocomplete>   
+
+						</form>
+						</v-card-text>
+						<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn 
+						round
+						flat
+						@click.native="editprofile=false" 
+						>Save</v-btn></v-card-actions>
+					</v-card>
+					</v-flex>
+				</v-layout>
+				</v-content>
+		  </v-dialog>
+
+
 
           {% block content %}
           {% endblock %}
@@ -149,7 +270,46 @@
   	return{
   		dialog: false,
 	    drawer: null,
-	    menupopout: false,
+		menupopout: false,
+		editprofile: false,
+		editform: true,
+		isEditing: null,
+		form: {
+			fname: '',
+			lname: '',
+			email: '',
+			username: '',
+			password: '',
+			cpassword: '',
+			age: '',
+			gender: '',
+			loginusername: '',
+			loginpassword: '',
+			test: '',
+		  },
+		  	firstnameRules: [
+				v => this.is_valid_field(v) || 'First Name is required'
+			],
+			lastnameRules: [
+			v => this.is_valid_field(v) || 'Last Name is required'
+			],
+			usernameRules: [
+				v => this.is_valid_field(v) || 'Username is required'
+			],
+			passwordRules: [
+				v => this.is_valid_field(v) || 'Password is required',
+				v => this.is_valid_password(v) || 'Password must be or more than 8 characters'
+			],
+			emailRules: [
+				v => this.is_valid_email(v) || 'E-mail must be valid'
+			],
+			confirmRules: [
+				v => (this.is_valid_password2(v) && this.is_valid_password(password))  || 'Passwords do not match'
+			],
+			ageRules: [
+				v => this.is_valid_field(v) || 'Age is required',
+				v => this.is_valid_age(v) || 'You must be 18 years old'
+			],
 	    user: {
 	    	name: 'Jerome Requioma',
 	      	age: '18',
@@ -304,8 +464,8 @@
   methods: {
   	dropdown: function(option){
   		if(option == "Settings"){
-  			console.log('Settings')
-  		} else if (option == "Logout"){
+			  this.editprofile = true;
+		} else if (option == "Logout"){
         	window.location.href= "logout"
 
   		}
@@ -326,7 +486,37 @@
 				}
 			}
 		});
-	}
+	},
+	is_valid_field: function(v) {
+      return !!v
+    },
+    is_valid_password: function(v){
+      return v && v.length >= 8
+    },
+    is_valid_password2: function(v){
+      return v == this.form.password
+    },
+    is_valid_email: function(v){
+      return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v)
+    },
+    is_valid_age: function (v) {
+      return (/^\d{1,2}$/ && v >= 18)
+    },
+    reset: function(){
+		if(this.isEditing){
+			this.form.fname = ''
+			this.form.lname = ''
+			this.form.email = ''
+			this.form.username = ''
+			this.form.password = ''
+			this.form.cpassword = ''
+			this.form.age = ''
+			this.form.gender = ''
+			this.form.loginusername = ''
+			this.form.loginpassword = ''
+			this.isEditing = false;
+		}
+    }
   },
 });
 

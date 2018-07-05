@@ -33,14 +33,13 @@ class LogInView(generic.View):
 
 class SignUpView(generic.View):
     def get(self, request, *args, **kwargs):
-        f = UserProfileForm()
         return render(request, 'minutetalk/index.html' ,{"form" : f})
         
     def post(self, request, *args, **kwargs):
         data = request.POST
         username = data['username']
         password = data['password1']
-        if(User.objects.filter(username=data).exists()):
+        if(User.objects.filter(username=username).exists()):
             context = {"error": "Username is already taken"}
             return JsonResponse(context)
         else:

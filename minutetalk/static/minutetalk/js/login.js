@@ -5,6 +5,9 @@ var a = new Vue({
   el: '#app',
   data(){
     return{
+      show1: false,
+      show2: false,
+      show3: false,
       image: '',
       alert: true,
       form: {

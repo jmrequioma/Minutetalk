@@ -45,7 +45,7 @@
         <v-container fluid grid-list-md>
           <v-layout row wrap justify-center>
               <v-flex d-flex xs12 sm6 md4>
-                    <v-dialog transition="scale-transition" v-model="auth_modal" persistent width="500px" height="600px" >
+                    <v-dialog transition="scale-transition" v-model="auth_modal" no-click-animation persistent width="500px" height="600px" >
                         <v-btn slot="activator" round flat>Go Talk!</v-btn>
                         <v-content v-model="loginpage" v-if="loginpage">
                           
@@ -76,18 +76,24 @@
                                       <form method="post" ref="login_form">
                                         {% csrf_token %}
                                         <v-text-field 
+                                        color="pink accent-4"
                                         name="username"
                                         v-model="form.loginusername"
                                         prepend-icon="person" 
                                         label="Username" 
                                         type="text" v-on:keyup.enter="login"></v-text-field>
-                                        <v-text-field 
+                                        <v-text-field
+                                        color="pink accent-4" 
                                         v-model="form.loginpassword"
                                         prepend-icon="lock" 
                                         name="password"
                                         label="Password" 
                                         id="password" 
-                                        type="password" v-on:keyup.enter="login"></v-text-field>
+                                        :type="password"
+                                        :append-icon="show1 ? 'visibility_off' : 'visibility'"
+                                        @click:append="show1 = !show1"
+                                        v-on:keyup.enter="login">
+                                      </v-text-field>
                                         <v-btn 
                                         round
                                         flat
@@ -151,7 +157,8 @@
                                             @click.prevent="removeImage"
                                             >Remove Image</v-btn>  
                                           </div>
-                                          <v-text-field 
+                                          <v-text-field
+                                            color="pink accent-4" 
                                             v-model="form.fname"
                                             prepend-icon="person" 
                                             name="first_name" 
@@ -159,6 +166,7 @@
                                             :rules="firstnameRules"
                                             type="text"></v-text-field>
                                           <v-text-field 
+                                            color="pink accent-4"  
                                             v-model="form.lname"
                                             prepend-icon="person" 
                                             name="last_name" 
@@ -166,6 +174,7 @@
                                             :rules="lastnameRules"
                                             type="text"></v-text-field>
                                           <v-text-field 
+                                            color="pink accent-4"
                                             v-model="form.email"
                                             prepend-icon="mail" 
                                             name="email" 
@@ -173,6 +182,7 @@
                                             :rules="emailRules"
                                             type="text"></v-text-field>
                                           <v-text-field 
+                                            color="pink accent-4"
                                             v-model="form.username"
                                             prepend-icon="person" 
                                             name="username" 
@@ -180,22 +190,31 @@
                                             :rules="usernameRules"
                                             type="text"></v-text-field>
                                           <v-text-field 
+                                            color="pink accent-4"  
                                             v-model="form.password"
                                             prepend-icon="lock" 
                                             name="password1" 
                                             label="Password" 
                                             id="password" 
                                             :rules="passwordRules"
-                                            type="password"></v-text-field>
+                                            :type="show2 ? 'text' : 'password'"
+                                            :append-icon="show2 ? 'visibility_off' : 'visibility'"
+                                            @click:append="show2 = !show2"
+                                            ></v-text-field>
                                           <v-text-field 
+                                            color="pink accent-4"
                                             v-model="form.cpassword"
                                             prepend-icon="lock" 
                                             name="password2" 
                                             label="Confirm Password" 
                                             id="cpassword"
                                             :rules="confirmRules"
-                                            type="password"></v-text-field>
+                                            :type="show3 ? 'text' : 'password'"
+                                            :append-icon="show3 ? 'visibility_off' : 'visibility'"
+                                            @click:append="show3 = !show3"
+                                            ></v-text-field>
                                           <v-text-field 
+                                            color="pink accent-4"
                                             v-model="form.age"
                                             prepend-icon="person" 
                                             name="age" 
@@ -204,6 +223,7 @@
                                             :rules="ageRules"
                                             type="text"></v-text-field>
                                           <v-autocomplete
+                                            color="pink accent-4"
                                             prepend-icon="person"
                                             name="gender"
                                             :items="['Male', 'Female']"
