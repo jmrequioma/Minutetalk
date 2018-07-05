@@ -3,6 +3,12 @@
 {% block content %}
 <v-content>
   <v-container fluid grid-list-xl>
+  	<v-btn icon small>
+        <v-icon dark left>arrow_back</v-icon>
+      </v-btn>
+      <v-btn icon small>
+        <v-icon dark left>arrow_forward</v-icon>
+      </v-btn>
   	<v-flex xs12 sm6 md3 ><v-text-field  class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field></v-flex>
   	<template>
   		<v-spacer><h1>People on this Channel</h1></v-spacer>
