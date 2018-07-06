@@ -89,7 +89,7 @@
                                         name="password"
                                         label="Password" 
                                         id="password" 
-                                        :type="password"
+                                        :type="show1 ? 'text' : 'password'"
                                         :append-icon="show1 ? 'visibility_off' : 'visibility'"
                                         @click:append="show1 = !show1"
                                         v-on:keyup.enter="login">
