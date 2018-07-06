@@ -12,4 +12,5 @@ urlpatterns = [
     path('logout', views.sign_out, name='logout'),
     path('<str:channel>', views.join_channel, name='join_channel'),
     path('ajax/search/', views.search_channel, name='search_channel'),
+    
 ]

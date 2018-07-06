@@ -32,14 +32,13 @@ class LogInView(generic.View):
 
 class SignUpView(generic.View):
     def get(self, request, *args, **kwargs):
-        f = UserProfileForm()
         return render(request, 'minutetalk/index.html' ,{"form" : f})
         
     def post(self, request, *args, **kwargs):
         data = request.POST
         username = data['username']
         password = data['password1']
-        if(User.objects.filter(username=data).exists()):
+        if(User.objects.filter(username=username).exists()):
             context = {"error": "Username is already taken"}
             return JsonResponse(context)
         else:
@@ -57,7 +56,7 @@ class HomeView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         channels_list = ChannelType.objects.all()
-        my_channels = ChannelUser.objects.filter(user=request.user).values_list('channel')
+        my_channels = ChannelUser.objects.filter(user=request.user)
         context = {
             'user': request.user,
             'channels_list' : channels_list,
@@ -70,7 +69,13 @@ def sign_out(request):
     return redirect('minutetalk:index')
 
 def join_channel(request, channel):
-    return render(request, 'minutetalk/channel.html', {'channel':channel})
+    my_channels = ChannelUser.objects.filter(user=request.user)
+    channel = Channel.objects.get(title=channel)
+    context = {
+            'my_channels' : my_channels,
+            'channel' : channel
+        }
+    return render(request, 'minutetalk/channel.html',context)
 
 def search_channel(request):
     username = request.GET.get('query')

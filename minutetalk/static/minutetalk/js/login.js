@@ -5,7 +5,11 @@ var a = new Vue({
   el: '#app',
   data(){
     return{
+      show1: false,
+      show2: false,
+      show3: false,
       image: '',
+      alert: true,
       form: {
         fname: '',
         lname: '',
@@ -145,6 +149,8 @@ var a = new Vue({
       this.form.gender = ''
       this.form.loginusername = ''
       this.form.loginpassword = ''
+      this.login_error = ''
+      this.signup_error = ''
     }
   },
 

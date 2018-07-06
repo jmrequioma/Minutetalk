@@ -21,7 +21,7 @@
   {% load static %}
 </head>
 <body>
-    <div id="app">
+    <div id="home">
         <v-app id="inspire">
           <v-navigation-drawer
             fixed
@@ -33,47 +33,24 @@
               <v-avatar size="80px"  class="avatarimage">
                 <img src="/media/{{request.user.userprofile.img_src}}">
               </v-avatar>
-              <v-spacer class="username">{{request.user.first_name}} {{request.user.last_name}}</v-spacer>
+              <v-spacer class="username">{{request.user.first_name}} {{request.user.last_name}}
+              </v-spacer>
               <v-spacer class="supportdetails">{{request.user.userprofile.gender}}, {{request.user.userprofile.age}}</v-spacer>
 			  <v-subheader>MY CHANNELS</v-subheader>
-			  <template v-for="(item, index) in user.mychannels">
-			  	<v-list-tile :key="item.title" ripple @click="">
+
+			  {% for channelUser in my_channels%}
+			  	<v-list-tile key="{{channelUser.channel.title}}" ripple @click="">
 			  		<v-list-tile-avatar size="30px">
-                		<img :src="item.avatar">
+                		<img src="/media/{{channelUser.channel.img_src}}">
               		</v-list-tile-avatar>
 	              	<v-list-tile-content>
-	                	<v-list-tile-title class="mychanneltitle">[[item.title]]</v-list-tile-title>
+	                	<v-list-tile-title class="mychanneltitle">{{channelUser.channel.title}}</v-list-tile-title>
 	              	</v-list-tile-content>
               	</v-list-tile>
-			  </template>
-			  <h1>THIS IS MY REAL CHANNELS</h1>
-			  <div>
-			  {% for channel in my_channels%}
-			  	{{channel.title}}
 			  {% endfor %}
-			  </div>
 			    <v-divider class="divide"></v-divider>
 			    <v-subheader>MY FAVORITED FRIENDS</v-subheader>
-			  <template v-for="(item, index) in user.myfriends">
-			  	<v-list-tile :key="item.title" ripple @click="">
-						<!-- check here if online -->
-						<v-badge color="green" bottom overlap >
-								<v-icon class="checker"
-								slot="badge"
-								dark
-								style="font-size: 10px"
-							>done</v-icon>
-							<!-- until here ang pagpagawas sa online -->
-							<v-list-tile-avatar size="30px">
-								<img :src="item.avatar">	
-							</v-list-tile-avatar>
-						</v-badge>
-									<v-list-tile-content>
-	                	<v-list-tile-title class="myfriendstitle">[[item.title]]</v-list-tile-title>
-	              	</v-list-tile-content>
-              	</v-list-tile>
-			  </template>
-				        
+     
             </v-list>
           </v-navigation-drawer>
           <v-toolbar
@@ -135,18 +112,133 @@
 	          	</v-card>
 	          	
       		</v-menu>
-          </v-toolbar>
+		  </v-toolbar>
+		  
+		  <v-dialog transition="scale-transition" v-model="editprofile" no-click-animation persistent width="500px" height="1000px" >
+				<v-layout>
+					<v-flex>
+					<v-card class="elevation-12">
 
+						<v-toolbar dark color="primary">
+							<v-btn 
+							color="transparent" 
+							icon 
+							@click.native="editprofile = false" 
+							@click.prevent="reset">
+								<v-icon>close</v-icon>
+							</v-btn>                      
+						
+						<v-toolbar-title>EDIT PROFILE</v-toolbar-title>
+						<v-spacer></v-spacer>
+						<v-btn 
+							color="transparent" 
+							icon 
+							@click.prevent="isEditing = !isEditing"
+						>
+							<v-icon>edit</v-icon>
+						</v-btn>
+						</v-toolbar>
+						<v-card-text>
+						<form>
+							<v-text-field
+							color="pink accent-4" 
+							v-model="form.fname"
+							prepend-icon="person" 
+							name="first_name" 
+							label="First Name"
+							:rules="firstnameRules"
+							:disabled="!isEditing"
+							type="text"></v-text-field>
+							<v-text-field 
+							color="pink accent-4"  
+							v-model="form.lname"
+							prepend-icon="person" 
+							name="last_name" 
+							label="Last Name" 
+							:rules="lastnameRules"
+							:disabled="!isEditing"
+							type="text"></v-text-field>
+							<v-text-field 
+							color="pink accent-4"
+							v-model="form.email"
+							prepend-icon="mail" 
+							name="email" 
+							label="Email" 
+							:rules="emailRules"
+							:disabled="true"
+							type="text"></v-text-field>
+							<v-text-field 
+							color="pink accent-4"
+							v-model="form.username"
+							prepend-icon="person" 
+							name="username" 
+							label="Username" 
+							:rules="usernameRules"
+							:disabled="true"
+							type="text"></v-text-field>
+							<v-text-field 
+							color="pink accent-4"  
+							v-model="form.password"
+							prepend-icon="lock" 
+							name="password1" 
+							label="Password" 
+							id="password" 
+							:rules="passwordRules"
+							type="password"
+							:disabled="!isEditing"
+							></v-text-field>
+							<v-text-field 
+							color="pink accent-4"
+							v-model="form.cpassword"
+							prepend-icon="lock" 
+							name="password2" 
+							label="Confirm Password" 
+							id="cpassword"
+							:rules="confirmRules"
+							type="password"
+							:disabled="!isEditing"
+							></v-text-field>
+							<v-text-field 
+							color="pink accent-4"
+							v-model="form.age"
+							prepend-icon="person" 
+							name="age" 
+							label="Age" 
+							id="age" 
+							:rules="ageRules"
+							:disabled="!isEditing"
+							type="text"></v-text-field>
+							<v-autocomplete
+							color="pink accent-4"
+							prepend-icon="person"
+							name="gender"
+							:items="['Male', 'Female']"
+							v-model = "form.gender"
+							label = "Gender"
+							:disabled="!isEditing"
+							></v-autocomplete>   
+
+						</form>
+						</v-card-text>
+						<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn 
+						round
+						flat
+						@click.native="editprofile=false" 
+						>Save</v-btn></v-card-actions>
+					</v-card>
+					</v-flex>
+				</v-layout>
+				</v-content>
+		  </v-dialog>
           {% block content %}
           {% endblock %}
-
         </v-app>
       </div>
  <script src="https://unpkg.com/vue/dist/vue.js"></script>
  <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
  <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
  <script type="text/javascript" src="{% static 'minutetalk/js/home.js' %}"></script>
-
-
 </body>
 </html>
