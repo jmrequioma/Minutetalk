@@ -42,7 +42,7 @@ new Vue({
 					avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/16508724_257346621359911_2391502370336370422_n.jpg?_nc_cat=0&oh=f6e2cad0a00a655f673463ac3fd2c509&oe=5BA041B1'
 				},
 				{
-					title: 'Timothy River Paler',
+					title: 'Timothy River Gwapo',
 					avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/16143076_1541011595912411_6397090310466530141_n.jpg?_nc_cat=0&oh=e4ea26d2f4c31fca3178ed4d2207c734&oe=5BE31199'
 				},
 				{
@@ -111,7 +111,6 @@ new Vue({
 			});
 		} 
 	},
-	
   },
   watch: {
   	search_input: function() {
@@ -148,5 +147,4 @@ new Vue({
   		return this.search_result;
   	}
   }
-
 });

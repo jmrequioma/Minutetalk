@@ -31,7 +31,7 @@
             <v-list dense>
             	<v-spacer></v-spacer>
               <v-avatar size="80px"  class="avatarimage">
-                <img src="/media/{{ request.user.userprofile.img_src }}">
+                <img src="/media/{{request.user.userprofile.img_src}}">
               </v-avatar>
               <v-spacer class="username">{{request.user.first_name}} {{request.user.last_name}}</v-spacer>
               <v-spacer class="supportdetails">{{request.user.userprofile.gender}}, {{request.user.userprofile.age}}</v-spacer>
@@ -46,6 +46,12 @@
 	              	</v-list-tile-content>
               	</v-list-tile>
 			  </template>
+			  <h1>THIS IS MY REAL CHANNELS</h1>
+			  <div>
+			  {% for channel in my_channels%}
+			  	{{channel.title}}
+			  {% endfor %}
+			  </div>
 			    <v-divider class="divide"></v-divider>
 			    <v-subheader>MY FAVORITED FRIENDS</v-subheader>
 			  <template v-for="(item, index) in user.myfriends">

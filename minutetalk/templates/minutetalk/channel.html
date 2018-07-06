@@ -5,7 +5,26 @@
   <v-container fluid grid-list-xl>
   	<v-flex xs12 sm6 md3 ><v-text-field  class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field></v-flex>
   	<template>
-  		<v-spacer><h1>People on this Channel</h1></v-spacer>
+  		<v-layout row wrap style="padding-left: 25%; padding-right: 25%;">
+  			<v-flex xs12 class="text-xs-center">
+	  			<v-card width="100%">
+			        <v-card-media
+			          height="200px"
+			          src="/media/{{ channel.img_src }}"
+			        >		        
+			        </v-card-media>
+			  
+			        <v-card-title primary-title class="justify-center">
+			          <div class="text-xs-center">
+			            <h3 class="headline mb-0 ">{{ channel.title}}</h3>
+			          </div>
+			        </v-card-title>
+			        <v-card-text>
+			            {{ channel.description}}}
+			        </v-card-text>
+		      	</v-card>
+	      	</v-flex>
+  		</v-layout>
        	<v-layout row wrap>
           	<v-flex d-flex xs10 sm3 v-for="(item, key) in user.myfriends">
           		<div>

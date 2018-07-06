@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
-from .models import UserProfile, ChannelType, Channel
+from .models import UserProfile, ChannelType, Channel, ChannelUser
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -8,7 +8,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
-
 
 class IndexView(generic.View):
     template_name = 'minutetalk/index.html'
@@ -58,9 +57,11 @@ class HomeView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         channels_list = ChannelType.objects.all()
+        my_channels = ChannelUser.objects.filter(user=request.user).values_list('channel')
         context = {
             'user': request.user,
             'channels_list' : channels_list,
+            'my_channels' : my_channels,
         }
         return render(request, 'minutetalk/channel_view.html',context)
 
@@ -76,7 +77,6 @@ def search_channel(request):
     data = Channel.objects.filter(title__contains=username)
     context = []
     for x in data:
-
         d = {
             'title' : x.title,
             'description' : x.description,
