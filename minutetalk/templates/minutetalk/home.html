@@ -201,7 +201,7 @@
 							label="Password" 
 							id="password" 
 							:rules="passwordRules"
-							:type="password"
+							type="password"
 							:disabled="!isEditing"
 							></v-text-field>
 							<v-text-field 
@@ -212,7 +212,7 @@
 							label="Confirm Password" 
 							id="cpassword"
 							:rules="confirmRules"
-							:type="password"
+							type="password"
 							:disabled="!isEditing"
 							></v-text-field>
 							<v-text-field 
@@ -283,8 +283,6 @@
 			cpassword: '',
 			age: '',
 			gender: '',
-			loginusername: '',
-			loginpassword: '',
 			test: '',
 		  },
 		  	firstnameRules: [
@@ -512,8 +510,6 @@
 			this.form.cpassword = ''
 			this.form.age = ''
 			this.form.gender = ''
-			this.form.loginusername = ''
-			this.form.loginpassword = ''
 			this.isEditing = false;
 		}
     }
