@@ -29,6 +29,8 @@ class Channel(models.Model):
     def __str__(self):
         return self.title
 
+    
+
 class ChannelUser(models.Model):
     channel = models.ForeignKey('Channel', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
