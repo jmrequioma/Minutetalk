@@ -1,71 +1,62 @@
-{% extends 'minutetalk/home.html' %}
-
-{% block content %}
-{% load static %}
+{% extends 'minutetalk/home.html' %} {% block content %} {% load static %}
 <v-content>
-  <v-container fluid grid-list-xl>
-  	<v-flex xs12 sm6 md3 ><v-text-field  class="ml-2" ref="search" label="Search..." append-icon="search" @click:append="search()" @keyup.enter="search()" v-model="search_input" hide-details dark></v-text-field></v-flex>
-  	<template v-if="!search_input.trim()">
-  		{% for channeltype in channels_list%}
-      		<v-spacer><h1>{{channeltype.name}}</h1></v-spacer>
-           	<v-layout row wrap>
-      		{% for channel in channeltype.channel_set.all %}
-	          	<v-flex d-flex xs10 sm3>
-		          	<v-card>
-				        <v-card-media
-				          height="200px"
-				          src="/media/{{ channel.img_src }}"
-				        >
-			        	<v-card-text class="description">
-				            {{ channel.description}}}
-				        </v-card-text>
-				        
-				        </v-card-media>
-				  
-				        <v-card-title primary-title>
-				          <div>
-				            <h3 class="headline mb-0">{{ channel.title}}</h3>
-				            <span>There are 0 users online</span>
-				          </div>
-				        </v-card-title>
-
-				        <v-card-actions>
-				          <v-btn  @click="join_channel(/{{channel.title}}/)"flat color="red">Join Channel</v-btn>
-				        </v-card-actions>
-			      	</v-card>
-			    </v-flex>
-      		{% endfor %}
-			</v-layout>
-      	{% endfor %}
-	</template>
-
-
-	<div v-if="search_input.trim()" > 
-		
-	<template>
-	<v-spacer ><h1>Search Result</h1></v-spacer>
-		<v-layout row wrap>
-          <v-flex d-flex xs10 sm3 v-for="channel in r">
-              <v-card >
-                  <v-card-media  :src="'/media/' + channel.src" height="200px" width="25%">
-                    <v-card-text class="description">
-                        [[channel.description]]
-                    </v-card-text>
-                </v-card-media>
-                <v-card-title primary-title>
-                    <h3 class="headline mb-0">[[channel.title]]</h3>
-                </v-card-title>
-                <v-card-actions>
-                  <v-btn @click="join_channel(channel.title,channel.id)" flat color="red">Join Channel</v-btn>
-                </v-card-actions>
-                 
-              </v-card>
+    <v-container fluid grid-list-xl>
+        <v-flex xs12 sm6 md3>
+            <v-text-field class="ml-2" ref="search" label="Search..." append-icon="search" @click:append="search()" @keyup.enter="search()" v-model="search_input" hide-details dark></v-text-field>
         </v-flex>
-        </v-layout>
-	</template>
-	</div>
-
-
-  </v-container>
+        <template v-if="!search_input.trim()">
+            {% for channeltype in channels_list%}
+            <v-spacer>
+                <h1>{{channeltype.name}}</h1></v-spacer>
+            <v-layout row wrap>
+                {% for channel in channeltype.channel_set.all %}
+                <v-flex d-flex xs10 sm3>
+                    <v-card>
+                        <v-card-media height="200px" src="/media/{{ channel.img_src }}">
+                            <v-card-text class="description">
+                                {{ channel.description}}}
+                            </v-card-text>
+                        </v-card-media>
+                        <v-card-title primary-title>
+                            <div>
+                                <h3 class="headline mb-0">{{ channel.title}}</h3>
+                                <span>There are 0 users online</span>
+                            </div>
+                        </v-card-title>
+                        <v-card-actions>
+                            <v-btn flat color="red">
+                                <a href="{% url 'minutetalk:join_channel' channel.id %}">Join Channel</a>
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-flex>
+                {% endfor %}
+            </v-layout>
+            {% endfor %}
+        </template>
+        <div v-if="search_input.trim()">
+            <template>
+                <v-spacer>
+                    <h1>Search Result</h1></v-spacer>
+                <v-layout row wrap>
+                    <v-flex d-flex xs10 sm3 v-for="channel in r">
+                        <v-card>
+                            <v-card-media :src="'/media/' + channel.src" height="200px" width="25%">
+                                <v-card-text class="description">
+                                    [[channel.description]]
+                                </v-card-text>
+                            </v-card-media>
+                            <v-card-title primary-title>
+                                <h3 class="headline mb-0">[[channel.title]]</h3>
+                            </v-card-title>
+                            <v-card-actions>
+                                <v-btn @click="join_channel(channel.title,channel.id)" flat color="red">Join Channel</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-flex>
+                </v-layout>
+            </template>
+        </div>
+    </v-container>
 </v-content>
 {% endblock %}

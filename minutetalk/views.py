@@ -1,8 +1,8 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
-from .models import UserProfile, ChannelType, Channel, ChannelUser
+from .models import UserProfile, ChannelType, Channel
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
@@ -13,6 +13,8 @@ class IndexView(generic.View):
     template_name = 'minutetalk/index.html'
 
     def get(self, request, *args, **kwargs):
+        if(request.user.is_authenticated):
+            return HttpResponseRedirect(reverse('minutetalk:home'))
         return render(request, self.template_name)
 
 class LogInView(generic.View):
@@ -56,7 +58,7 @@ class HomeView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         channels_list = ChannelType.objects.all()
-        my_channels = ChannelUser.objects.filter(user=request.user)
+        my_channels = UserProfile.objects.get(id=request.user.userprofile.id).channels.all()
         context = {
             'user': request.user,
             'channels_list' : channels_list,
@@ -68,11 +70,9 @@ def sign_out(request):
     logout(request)
     return redirect('minutetalk:index')
 
-def join_channel(request, channel):
-    my_channels = ChannelUser.objects.filter(user=request.user)
-    channel = Channel.objects.get(title=channel)
+def join_channel(request, channel_id):
+    channel = get_object_or_404(Channel,id=channel_id)
     context = {
-            'my_channels' : my_channels,
             'channel' : channel
         }
     return render(request, 'minutetalk/channel.html',context)

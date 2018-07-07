@@ -9,9 +9,10 @@ class UserProfile(models.Model):
     age = models.IntegerField()
     gender = models.CharField(max_length=6)
     img_src = models.FileField(upload_to='users/',default='users/noprof.jpg')
+    channels = models.ManyToManyField('Channel')
 
     def __str__(self):
-        return self.user.username
+        return self.first_name
 
 class ChannelType(models.Model):
     name = models.CharField(max_length=30)

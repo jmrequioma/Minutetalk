@@ -1,8 +1,12 @@
 from django.contrib import admin
 
-from .models import UserProfile, Channel, ChannelType, ChannelUser
+from .models import UserProfile, Channel, ChannelType
 
-admin.site.register(UserProfile)
+class UserProfileChannelAdmin(admin.ModelAdmin):
+     model= UserProfile
+     filter_horizontal = ('channels',) #If you don't specify this, you will get a multiple select widget.
+
+
+admin.site.register(UserProfile, UserProfileChannelAdmin)
 admin.site.register(Channel)
 admin.site.register(ChannelType)
-admin.site.register(ChannelUser)
