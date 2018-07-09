@@ -44,11 +44,16 @@ class SignUpView(generic.View):
             context = {"error": "Username is already taken"}
             return JsonResponse(context)
         else:
+            print('1')
             user = User.objects.create_user(username=data["username"],password=data['password1'],email=data['email'], first_name=data['first_name'], last_name=data['last_name'])
-            userProfile = UserProfile(user=user,gender=data['gender'], age=data["age"])
+            print('2')
+            userProfile = UserProfile(user=user,gender=data['gender'], age=data["age"], email=data['email'], first_name=data['first_name'], last_name=data['last_name'])
+            print('3')
             user = authenticate(request, username=username, password=password)
+            print('4')
             if user is not None:
                 userProfile.save()
+                print('5')
                 user.save()
                 login(request, user)
                 return JsonResponse({})
