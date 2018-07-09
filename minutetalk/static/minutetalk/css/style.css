@@ -228,3 +228,11 @@ img {
   text-align: center;
   
 }
+
+.title {
+  font-family: 'Roboto', 'Arial', 'sans-serif';
+  padding-top: 20px;
+  color: white;
+  font-weight: bolder;
+  text-transform: uppercase;
+}

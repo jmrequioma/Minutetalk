@@ -23,17 +23,17 @@
             <v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" app v-model="drawer" class=drawer>
                 <v-list dense>
                     <v-avatar size="80px" class="avatarimage">
-                        <img src="/media/{{request.user.userprofile.img_src}}">
+                        <img src="/media/{{user.userprofile.img_src}}">
                     </v-avatar>
-                    <v-spacer class="username">
-                        {{request.user.first_name}} {{request.user.last_name}}
+                    <v-spacer class="username" v-model="name">
+                        [[name]]
                     </v-spacer>
-                    <v-spacer class="supportdetails">
-                        {{request.user.userprofile.gender}},{{request.user.userprofile.age}}
+                    <v-spacer class="supportdetails" v-model="details">
+                        [[details]]
                     </v-spacer>
                     <v-subheader>MY CHANNELS</v-subheader>
                     {% for channel in my_channels %}
-                    <v-list-tile key="{{channelUser.channel.title}}" ripple @click="">
+                    <v-list-tile :key="{{channelUser.channel.title}}" ripple @click="">
                         <v-list-tile-avatar size="30px">
                             <img src="/media/{{channel.img_src}}">
                         </v-list-tile-avatar>
@@ -44,8 +44,6 @@
                         </v-list-tile-content>
                     </v-list-tile>
                     {% endfor %}
-                    <v-divider class="divide"></v-divider>
-                    <v-subheader>MY FAVORITED FRIENDS</v-subheader>
                 </v-list>
             </v-navigation-drawer>
             <v-toolbar color="blue darken-3" dark app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
@@ -60,18 +58,18 @@
                 <v-menu v-model=menupopout :close-on-content-click="false" :nudge-width="50" offset-y>
                     <v-btn icon slot="activator">
                         <v-avatar size="32px">
-                            <img src="/media/{{request.user.userprofile.img_src}}" alt="Avatar">
+                            <img src="/media/{{user.userprofile.img_src}}" alt="Avatar">
                         </v-avatar>
                     </v-btn>
                     <v-card class=usericonright>
                         <v-list>
                             <v-list-tile avatar>
                                 <v-list-tile-avatar>
-                                    <img src="/media/{{request.user.userprofile.img_src}}">
+                                    <img src="/media/{{user.userprofile.img_src}}">
                                 </v-list-tile-avatar>
                                 <v-list-tile-content>
-                                    <v-list-tile-title>{{request.user.first_name}} {{request.user.last_name}}</v-list-tile-title>
-                                    <v-list-tile-sub-title>{{request.user.userprofile.gender}},{{request.user.userprofile.age}}</v-list-tile-sub-title>
+                                    <v-list-tile-title v-model="name">[[name]]</v-list-tile-title>
+                                    <v-list-tile-sub-title v-model="details">[[details]]</v-list-tile-sub-title>
                                 </v-list-tile-content>
                                 </v-list-tile-action>
                             </v-list-tile>
@@ -94,18 +92,19 @@
                     <v-flex>
                         <v-card class="elevation-12">
                             <v-toolbar dark color="primary">
-                                <v-btn color="transparent" icon @click.native="editprofile = false" @click.prevent="reset">
+                                <v-btn color="transparent" icon @click.prevent="reset">
                                     <v-icon>close</v-icon>
                                 </v-btn>
                                 <v-toolbar-title>EDIT PROFILE</v-toolbar-title>
                                 <v-spacer></v-spacer>
-                                <v-btn color="transparent" icon @click.prevent="isEditing = !isEditing">
+                                <v-btn color="transparent" icon :disabled="isEditing" @click.prevent="isEditing = !isEditing">
                                     <v-icon>edit</v-icon>
                                 </v-btn>
                             </v-toolbar>
                             <v-card-text>
-                                <form>
-                                    <v-text-field color="pink accent-4" v-model="form.fname" prepend-icon="person" name="first_name" label="First Name" :rules="firstnameRules" :disabled="!isEditing" type="text"></v-text-field>
+                                <form ref="editForm">
+                                    {% csrf_token %}
+                                    <v-text-field color="pink accent-4" v-model="form.fname" prepend-icon="person" name="first_name" label="First Name" :rules="firstnameRules" :disabled="!isEditing" type="text" ></v-text-field>
                                     <v-text-field color="pink accent-4" v-model="form.lname" prepend-icon="person" name="last_name" label="Last Name" :rules="lastnameRules" :disabled="!isEditing" type="text"></v-text-field>
                                     <v-text-field color="pink accent-4" v-model="form.email" prepend-icon="mail" name="email" label="Email" :rules="emailRules" :disabled="true" type="text"></v-text-field>
                                     <v-text-field color="pink accent-4" v-model="form.username" prepend-icon="person" name="username" label="Username" :rules="usernameRules" :disabled="true" type="text"></v-text-field>
@@ -117,7 +116,7 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn round flat @click.native="editprofile=false">Save</v-btn>
+                                <v-btn round flat @click.native="isEditing=editprofile=false" :disabled="validate" @click.prevent="edit">Save</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
@@ -131,6 +130,27 @@
     <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
     <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
     <script type="text/javascript" src="{% static 'minutetalk/js/home.js' %}"></script>
+    <script type="text/javascript">
+        let fname1 = "{{user.first_name}}";
+        var lname1 = "{{user.last_name}}";
+        var email1 = "{{user.email}}";
+        var username1 = "{{user.username}}";
+        var age1 = "{{user.userprofile.age}}";
+        var gender1 = "{{user.userprofile.gender}}";
+        function init(){
+            vue.form.fname =  fname1;
+            vue.form.lname = lname1;
+            vue.form.email = email1;
+            vue.form.username = username1;
+            vue.form.age  = age1;
+            vue.form.gender = gender1;
+            vue.name = fname1 + " " + lname1;
+            vue.details = gender1 + ", " +  age1;
+            
+
+        }
+        init();
+    </script>
 </body>
 
 </html>

@@ -159,7 +159,7 @@ var a = new Vue({
             return !this.form.loginusername || !this.form.loginpassword;
         },
         invalidSignup() {
-            fname = this.form.fname,
+                fname = this.form.fname,
                 lname = this.form.lname,
                 email = this.form.email,
                 username = this.form.username,
