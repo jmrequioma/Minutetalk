@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="static/minutetalk/css/style.css">
+    <link rel="stylesheet" type="text/css" href="static/minutetalk/css/clock.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,12 +24,27 @@
                 <v-toolbar-title v-text="title" class="titlename"></v-toolbar-title>
             </v-toolbar>
             <v-content>
-            </v-content>
-            <v-content fill-height align-content-center>
+                <v-container justify-center style="max-width: 35%; padding-left: 7%;">
+                    <v-layout justify-center>
+                        <v-flex justify-center class="text-xs-center">
+                            <article class="clock" justify-center>
+                                <div justify-center class="hours-container">
+                                    <div justify-center class="hours"></div>
+                                </div>
+                                <div justify-center class="minutes-container">
+                                    <div justify-center class="minutes"></div>
+                                </div>
+                                <div justify-center class="seconds-container">
+                                    <div justify-center class="seconds"></div>
+                                </div>
+                            </article>
+                        </v-flex>
+                    </v-layout>
+                </v-container> 
                 <v-container fluid grid-list-md>
                     <v-layout row wrap justify-center>
                         <v-flex d-flex xs12 sm6 md4>
-                            <h1 class="greet"> MiniTalk! It's time for a Mini Talk!</h1>
+                            <h1 class="greet"> MinuteTalk! It's time for a Mini Talk!</h1>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -121,6 +137,7 @@
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
     <script type="text/javascript" src="{% static 'minutetalk/js/login.js' %}"></script>
+    <script type="text/javascript" src="{% static 'minutetalk/js/clock.js' %}"></script>
 </body>
 
 </html>
