@@ -1,4 +1,4 @@
-    new Vue({
+var vue = new Vue({
     delimiters: ['[[', ']]'],
     el: '#home',
     data() {
@@ -6,7 +6,7 @@
             dialog: false,
             editprofile: false,
             editform: true,
-            isEditing: null,
+            isEditing: false,
             drawer: null,
             menupopout: false,
             search_input: '',
@@ -24,6 +24,8 @@
                 gender: '',
                 test: '',
             },
+            name: '',
+            details: '',
             firstnameRules: [
                 v => this.is_valid_field(v) || 'First Name is required'
             ],
@@ -41,7 +43,7 @@
                 v => this.is_valid_email(v) || 'E-mail must be valid'
             ],
             confirmRules: [
-                v => (this.is_valid_password2(v) && this.is_valid_password(password)) || 'Passwords do not match'
+                v => (this.is_valid_password2(v) && this.is_valid_password(v)) || 'Passwords do not match'
             ],
             ageRules: [
                 v => this.is_valid_field(v) || 'Age is required',
@@ -64,13 +66,25 @@
         dropdown: function(option) {
             if (option == "Settings") {
                 this.editprofile = true;
+                $.ajax({
+                    async: false,
+                    url: 'ajax/search',
+                    data: {
+                        'query': this.search_input,
+                    },
+                    success: function(data) {
+                        if (data.titles.length > 0) {
+                            this.show_search_result = true;
+                            a = data.titles;
+                        } else {
+                            this.show_search_result = false;
+                        }
+                    }
+                });
             } else if (option == "Logout") {
                 window.location.href = "logout"
 
             }
-        },
-        join_channel: function(channel) {
-            window.location.href = "{ url 'minutetalk:join_channel' channel }"
         },
         search: function() {
             var query = $('#search').val();
@@ -101,18 +115,39 @@
         is_valid_age: function(v) {
             return (/^\d{1,2}$/ && v >= 18)
         },
+        edit: function() {
+            fname1 = this.form.fname;
+            lname1 = this.form.lname;
+            email1 = this.form.email;
+            username1 = this.form.username;
+            age1 = this.form.age;
+            gender1 = this.form.gender;
+            init();
+            // save changes to database
+            $.ajax({
+                url: 'edit_profile',
+                type: 'POST',
+                data: {
+                    first_name: this.form.fname,
+                    last_name: this.form.lname,
+                    email: this.form.email,
+                    username: this.form.username,
+                    password1: this.form.password,
+                    age: this.form.age,
+                    gender: this.form.gender,
+                    csrfmiddlewaretoken: this.$refs.editForm.csrfmiddlewaretoken.value
+                },
+                success: response => {
+                    console.log("success")
+                }            
+            });
+
+        },
         reset: function() {
-            if (this.isEditing) {
-                this.form.fname = ''
-                this.form.lname = ''
-                this.form.email = ''
-                this.form.username = ''
-                this.form.password = ''
-                this.form.cpassword = ''
-                this.form.age = ''
-                this.form.gender = ''
-                this.isEditing = false;
-            }
+            this.isEditing = false;
+            this.editprofile = false;
+            init();
+            
         }
     },
     watch: {
@@ -143,6 +178,18 @@
         r() {
             console.log(this.search_result);
             return this.search_result;
+        },
+        validate() {
+            fname = this.form.fname;
+            lname = this.form.lname;
+            email = this.form.email;
+            username = this.form.username;
+            pass1 = this.form.password;
+            pass2 = this.form.cpassword;
+            age = this.form.age;
+            gender = this.form.gender;
+            return !this.isEditing ||  (this.isEditing && (!fname || !lname || !email || !username || !age || !gender ||
+                !this.is_valid_email(email) || !this.is_valid_age(age) || ((pass1 != pass2) && (!this.is_valid_password(pass1) || !this.is_valid_password2(pass2))) )) ;
         }
     }
 });

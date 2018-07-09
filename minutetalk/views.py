@@ -44,16 +44,11 @@ class SignUpView(generic.View):
             context = {"error": "Username is already taken"}
             return JsonResponse(context)
         else:
-            print('1')
             user = User.objects.create_user(username=data["username"],password=data['password1'],email=data['email'], first_name=data['first_name'], last_name=data['last_name'])
-            print('2')
             userProfile = UserProfile(user=user,gender=data['gender'], age=data["age"], email=data['email'], first_name=data['first_name'], last_name=data['last_name'])
-            print('3')
             user = authenticate(request, username=username, password=password)
-            print('4')
             if user is not None:
                 userProfile.save()
-                print('5')
                 user.save()
                 login(request, user)
                 return JsonResponse({})
@@ -77,8 +72,11 @@ def sign_out(request):
 
 def join_channel(request, channel_id):
     channel = get_object_or_404(Channel,id=channel_id)
+    my_channels = UserProfile.objects.get(id=request.user.userprofile.id).channels.all()
+
     context = {
-            'channel' : channel
+            'channel' : channel,
+            'my_channels' : my_channels,
         }
     return render(request, 'minutetalk/channel.html',context)
 
@@ -94,6 +92,21 @@ def search_channel(request):
             'id' : x.id        
         }
         context.append(d)
-    print(context)
     # context = [(x.title,x.description,x.img_src.name,x.id) for x in data]
-    return JsonResponse({'titles' : context });
+    return JsonResponse({'titles' : context })
+def edit_profile(request):
+    data = request.POST
+    user = request.user
+    userProfile = request.user.userprofile
+    user.first_name = userProfile.first_name = data["first_name"]
+    user.last_name = userProfile.last_name = data["last_name"]
+    user.email = userProfile.email = data["email"]
+    userProfile.age = data["age"]
+    userProfile.gender = data["gender"]
+    if data["password1"]:
+        user.set_password(data['password1'])
+
+    user.save()
+    userProfile.save()
+    print(user.first_name)
+    return JsonResponse({})

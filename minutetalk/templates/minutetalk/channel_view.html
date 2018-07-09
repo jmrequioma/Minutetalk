@@ -7,14 +7,14 @@
         <template v-if="!search_input.trim()">
             {% for channeltype in channels_list%}
             <v-spacer>
-                <h1>{{channeltype.name}}</h1></v-spacer>
+                <h1 class="title">{{channeltype.name}}</h1></v-spacer>
             <v-layout row wrap>
                 {% for channel in channeltype.channel_set.all %}
                 <v-flex d-flex xs10 sm3>
                     <v-card>
                         <v-card-media height="200px" src="/media/{{ channel.img_src }}">
                             <v-card-text class="description">
-                                {{ channel.description}}}
+                                {{ channel.description}}
                             </v-card-text>
                         </v-card-media>
                         <v-card-title primary-title>
@@ -24,7 +24,7 @@
                             </div>
                         </v-card-title>
                         <v-card-actions>
-                            <v-btn flat color="red" href="{% url 'minutetalk:join_channel' channel.id %}"> Join Channel
+                            <v-btn flat color="red" href="{% url 'minutetalk:join_channel' channel.id %}"> Join
                                 
                             </v-btn>
                         </v-card-actions>
@@ -39,7 +39,7 @@
                 <v-spacer>
                     <h1>Search Result</h1></v-spacer>
                 <v-layout row wrap>
-                    <v-flex d-flex xs10 sm3 v-for="channel in r">
+                    <v-flex d-flex xs10 sm3 v-for="channel in r" :key="channel.id">
                         <v-card>
                             <v-card-media :src="'/media/' + channel.src" height="200px" width="25%">
                                 <v-card-text class="description">
