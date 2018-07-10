@@ -9,7 +9,7 @@ class UserProfile(models.Model):
     age = models.IntegerField()
     gender = models.CharField(max_length=6)
     img_src = models.FileField(upload_to='users/',default='users/noprof.jpg')
-    fav_channels = models.ManyToManyField('Channel', related_name="fav_channels")
+    fav_channels = models.ManyToManyField('Channel')
     my_channel = models.ForeignKey('Channel', on_delete=models.CASCADE, related_name="current_channels")
 
     def __str__(self):

@@ -18,7 +18,7 @@
                              <v-btn
                                 :class="channel.fav ? 'yellow--text' : 'grey--text'"
                                 icon
-                                @click="channel.fav = !channel.fav"
+                                @click="favorite({{channel.id}})"
                                 class="favoritebtn"
                                 flat
                             >

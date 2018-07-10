@@ -111,3 +111,23 @@ def edit_profile(request):
     userProfile.save()
     print(user.first_name)
     return JsonResponse({})
+
+def addFavoriteChannel(request):
+    channel_id = request.GET.get('channel_id');
+    user = UserProfile.objects.get(user=request.user)
+    print(user)
+    channel = Channel.objects.get(id=request.GET.get('channel_id'))
+    context = {}
+    if user.fav_channels.filter(id=channel_id).exists():
+        print('Removing from favorite channels...')
+        context['message'] = 'Removed from favorites'
+        user.fav_channels.remove(channel)
+        return JsonResponse(context)
+    else:
+        print('Adding to favorite channels...')
+        print(user.fav_channels.all())
+        print(channel)
+        user.fav_channels.add(channel)
+        user.save()
+        context['message'] = 'Added to favorites'
+        return JsonResponse(context)
