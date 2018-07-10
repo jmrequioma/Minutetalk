@@ -81,6 +81,7 @@ def join_channel(request, channel_id):
             'channel' : channel,
             'my_channels' : my_channels,
             'users': online_users,
+            'fav' : user.fav_channels.filter(id=channel_id).exists()
         }
     return render(request, 'minutetalk/channel.html',context)
 
