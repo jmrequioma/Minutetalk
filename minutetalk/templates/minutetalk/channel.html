@@ -35,15 +35,17 @@
                 <v-text-field class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field>
             </v-flex>
             <v-layout row wrap>
- <!--                <v-flex d-flex xs10 sm3 v-for="(item, key) in user.myfriends">
+                {% for user in users %}
+                <v-flex d-flex xs10 sm3>
                     <div>
                         <v-list-tile-avatar size="200px">
-                            <img :src="item.avatar">
-                            <p class="name">[[item.title]]</p>
+                            <img src="/media/{{ user.img_src }}">
+                            <p class="name">{{user.first_name}} {{user.last_name}}</p>
                         </v-list-tile-avatar>
                         <v-btn round>Talk!</v-btn>
                     </div>
-                </v-flex> -->
+                </v-flex>
+                {%endfor%}
             </v-layout>
         </template>
     </v-container>
