@@ -76,7 +76,8 @@ def join_channel(request, channel_id):
     my_channels = user.fav_channels.all()
     user.my_channel = channel
     user.save()
-    online_users =channel.userprofile_set.exclude(user=request.user)
+    online_users = channel.current_channel.exclude(user=request.user)
+    print(online_users)
     context = {
             'channel' : channel,
             'my_channels' : my_channels,
