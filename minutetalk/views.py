@@ -72,7 +72,7 @@ def sign_out(request):
 
 def join_channel(request, channel_id):
     channel = get_object_or_404(Channel,id=channel_id)
-    my_channels = UserProfile.objects.get(id=request.user.userprofile.id).channels.all()
+    my_channels = UserProfile.objects.get(id=request.user.userprofile.id).fav_channels.all()
 
     context = {
             'channel' : channel,
@@ -94,6 +94,7 @@ def search_channel(request):
         context.append(d)
     # context = [(x.title,x.description,x.img_src.name,x.id) for x in data]
     return JsonResponse({'titles' : context })
+
 def edit_profile(request):
     data = request.POST
     user = request.user
