@@ -89,20 +89,6 @@ var vue = new Vue({
 
             }
         },
-        search: function() {
-            var query = $('#search').val();
-            $.ajax({
-                url: '{% url "minutetalk:search_channel" %}',
-                data: {
-                    'query': query,
-                },
-                success: function(data) {
-                    for (i in data.titles) {
-                        console.log(data.titles[i])
-                    }
-                }
-            });
-        },
         is_valid_field: function(v) {
             return !!v
         },

@@ -2,7 +2,7 @@
 <v-content>
     <v-container fluid grid-list-xl>
         <v-flex xs12 sm6 md3>
-            <v-text-field class="ml-2" ref="search" label="Search..." append-icon="search" @click:append="search()" @keyup.enter="search()" v-model="search_input" hide-details dark></v-text-field>
+            <v-text-field class="ml-2" ref="search" label="Search..." append-icon="search"  v-model="search_input" hide-details dark></v-text-field>
         </v-flex>
         <template v-if="!search_input.trim()">
             {% for channeltype in channels_list%}
@@ -14,7 +14,7 @@
                     <v-card>
                         <v-card-media height="200px" src="/media/{{ channel.img_src }}">
                             <v-card-text class="description">
-                                {{ channel.description}}
+                                {{ channel.description}}}}
                             </v-card-text>
                         </v-card-media>
                         <v-card-title primary-title>

@@ -9,7 +9,8 @@ class UserProfile(models.Model):
     age = models.IntegerField()
     gender = models.CharField(max_length=6)
     img_src = models.FileField(upload_to='users/',default='users/noprof.jpg')
-    channels = models.ManyToManyField('Channel')
+    fav_channels = models.ManyToManyField('Channel', related_name="fav_channels")
+    my_channel = models.ForeignKey('Channel', on_delete=models.CASCADE, related_name="current_channels")
 
     def __str__(self):
         return self.first_name
@@ -28,9 +29,3 @@ class Channel(models.Model):
 
     def __str__(self):
         return self.title
-
-    
-
-class ChannelUser(models.Model):
-    channel = models.ForeignKey('Channel', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)

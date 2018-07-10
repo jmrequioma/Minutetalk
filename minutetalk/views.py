@@ -58,7 +58,7 @@ class HomeView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         channels_list = ChannelType.objects.all()
-        my_channels = UserProfile.objects.get(id=request.user.userprofile.id).channels.all()
+        my_channels = UserProfile.objects.get(id=request.user.userprofile.id).fav_channels.all()
         context = {
             'user': request.user,
             'channels_list' : channels_list,

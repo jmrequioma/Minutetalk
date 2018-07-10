@@ -4,7 +4,7 @@ from .models import UserProfile, Channel, ChannelType
 
 class UserProfileChannelAdmin(admin.ModelAdmin):
      model= UserProfile
-     filter_horizontal = ('channels',) #If you don't specify this, you will get a multiple select widget.
+     filter_horizontal = ('fav_channels',) #If you don't specify this, you will get a multiple select widget.
 
 
 admin.site.register(UserProfile, UserProfileChannelAdmin)
