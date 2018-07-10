@@ -1,4 +1,9 @@
-.clock {
+@font-face {
+  src: url('/static/fonts/digital-7.ttf') format("truetype"); 
+  font-family: Digital-7;
+}
+
+/*.clock {
   border-radius: 50%;
   background: #fff url("/static/images/clock.svg") no-repeat center;
   background-size: 88%;
@@ -28,6 +33,7 @@
   bottom: 0;
   left: 0;
 }
+
 
 .hours {
   background: #000;
@@ -74,4 +80,22 @@
 }
 .seconds-container {
   transition: transform 0.2s cubic-bezier(.4,2.08,.55,.44);
+}*/
+
+.clock-container {
+  position: relative;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
+
+.clock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    color: white;
+    font-size: 70px;
+    font-family: Digital-7;
+    letter-spacing: 8px;
