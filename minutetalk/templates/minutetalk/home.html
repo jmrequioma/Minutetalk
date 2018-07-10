@@ -131,7 +131,7 @@
     <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
     <script type="text/javascript" src="{% static 'minutetalk/js/home.js' %}"></script>
     <script type="text/javascript">
-        let fname1 = "{{user.first_name}}";
+        var fname1 = "{{user.first_name}}";
         var lname1 = "{{user.last_name}}";
         var email1 = "{{user.email}}";
         var username1 = "{{user.username}}";
@@ -149,7 +149,6 @@
         }
         init();
         vue.channel.fav = ("{{fav}}" == "True")
-        console.log("{{fav}}")
     </script>
 </body>
 
