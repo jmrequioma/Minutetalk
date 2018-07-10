@@ -182,3 +182,5 @@ var vue = new Vue({
         }
     }
 });
+
+setInterval(function(){ console.log("Hello"); }, 2000);

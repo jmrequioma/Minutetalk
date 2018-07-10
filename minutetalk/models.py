@@ -10,7 +10,7 @@ class UserProfile(models.Model):
     gender = models.CharField(max_length=6)
     img_src = models.FileField(upload_to='users/',default='users/noprof.jpg')
     fav_channels = models.ManyToManyField('Channel', related_name="fav_channels")
-    my_channel = models.ForeignKey('Channel', on_delete=models.CASCADE, related_name="current_channels")
+    my_channel = models.ForeignKey('Channel', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.first_name

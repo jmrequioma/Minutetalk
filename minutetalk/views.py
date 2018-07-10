@@ -72,11 +72,15 @@ def sign_out(request):
 
 def join_channel(request, channel_id):
     channel = get_object_or_404(Channel,id=channel_id)
-    my_channels = UserProfile.objects.get(id=request.user.userprofile.id).fav_channels.all()
-
+    user = UserProfile.objects.get(id=request.user.userprofile.id)
+    my_channels = user.fav_channels.all()
+    user.my_channel = channel
+    user.save()
+    online_users =channel.userprofile_set.exclude(id=request.user.userprofile.id)
     context = {
             'channel' : channel,
             'my_channels' : my_channels,
+            'users': online_users,
         }
     return render(request, 'minutetalk/channel.html',context)
 
