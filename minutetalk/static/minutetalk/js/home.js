@@ -24,6 +24,9 @@ var vue = new Vue({
                 gender: '',
                 test: '',
             },
+            channel: {
+                fav: false
+            },
             name: '',
             details: '',
             firstnameRules: [

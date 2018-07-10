@@ -4,19 +4,26 @@
         <v-btn icon small>
             <v-icon dark left>arrow_back</v-icon>
         </v-btn>
-        <v-flex xs12 sm6 md3>
-            <v-text-field class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field>
-        </v-flex>
+
         <template>
-            <v-layout row wrap style="padding-left: 25%; padding-right: 25%;">
+            <v-layout row wrap>
                 <v-flex xs12 class="text-xs-center">
                     <v-card width="100%">
-                        <v-card-media height="200px" src="/media/{{ channel.img_src }}">
+                        <v-card-media height="350px" src="/media/{{ channel.img_src }}">
                         </v-card-media>
                         <v-card-title primary-title class="justify-center">
                             <div class="text-xs-center">
                                 <h3 class="headline mb-0 ">{{ channel.title}}</h3>
                             </div>
+                             <v-btn
+                                :class="channel.fav ? 'yellow--text' : 'grey--text'"
+                                icon
+                                @click="channel.fav = !channel.fav"
+                                class="favoritebtn"
+                                flat
+                            >
+                                <v-icon>star</v-icon>
+                        </v-btn>
                         </v-card-title>
                         <v-card-text>
                             {{ channel.description}}}
@@ -24,6 +31,9 @@
                     </v-card>
                 </v-flex>
             </v-layout>
+            <v-flex xs12 sm6 md3>
+                <v-text-field class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field>
+            </v-flex>
             <v-layout row wrap>
  <!--                <v-flex d-flex xs10 sm3 v-for="(item, key) in user.myfriends">
                     <div>

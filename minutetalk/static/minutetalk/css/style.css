@@ -236,3 +236,7 @@ img {
   font-weight: bolder;
   text-transform: uppercase;
 }
+
+.favoritebtn {
+  background: transparent;
+}
