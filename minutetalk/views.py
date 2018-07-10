@@ -72,11 +72,11 @@ def sign_out(request):
 
 def join_channel(request, channel_id):
     channel = get_object_or_404(Channel,id=channel_id)
-    user = UserProfile.objects.get(id=request.user.userprofile.id)
+    user = UserProfile.objects.get(user=request.user)
     my_channels = user.fav_channels.all()
     user.my_channel = channel
     user.save()
-    online_users =channel.userprofile_set.exclude(id=request.user.userprofile.id)
+    online_users =channel.userprofile_set.exclude(user=request.user)
     context = {
             'channel' : channel,
             'my_channels' : my_channels,
