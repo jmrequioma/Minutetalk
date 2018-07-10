@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField(max_length=254, default='example@email.com')
@@ -8,12 +9,14 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=30)
     age = models.IntegerField()
     gender = models.CharField(max_length=6)
-    img_src = models.FileField(upload_to='users/',default='users/noprof.jpg')
+    img_src = models.FileField(upload_to='users/', default='users/noprof.jpg')
     fav_channels = models.ManyToManyField('Channel')
-    my_channel = models.ForeignKey('Channel', on_delete=models.CASCADE, related_name="current_channel")
+    my_channel = models.ForeignKey(
+        'Channel', on_delete=models.CASCADE, related_name="current_channel")
 
     def __str__(self):
         return self.first_name
+
 
 class ChannelType(models.Model):
     name = models.CharField(max_length=30)
@@ -21,9 +24,11 @@ class ChannelType(models.Model):
     def __str__(self):
         return self.name
 
+
 class Channel(models.Model):
     description = models.CharField(max_length=100, null=True)
-    img_src = models.FileField(upload_to='channels/',default='channels/nopic.jpg')
+    img_src = models.FileField(
+        upload_to='channels/', default='channels/nopic.jpg')
     title = models.CharField(max_length=20, null=True)
     channel_type = models.ForeignKey('ChannelType', on_delete=models.CASCADE)
 

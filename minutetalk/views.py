@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 
+
 class IndexView(generic.View):
     template_name = 'minutetalk/index.html'
 
@@ -16,6 +17,7 @@ class IndexView(generic.View):
         if(request.user.is_authenticated):
             return HttpResponseRedirect(reverse('minutetalk:home'))
         return render(request, self.template_name)
+
 
 class LogInView(generic.View):
     template_name = 'minutetalk/index.html'
@@ -32,10 +34,11 @@ class LogInView(generic.View):
         }
         return JsonResponse(context)
 
+
 class SignUpView(generic.View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'minutetalk/index.html' ,{"form" : f})
-        
+        return render(request, 'minutetalk/index.html', {"form": f})
+
     def post(self, request, *args, **kwargs):
         data = request.POST
         username = data['username']
@@ -44,8 +47,17 @@ class SignUpView(generic.View):
             context = {"error": "Username is already taken"}
             return JsonResponse(context)
         else:
-            user = User.objects.create_user(username=data["username"],password=data['password1'],email=data['email'], first_name=data['first_name'], last_name=data['last_name'])
-            userProfile = UserProfile(user=user,gender=data['gender'], age=data["age"], email=data['email'], first_name=data['first_name'], last_name=data['last_name'])
+            user = User.objects.create_user(username=data["username"],
+                                            password=data['password1'],
+                                            email=data['email'],
+                                            first_name=data['first_name'],
+                                            last_name=data['last_name'])
+            userProfile = UserProfile(user=user,
+                                      gender=data['gender'],
+                                      age=data["age"],
+                                      email=data['email'],
+                                      first_name=data['first_name'],
+                                      last_name=data['last_name'])
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 userProfile.save()
@@ -54,24 +66,28 @@ class SignUpView(generic.View):
                 return JsonResponse({})
             return JsonResponse({"error": "Some error occured during sign up"})
 
+
 class HomeView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         channels_list = ChannelType.objects.all()
-        my_channels = UserProfile.objects.get(user=request.user).fav_channels.all()
+        my_channels = UserProfile.objects.get(
+            user=request.user).fav_channels.all()
         context = {
             'user': request.user,
-            'channels_list' : channels_list,
-            'my_channels' : my_channels,
+            'channels_list': channels_list,
+            'my_channels': my_channels,
         }
-        return render(request, 'minutetalk/channel_view.html',context)
+        return render(request, 'minutetalk/channel_view.html', context)
+
 
 def sign_out(request):
     logout(request)
     return redirect('minutetalk:index')
 
+
 def join_channel(request, channel_id):
-    channel = get_object_or_404(Channel,id=channel_id)
+    channel = get_object_or_404(Channel, id=channel_id)
     user = UserProfile.objects.get(user=request.user)
     my_channels = user.fav_channels.all()
     user.my_channel = channel
@@ -79,12 +95,13 @@ def join_channel(request, channel_id):
     online_users = channel.current_channel.exclude(user=request.user)
     print(online_users)
     context = {
-            'channel' : channel,
-            'my_channels' : my_channels,
-            'users': online_users,
-            'fav' : user.fav_channels.filter(id=channel_id).exists()
-        }
-    return render(request, 'minutetalk/channel.html',context)
+        'channel': channel,
+        'my_channels': my_channels,
+        'users': online_users,
+        'fav': user.fav_channels.filter(id=channel_id).exists()
+    }
+    return render(request, 'minutetalk/channel.html', context)
+
 
 def search_channel(request):
     username = request.GET.get('query')
@@ -92,14 +109,15 @@ def search_channel(request):
     context = []
     for x in data:
         d = {
-            'title' : x.title,
-            'description' : x.description,
-            'src' : x.img_src.name,
-            'id' : x.id        
+            'title': x.title,
+            'description': x.description,
+            'src': x.img_src.name,
+            'id': x.id
         }
         context.append(d)
     # context = [(x.title,x.description,x.img_src.name,x.id) for x in data]
-    return JsonResponse({'titles' : context })
+    return JsonResponse({'titles': context})
+
 
 def edit_profile(request):
     data = request.POST
@@ -118,8 +136,9 @@ def edit_profile(request):
     print(user.first_name)
     return JsonResponse({})
 
+
 def addFavoriteChannel(request):
-    channel_id = request.GET.get('channel_id');
+    channel_id = request.GET.get('channel_id')
     user = UserProfile.objects.get(user=request.user)
     print(user)
     channel = Channel.objects.get(id=request.GET.get('channel_id'))
