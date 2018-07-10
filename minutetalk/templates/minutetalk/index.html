@@ -24,17 +24,11 @@
             </v-toolbar>
             <v-content>
             </v-content>
-            <v-content fill-height align-content-center>
-                <v-container fluid grid-list-md>
-                    <v-layout row wrap justify-center>
-                        <v-flex d-flex xs12 sm6 md4>
-                            <h1 class="greet"> MiniTalk! It's time for a Mini Talk!</h1>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-                <v-container fluid grid-list-md>
-                    <v-layout row wrap justify-center>
-                        <v-flex d-flex xs12 sm6 md4>
+            <v-content>
+                <v-container grid-list-md text-xs-center justify-center style="max-height: 100%;">
+                    <v-layout align-center justify-center row fill-height>
+                        <v-flex xs4>
+                            <h1 class="greet"> MinuteTalk! It's time for a Mini Talk!</h1>
                             <v-dialog transition="scale-transition" v-model="auth_modal" persistent width="500px" height="600px">
                                 <v-btn slot="activator" round flat>Go Talk!</v-btn>
                                 <v-content v-model="loginpage" v-if="loginpage">
@@ -112,6 +106,9 @@
                                     </v-layout>
                                 </v-content>
                             </v-dialog>
+                        </v-flex>
+                        <v-flex xs6>
+                            <img justify-center src="{% static 'images/clock.webp' %}"/>
                         </v-flex>
                     </v-layout>
                 </v-container>
