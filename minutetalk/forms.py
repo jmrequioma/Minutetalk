@@ -1,6 +1,8 @@
 from django import forms
 from .models import UserProfile
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
+
 
 class UserProfileForm(forms.ModelForm):
     GENDER_CHOICES = (
@@ -20,12 +22,6 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['age','email','gender','username','password1','password2','first_name','last_name','img_src']
-
-    def save(self, commit=True):
-        data = self.cleaned_data
-        user = User.objects.create_user(username=data["username"],password=data['password1'],email=data['email'], first_name=data['first_name'], last_name=data['last_name'])
-        userProfile = UserProfile(user=user,gender=data['gender'], age=data["age"], img_src=data['img_src'])
-        userProfile.save()
 
     def edit(self,request):
         data = self.cleaned_data
@@ -58,3 +54,9 @@ class UserProfileForm(forms.ModelForm):
         if password1 != password2:
             raise forms.ValidationError("Password does not match")
         return password1
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')

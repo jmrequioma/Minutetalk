@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="static/minutetalk/css/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -46,9 +45,7 @@
                                                     <form method="post" ref="login_form">
                                                         {% csrf_token %}
                                                         <v-text-field color="pink accent-4" name="username" v-model="form.loginusername" prepend-icon="person" label="Username" type="text" v-on:keyup.enter="login"></v-text-field>
-                                                        <v-text-field color="pink accent-4" v-model="form.loginpassword" prepend-icon="lock" name="password" label="Password" id="password" type="password" v-on:keyup.enter="login" :type="show1 ? 'text' : 'password'"
-                                                        :append-icon="show1 ? 'visibility_off' : 'visibility'"
-                                                        @click:append="show1 = !show1"></v-text-field>
+                                                        <v-text-field color="pink accent-4" v-model="form.loginpassword" prepend-icon="lock" name="password" label="Password" id="password" type="password" v-on:keyup.enter="login" :type="show1 ? 'text' : 'password'" :append-icon="show1 ? 'visibility_off' : 'visibility'" @click:append="show1 = !show1"></v-text-field>
                                                         <v-btn round flat @click="login" :disabled="invalidLogin">
                                                             Login</v-btn>
                                                     </form>
@@ -75,30 +72,24 @@
                                                 </v-toolbar>
                                                 <v-card-text>
                                                     <v-alert v-if="!!signup_error" v-model="alert" type="error" outline transition="scale-transition"> [[signup_error]]</v-alert>
-                                                    <form method="post" enctype="multipart/form-data" ref="signup_form">
+                                                    <form method="post" enctype="multipart/form-data" id='signUpForm' ref="signup_form">
                                                         {% csrf_token %}
                                                         <div v-if="!image">
                                                             <h2>Select an image</h2>
-                                                            <input type="file" ref="img_src" @change="onFileChange">
+                                                            <input type="file" id="imageUpload" name="file" ref="img_src" @change="onFileChange">
                                                         </div>
                                                         <div v-else>
-                                                            <img :src="image" ref="img_src"/>
+                                                            <img :src="image" ref="img_src" />
                                                             <v-btn round flat @click.prevent="removeImage">Remove Image</v-btn>
                                                         </div>
                                                         <v-text-field color="pink accent-4" v-model="form.fname" prepend-icon="person" name="first_name" label="First Name" :rules="firstnameRules" type="text"></v-text-field>
                                                         <v-text-field color="pink accent-4" v-model="form.lname" prepend-icon="person" name="last_name" label="Last Name" :rules="lastnameRules" type="text"></v-text-field>
                                                         <v-text-field color="pink accent-4" v-model="form.email" prepend-icon="mail" name="email" label="Email" :rules="emailRules" type="text"></v-text-field>
                                                         <v-text-field color="pink accent-4" v-model="form.username" prepend-icon="person" name="username" label="Username" :rules="usernameRules" type="text"></v-text-field>
-                                                        <v-text-field color="pink accent-4" v-model="form.password" prepend-icon="lock" name="password1" label="Password" id="password" :rules="passwordRules" type="password" :type="show2 ? 'text' : 'password'"
-                                                        :append-icon="show2 ? 'visibility_off' : 'visibility'"
-                                                        @click:append="show2 = !show2"
-                                                        ></v-text-field>
-                                                        <v-text-field color="pink accent-4" v-model="form.cpassword" prepend-icon="lock" name="password2" label="Confirm Password" id="cpassword" :rules="confirmRules" type="password" :type="show3 ? 'text' : 'password'"
-                                                        :append-icon="show3 ? 'visibility_off' : 'visibility'"
-                                                        @click:append="show3 = !show3"
-                                                        ></v-text-field>
+                                                        <v-text-field color="pink accent-4" v-model="form.password" prepend-icon="lock" name="password1" label="Password" id="password" :rules="passwordRules" type="password" :type="show2 ? 'text' : 'password'" :append-icon="show2 ? 'visibility_off' : 'visibility'" @click:append="show2 = !show2"></v-text-field>
+                                                        <v-text-field color="pink accent-4" v-model="form.cpassword" prepend-icon="lock" name="password2" label="Confirm Password" id="cpassword" :rules="confirmRules" type="password" :type="show3 ? 'text' : 'password'" :append-icon="show3 ? 'visibility_off' : 'visibility'" @click:append="show3 = !show3"></v-text-field>
                                                         <v-text-field color="pink accent-4" v-model="form.age" prepend-icon="person" name="age" label="Age" id="age" :rules="ageRules" type="text"></v-text-field>
-                                                        <v-autocomplete color="pink accent-4" prepend-icon="person" name="gender" :items="['Male', 'Female']" v-model="form.gender" label="Gender" ></v-autocomplete>
+                                                        <v-autocomplete color="pink accent-4" prepend-icon="person" name="gender" :items="['Male', 'Female']" v-model="form.gender" label="Gender"></v-autocomplete>
                                                         <v-btn round flat @click="signup" @click.native="auth_modal=false, loginpage=true" :disabled="invalidSignup">Sign Up</v-btn>
                                                     </form>
                                             </v-card>
@@ -108,13 +99,14 @@
                             </v-dialog>
                         </v-flex>
                         <v-flex xs6>
-                            <img justify-center src="{% static 'images/clock.webp' %}"/>
+                            <img justify-center src="{% static 'images/clock.webp' %}" />
                         </v-flex>
                     </v-layout>
                 </v-container>
             </v-content>
         </v-app>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
     <script type="text/javascript" src="{% static 'minutetalk/js/login.js' %}"></script>

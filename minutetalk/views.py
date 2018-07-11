@@ -8,7 +8,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserProfileForm
-
+import base64
+from django.core.files.base import ContentFile
 
 class IndexView(generic.View):
 
@@ -38,7 +39,17 @@ class SignUpView(generic.View):
     def post(self, request, *args, **kwargs):
         form = UserProfileForm(request.POST)
         if form.is_valid():
-            form.save()
+            data = request.POST
+            print('DATA: ')
+            print(data)
+            user = User.objects.create_user(
+                username=data['username'],password=data['password1'],email=data['email'], first_name=data['first_name'], last_name=data['last_name']
+                )
+            userprofile = UserProfile(
+                user=user,gender=data['gender'], age=data['age']
+                )
+            userprofile.save()
+            addUserImage(request,userprofile)
             user = authenticate(request, username=request.POST['username'], password=request.POST['password1'])
             if user is not None:
                 login(request, user)
@@ -114,6 +125,7 @@ class EditProfile(LoginRequiredMixin, generic.View):
 
 
 class AddFavoriteChannel(LoginRequiredMixin, generic.View):
+    
     def get(self, request):
         channel_id = request.GET.get('channel_id');
         user = UserProfile.objects.get_object_or_404(user=request.user)
@@ -133,3 +145,13 @@ class AddFavoriteChannel(LoginRequiredMixin, generic.View):
             user.save()
             context['message'] = 'Added to favorites'
             return JsonResponse(context)
+
+def addUserImage(request,userprofile):
+    image_data = request.POST['img_src']
+    format, imgstr = image_data.split(';base64,')
+    print("format", format)
+    ext = format.split('/')[-1]
+
+    data = ContentFile(base64.b64decode(imgstr))  
+    file_name = userprofile.user.username + ext
+    userprofile.img_src.save(file_name, data, save=True)

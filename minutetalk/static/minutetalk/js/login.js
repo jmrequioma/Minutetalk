@@ -83,6 +83,7 @@ var a = new Vue({
                     password: this.form.loginpassword,
                     csrfmiddlewaretoken: this.$refs.login_form.csrfmiddlewaretoken.value
                 },
+                dataType: 'json',
                 success: response => {
                     if (response['error']) {
                         this.auth_modal = true
@@ -118,12 +119,13 @@ var a = new Vue({
                         this.loginpage = false
                         this.signup_error = response['error']
                     } else {
+                        this.reset()
                         console.log("REDIRECTING")
                         window.location.href = "minutetalk/home"
                     }
                 }
             })
-            this.reset()
+
         },
         is_valid_field: function(v) {
             return !!v
