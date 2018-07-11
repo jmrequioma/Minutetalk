@@ -25,6 +25,7 @@ var vue = new Vue({
                 test: '',
             },
             channel: {
+                show_favorite: false,
                 fav: false
             },
             name: '',
@@ -91,6 +92,15 @@ var vue = new Vue({
         },
         favorite: function (channel_id) {
             this.channel.fav = !this.channel.fav
+            this.channel.show_favorite = !this.channel.show_favorite;
+
+            var element = document.getElementById(channel_id.toString());
+
+            if(!this.channel.fav && element){
+                element.parentNode.removeChild(element);
+                this.channel.show_favorite = false;
+            }
+
             $.ajax({
                 url: '/ajax/add_to_favorite',
                 data: {
@@ -102,6 +112,8 @@ var vue = new Vue({
                     }
                 }
             });    
+
+
         },
         is_valid_field: function(v) {
             return !!v

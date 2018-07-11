@@ -33,7 +33,7 @@
                     </v-spacer>
                     <v-subheader>MY CHANNELS</v-subheader>
                     {% for channel in my_channels %}
-                    <v-list-tile :key="{{channelUser.channel.title}}" ripple @click="">
+                    <v-list-tile id="{{channel.id}}" ripple @click="">
                         <v-list-tile-avatar size="30px">
                             <img src="/media/{{channel.img_src}}">
                         </v-list-tile-avatar>
@@ -44,6 +44,19 @@
                         </v-list-tile-content>
                     </v-list-tile>
                     {% endfor %}
+                    {% if channel %}
+                    <v-list-tile v-if="channel.show_favorite" ripple @click="">
+                        <v-list-tile-avatar size="30px">
+                            <img src="/media/{{channel.img_src}}">
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title class="mychanneltitle">
+                                {{channel.title}}
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    {% endif %}
+
                 </v-list>
             </v-navigation-drawer>
             <v-toolbar color="blue darken-3" dark app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
@@ -151,7 +164,5 @@
         vue.channel.fav = ("{{fav}}" == "True")
     </script>
 </body>
-
 </html>
-        vue.channel.fav = ("{{fav}}" == "True")
         

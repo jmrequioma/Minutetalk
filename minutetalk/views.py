@@ -116,9 +116,8 @@ class EditProfile(LoginRequiredMixin, generic.View):
 class AddFavoriteChannel(LoginRequiredMixin, generic.View):
     def get(self, request):
         channel_id = request.GET.get('channel_id');
-        user = UserProfile.objects.get_object_or_404(user=request.user)
-        print(user)
-        channel = Channel.objects.get_object_or_404(id=request.GET.get('channel_id'))
+        user = get_object_or_404(UserProfile, user=request.user)
+        channel = get_object_or_404(Channel, id=request.GET.get('channel_id'))
         context = {}
         if user.fav_channels.filter(id=channel_id).exists():
             print('Removing from favorite channels...')
