@@ -90,18 +90,17 @@ var vue = new Vue({
             }
         },
         favorite: function (channel_id) {
-            console.log('Favorite...')    
             this.channel.fav = !this.channel.fav
             $.ajax({
-            url: '/ajax/add_to_favorite',
-            data: {
-                'channel_id' : channel_id,
-            },
-            success: function(data) {
-                if(data['message']) {
-                    console.log(data['message'])
+                url: '/ajax/add_to_favorite',
+                data: {
+                    'channel_id' : channel_id,
+                },
+                success: function(data) {
+                    if(data['message']) {
+                        console.log(data['message'])
+                    }
                 }
-            }
             });    
         },
         is_valid_field: function(v) {
@@ -180,7 +179,6 @@ var vue = new Vue({
     },
     computed: {
         r() {
-            console.log(this.search_result);
             return this.search_result;
         },
         validate() {
@@ -198,4 +196,3 @@ var vue = new Vue({
     }
 });
 
-setInterval(function(){ console.log("Hello"); }, 2000);

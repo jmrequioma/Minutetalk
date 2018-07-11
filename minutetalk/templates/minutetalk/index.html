@@ -79,10 +79,10 @@
                                                         {% csrf_token %}
                                                         <div v-if="!image">
                                                             <h2>Select an image</h2>
-                                                            <input type="file" @change="onFileChange">
+                                                            <input type="file" ref="img_src" @change="onFileChange">
                                                         </div>
                                                         <div v-else>
-                                                            <img :src="image" />
+                                                            <img :src="image" ref="img_src"/>
                                                             <v-btn round flat @click.prevent="removeImage">Remove Image</v-btn>
                                                         </div>
                                                         <v-text-field color="pink accent-4" v-model="form.fname" prepend-icon="person" name="first_name" label="First Name" :rules="firstnameRules" type="text"></v-text-field>

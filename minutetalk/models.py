@@ -3,17 +3,14 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    email = models.EmailField(max_length=254, default='example@email.com')
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
     age = models.IntegerField()
     gender = models.CharField(max_length=6)
     img_src = models.FileField(upload_to='users/',default='users/noprof.jpg')
-    fav_channels = models.ManyToManyField('Channel')
-    my_channel = models.ForeignKey('Channel', on_delete=models.CASCADE, related_name="current_channel")
+    fav_channels = models.ManyToManyField('Channel', null=True)
+    my_channel = models.ForeignKey('Channel', on_delete=models.CASCADE, null=True, related_name="current_channel")
 
     def __str__(self):
-        return self.first_name
+        return self.user.first_name
 
 class ChannelType(models.Model):
     name = models.CharField(max_length=30)

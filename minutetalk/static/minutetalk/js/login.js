@@ -106,8 +106,10 @@ var a = new Vue({
                     email: this.form.email,
                     username: this.form.username,
                     password1: this.form.password,
+                    password2: this.form.cpassword,
                     age: this.form.age,
                     gender: this.form.gender,
+                    img_src: this.$refs.img_src.src,
                     csrfmiddlewaretoken: this.$refs.signup_form.csrfmiddlewaretoken.value
                 },
                 success: response => {
