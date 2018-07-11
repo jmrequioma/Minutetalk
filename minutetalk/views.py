@@ -11,12 +11,14 @@ from .forms import UserProfileForm
 import base64
 from django.core.files.base import ContentFile
 
+
 class IndexView(generic.View):
 
     def get(self, request, *args, **kwargs):
         if(request.user.is_authenticated):
             return HttpResponseRedirect(reverse('minutetalk:home'))
         return render(request, 'minutetalk/index.html')
+
 
 
 class LogInView(generic.View):
@@ -58,6 +60,7 @@ class SignUpView(generic.View):
         return JsonResponse({"error" : form.errors})
 
 
+
 class HomeView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
@@ -65,11 +68,10 @@ class HomeView(LoginRequiredMixin, generic.View):
         my_channels = get_object_or_404(UserProfile,user=request.user).fav_channels.all()
         context = {
             'user': request.user,
-            'channels_list' : channels_list,
-            'my_channels' : my_channels,
+            'channels_list': channels_list,
+            'my_channels': my_channels,
         }
-        return render(request, 'minutetalk/channel_view.html',context)
-
+        return render(request, 'minutetalk/channel_view.html', context)
 
 class SignOut(generic.View):
 
@@ -128,9 +130,8 @@ class AddFavoriteChannel(LoginRequiredMixin, generic.View):
     
     def get(self, request):
         channel_id = request.GET.get('channel_id');
-        user = UserProfile.objects.get_object_or_404(user=request.user)
-        print(user)
-        channel = Channel.objects.get_object_or_404(id=request.GET.get('channel_id'))
+        user = get_object_or_404(UserProfile, user=request.user)
+        channel = get_object_or_404(Channel, id=request.GET.get('channel_id'))
         context = {}
         if user.fav_channels.filter(id=channel_id).exists():
             print('Removing from favorite channels...')

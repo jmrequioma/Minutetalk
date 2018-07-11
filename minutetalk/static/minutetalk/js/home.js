@@ -4,8 +4,8 @@ var vue = new Vue({
     data() {
         return {
             dialog: false,
+            changepassword: false,
             editprofile: false,
-            editform: true,
             isEditing: false,
             drawer: null,
             menupopout: false,
@@ -13,18 +13,24 @@ var vue = new Vue({
             search_result: [],
             show_search_result: false,
             queryHTML: null,
+            editformpass: '',
+            enterpass: false,
             form: {
                 fname: '',
                 lname: '',
                 email: '',
                 username: '',
-                password: '',
-                cpassword: '',
                 age: '',
                 gender: '',
                 test: '',
             },
+            changepass: {
+                oldpassword: '',
+                newpassword: '',
+                confirmpassword: ''
+            },
             channel: {
+                show_favorite: false,
                 fav: false
             },
             name: '',
@@ -54,10 +60,13 @@ var vue = new Vue({
             ],
 
             iconlist: [{
-                    title: 'Settings',
-                    icon: 'settings'
+                    title: 'Edit Profile',
+                    icon: 'person'
                 },
-
+                {
+                    title: 'Change Password',
+                    icon: 'lock'  
+                },
                 {
                     title: 'Logout',
                     icon: 'exit_to_app'
@@ -67,7 +76,7 @@ var vue = new Vue({
     },
     methods: {
         dropdown: function(option) {
-            if (option == "Settings") {
+            if (option == "Edit Profile") {
                 this.editprofile = true;
                 $.ajax({
                     async: false,
@@ -84,6 +93,9 @@ var vue = new Vue({
                         }
                     }
                 });
+            } else if (option == "Change Password"){
+                console.log("Change password")
+                this.changepassword = true;
             } else if (option == "Logout") {
                 window.location.href = "logout"
 
@@ -91,6 +103,15 @@ var vue = new Vue({
         },
         favorite: function (channel_id) {
             this.channel.fav = !this.channel.fav
+            this.channel.show_favorite = !this.channel.show_favorite;
+
+            var element = document.getElementById(channel_id.toString());
+
+            if(!this.channel.fav && element){
+                element.parentNode.removeChild(element);
+                this.channel.show_favorite = false;
+            }
+
             $.ajax({
                 url: '/ajax/add_to_favorite',
                 data: {
@@ -102,6 +123,8 @@ var vue = new Vue({
                     }
                 }
             });    
+
+
         },
         is_valid_field: function(v) {
             return !!v
@@ -149,6 +172,11 @@ var vue = new Vue({
         reset: function() {
             this.isEditing = false;
             this.editprofile = false;
+            this.changepassword = false;
+            this.changepass.oldpassword = ''
+            this.changepass.newpassword = ''
+            this.changepass.confirmpassword = ''
+            this.$refs.changePassword.reset();
             init();
             
         }

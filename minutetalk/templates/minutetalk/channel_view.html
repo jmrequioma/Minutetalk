@@ -14,18 +14,17 @@
                     <v-card>
                         <v-card-media height="200px" src="/media/{{ channel.img_src }}">
                             <v-card-text class="description">
-                                {{ channel.description}}}}
+                                {{ channel.description}}
                             </v-card-text>
                         </v-card-media>
                         <v-card-title primary-title>
                             <div>
                                 <h3 class="headline mb-0">{{ channel.title}}</h3>
-                                <span>There are 0 users online</span>
+                                <span>There are {{channel}} users online</span>
                             </div>
                         </v-card-title>
                         <v-card-actions>
-                            <v-btn flat color="red" href="{% url 'minutetalk:join_channel' channel.id %}"> Join
-                                
+                            <v-btn flat color="red" href="{% url 'minutetalk:join_channel' channel.id %}"> Join                                
                             </v-btn>
                         </v-card-actions>
                     </v-card>
