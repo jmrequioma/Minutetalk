@@ -121,20 +121,69 @@
                                     <v-text-field color="pink accent-4" v-model="form.lname" prepend-icon="person" name="last_name" label="Last Name" :rules="lastnameRules" :disabled="!isEditing" type="text"></v-text-field>
                                     <v-text-field color="pink accent-4" v-model="form.email" prepend-icon="mail" name="email" label="Email" :rules="emailRules" :disabled="true" type="text"></v-text-field>
                                     <v-text-field color="pink accent-4" v-model="form.username" prepend-icon="person" name="username" label="Username" :rules="usernameRules" :disabled="true" type="text"></v-text-field>
-                                    <v-text-field color="pink accent-4" v-model="form.password" prepend-icon="lock" name="password1" label="Password" id="password" :rules="passwordRules" type="password" :disabled="!isEditing"></v-text-field>
-                                    <v-text-field color="pink accent-4" v-model="form.cpassword" prepend-icon="lock" name="password2" label="Confirm Password" id="cpassword" :rules="confirmRules" type="password" :disabled="!isEditing"></v-text-field>
                                     <v-text-field color="pink accent-4" v-model="form.age" prepend-icon="person" name="age" label="Age" id="age" :rules="ageRules" :disabled="!isEditing" type="text"></v-text-field>
                                     <v-autocomplete color="pink accent-4" prepend-icon="person" name="gender" :items="['Male', 'Female']" v-model="form.gender" label="Gender" :disabled="!isEditing"></v-autocomplete>
                                 </form>
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn round flat @click.native="isEditing=editprofile=false" :disabled="validate" @click.prevent="edit">Save</v-btn>
+                                <v-btn round flat @click.native="isEditing=editprofile=false, enterpass=true" :disabled="validate" @click.prevent="edit">Save
+                                </v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
                 </v-layout>
-                </v-content>
+     <!-- </v-content> -->
+            </v-dialog>
+            <v-dialog v-model="enterpass" persistent max-width="350px">
+                <v-card>
+                    <v-card-title class="font-weight-medium subheading" primary-title>
+                        Confirm Your Changes
+                    </v-card-title>
+                    <v-avatar size="50px" class="avatarimage">
+                        <img src="/media/{{user.userprofile.img_src}}">
+                    </v-avatar>
+                    <v-spacer class="username" v-model="name">
+                        [[name]]
+                    </v-spacer>
+                    <form>
+                        <v-flex style="padding-left: 20px; padding-right: 20px;">
+                            <v-text-field color="pink accent-4" v-model="editformpass" prepend-icon="lock" name="editform_pass" label="Password" type="password"></v-text-field>
+                        </v-flex>
+                    </form>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn round flat @click.native="enterpass=false">Ok</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+            <v-dialog transition="scale-transition" v-model="changepassword" no-click-animation persistent width="500px" height="1000px">
+                <v-layout>
+                    <v-flex>
+                        <v-card class="elevation-12">
+                            <v-toolbar dark color="primary">
+                                <v-btn color="transparent" icon @click.prevent="reset">
+                                    <v-icon>close</v-icon>
+                                </v-btn>
+                                <v-toolbar-title>CHANGE PASSWORD</v-toolbar-title>
+                                <v-spacer></v-spacer>
+                           </v-toolbar>
+                            <v-card-text>
+                                <form ref="changePassword">
+                                    {% csrf_token %}
+                                    <v-text-field color="pink accent-4" v-model="changepass.oldpassword" prepend-icon="lock_open" name="old_password" label="Old Password"  type="password" ></v-text-field>
+                                    <v-text-field color="pink accent-4" v-model="changepass.newpassword" prepend-icon="lock" name="new_password" label="New Password" :rules="passwordRules" type="password"></v-text-field>
+                                    <v-text-field color="pink accent-4" v-model="changepass.confirmpassword" prepend-icon="lock" name="confirm_password" label="Confirm New Password" :rules="confirmRules" type="password"></v-text-field>
+                                </form>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn round flat @click.native="changepassword=false" :disabled="validate" @click.prevent="edit">Save</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-flex>
+                </v-layout>
+            <!-- </v-content> -->
             </v-dialog>
             {% block content %} {% endblock %}
         </v-app>
