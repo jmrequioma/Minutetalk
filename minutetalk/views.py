@@ -10,12 +10,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserProfileForm
 
 
+
 class IndexView(generic.View):
 
     def get(self, request, *args, **kwargs):
         if(request.user.is_authenticated):
             return HttpResponseRedirect(reverse('minutetalk:home'))
         return render(request, 'minutetalk/index.html')
+
 
 
 class LogInView(generic.View):
@@ -47,6 +49,7 @@ class SignUpView(generic.View):
         return JsonResponse({"error" : form.errors})
 
 
+
 class HomeView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
@@ -54,11 +57,10 @@ class HomeView(LoginRequiredMixin, generic.View):
         my_channels = get_object_or_404(UserProfile,user=request.user).fav_channels.all()
         context = {
             'user': request.user,
-            'channels_list' : channels_list,
-            'my_channels' : my_channels,
+            'channels_list': channels_list,
+            'my_channels': my_channels,
         }
-        return render(request, 'minutetalk/channel_view.html',context)
-
+        return render(request, 'minutetalk/channel_view.html', context)
 
 class SignOut(generic.View):
 
