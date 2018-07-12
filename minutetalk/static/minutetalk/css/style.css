@@ -240,3 +240,44 @@ img {
 .favoritebtn {
   background: transparent;
 }
+
+.question {
+  width: 280px;
+  height: 810px;
+}
+
+.questionlists {
+  background-color:  #F9B6BC;
+}
+.myquestion {
+  font-family: 'Catamaran', 'Arial', 'sans-serif';
+  font-size: 15px;
+  color: #280004;   
+  text-align: right;
+}
+
+.otherquestion {
+  font-family: 'Catamaran', 'Arial', 'sans-serif';
+  font-size: 15px;
+  color: #280004;   
+  text-align: left;
+}
+
+.othermessage{
+  background-color: #B79396;
+}
+
+.onlinenumber {
+  height: 20px;
+}
+
+/*.v-list iconlist{
+  background-color: maroon;
+}
+*//*.toolbar__title {
+  font-family: Digital-7;
+}
+*/
+
+
+

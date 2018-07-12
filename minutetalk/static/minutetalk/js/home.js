@@ -65,7 +65,7 @@ var vue = new Vue({
                 },
                 {
                     title: 'Change Password',
-                    icon: 'lock'  
+                    icon: 'lock'
                 },
                 {
                     title: 'Logout',
@@ -93,7 +93,7 @@ var vue = new Vue({
                         }
                     }
                 });
-            } else if (option == "Change Password"){
+            } else if (option == "Change Password") {
                 console.log("Change password")
                 this.changepassword = true;
             } else if (option == "Logout") {
@@ -101,13 +101,13 @@ var vue = new Vue({
 
             }
         },
-        favorite: function (channel_id) {
+        favorite: function(channel_id) {
             this.channel.fav = !this.channel.fav
             this.channel.show_favorite = !this.channel.show_favorite;
 
             var element = document.getElementById(channel_id.toString());
 
-            if(!this.channel.fav && element){
+            if (!this.channel.fav && element) {
                 element.parentNode.removeChild(element);
                 this.channel.show_favorite = false;
             }
@@ -115,14 +115,14 @@ var vue = new Vue({
             $.ajax({
                 url: '/ajax/add_to_favorite',
                 data: {
-                    'channel_id' : channel_id,
+                    'channel_id': channel_id,
                 },
                 success: function(data) {
-                    if(data['message']) {
+                    if (data['message']) {
                         console.log(data['message'])
                     }
                 }
-            });    
+            });
 
 
         },
@@ -165,9 +165,8 @@ var vue = new Vue({
                 },
                 success: response => {
                     console.log("success")
-                }            
+                }
             });
-
         },
         reset: function() {
             this.isEditing = false;
@@ -178,7 +177,21 @@ var vue = new Vue({
             this.changepass.confirmpassword = ''
             this.$refs.changePassword.reset();
             init();
-            
+        },
+        start_call: function(callee_id){
+            $.ajax({
+                url: 'ajax/session',
+                data: {
+                    'callee_id' : callee_id
+                },
+                success: response => {
+                    if (response['message']) {
+                        console.log(response['message'])
+                    } else {
+                        console.log('Session not created.')
+                    }
+                }
+            })
         }
     },
     watch: {
@@ -218,9 +231,8 @@ var vue = new Vue({
             pass2 = this.form.cpassword;
             age = this.form.age;
             gender = this.form.gender;
-            return !this.isEditing ||  (this.isEditing && (!fname || !lname || !email || !username || !age || !gender ||
-                !this.is_valid_email(email) || !this.is_valid_age(age) || ((pass1 != pass2) && (!this.is_valid_password(pass1) || !this.is_valid_password2(pass2))) )) ;
+            return !this.isEditing || (this.isEditing && (!fname || !lname || !email || !username || !age || !gender ||
+                !this.is_valid_email(email) || !this.is_valid_age(age) || ((pass1 != pass2) && (!this.is_valid_password(pass1) || !this.is_valid_password2(pass2)))));
         }
     }
 });
-

@@ -40,9 +40,9 @@
                     <div>
                         <v-list-tile-avatar size="200px">
                             <img src="/media/{{ user.img_src }}">
-                            <p class="name">{{user.first_name}} {{user.last_name}}</p>
+                            <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
                         </v-list-tile-avatar>
-                        <v-btn round>Talk!</v-btn>
+                        <v-btn round @click="start_call({{user.user.id}})">Talk!</v-btn>
                     </div>
                 </v-flex>
                 {%endfor%}

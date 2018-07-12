@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import UserProfile, Channel, ChannelType
+from .models import UserProfile, Channel, ChannelType, CallerCallee
 
 class UserProfileChannelAdmin(admin.ModelAdmin):
      model= UserProfile
@@ -10,3 +10,4 @@ class UserProfileChannelAdmin(admin.ModelAdmin):
 admin.site.register(UserProfile, UserProfileChannelAdmin)
 admin.site.register(Channel)
 admin.site.register(ChannelType)
+admin.site.register(CallerCallee)
