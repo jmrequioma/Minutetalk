@@ -95,13 +95,6 @@
                                 </v-list-tile-avatar>
                                 <v-list-tile-content>
                                     <v-list-tile-title class="otherusername">[[otheruser.name]]</v-list-tile-title>
-                                    <v-list-tile-action class="favorite">
-                                        <v-btn :class="otheruser.fav ? 'red--text' : ''" icon @click="otheruser.fav = !otheruser.fav" class="favebtn">
-                                            <v-icon class="iconfave">favorite</v-icon>
-                                            <span v-if="!otheruser.fav" style="font-size: 12px" class="notfavorite">Add to favorites</span>
-                                            <span v-else class="truefavorite">Favorite</span>
-                                        </v-btn>
-                                    </v-list-tile-action>
                                 </v-list-tile-content>
                             </v-list-tile>
                         </v-list>
@@ -149,10 +142,9 @@
     <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
     <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
     <script>
-
+    // var token = '{{token}}';
     // var apiKey = '{{apikey}}';
     // var sessionId = '{{session_id}}';
-    // var token = '{{token}}';
 
     new Vue({
         delimiters: ['[[', ']]'],
