@@ -29,6 +29,7 @@ var vue = new Vue({
                 newpassword: '',
                 confirmpassword: ''
             },
+            users : [],
             channel: {
                 show_favorite: false,
                 fav: false
@@ -223,4 +224,9 @@ var vue = new Vue({
         }
     }
 });
+
+
+
+
+
 
