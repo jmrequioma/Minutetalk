@@ -189,11 +189,10 @@ var vue = new Vue({
             this.changepass.confirmpassword = ''
             this.$refs.changePassword.reset();
         },
-        start_call: function(callee_id){
+        startCall: function(){
             $.ajax({
                 url: 'ajax/session',
                 data: {
-                    'callee_id' : callee_id
                 },
                 success: response => {
                     if (response['message']) {

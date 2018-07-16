@@ -13,13 +13,13 @@ urlpatterns = [
     path('<int:channel_id>', views.JoinChannel.as_view(), name='join_channel'),
     path('edit_profile', views.EditProfile.as_view(), name='edit_profile'),
     path('edit_pass', views.EditPassword.as_view(), name='edit_password'),
-    path('videochat', views.VideoChatView.as_view(), name='favorite'),
+    path('<int:channel_id>/videochat', views.VideoChatView.as_view(), name='favorite'),
 
     path('ajax/search', views.SearchChannel.as_view(), name='search_channel'),
     path('ajax/check_password', views.CheckPassword.as_view(), name='check_password'),
 
     path('ajax/add_to_favorite', views.AddFavoriteChannel.as_view(),
          name='favorite'),
-    path('ajax/session', views.CreateSessionView.as_view(),
+    path('ajax/session', views.CreateSession.as_view(),
          name='create_session'),
 ]

@@ -205,52 +205,47 @@ class VideoChatView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
 
-        if CallerCallee.objects.filter(caller=request.user).exists():
-            session_id = CallerCallee.objects.get(
-                caller=request.user).session_id
-        else:
-            session_id = CallerCallee.objects.get(
-                callee=request.user).session_id
+        # if CallerCallee.objects.filter(caller=request.user).exists():
+        #     session_id = CallerCallee.objects.get(
+        #         caller=request.user).session_id
+        # else:
+        #     session_id = CallerCallee.objects.get(
+        #         callee=request.user).session_id
 
-        # Generate a Token from just a session_id (fetched from a database)
-        token = opentok.generate_token(session_id)
+        # # Generate a Token from just a session_id (fetched from a database)
+        # token = opentok.generate_token(session_id)
 
-        connectionMetadata = request.user.username
-        token = opentok.generate_token(session_id)
+        # connectionMetadata = request.user.username
+        # token = opentok.generate_token(session_id)
 
-        context = {
-            'session_id': session_id,
-            'token': token,
-            'apikey': api_key,
-        }
-        return render(request, 'minutetalk/livestream.html', context)
+        # context = {
+        #     'session_id': session_id,
+        #     'token': token,
+        #     'apikey': api_key,
+        # }
+        return render(request, 'minutetalk/livestream.html')
 
 
-class CreateSessionView(LoginRequiredMixin, generic.View):
+class CreateSession(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
-        context = {}
-        if CallerCallee.objects.filter(caller=request.user).exists():
-            context['message'] = 'Session already created'
-        else:
+        # Create a session that attempts to send streams directly between 
+        # clients (falling back
+        # to use the OpenTok TURN server to relay streams if the clients 
+        # cannot connect):
+        session = opentok.create_session()
 
-            # Create a session that attempts to send streams directly between 
-            # clients (falling back
-            # to use the OpenTok TURN server to relay streams if the clients 
-            # cannot connect):
-            session = opentok.create_session()
+        # Store this session ID in the database
+        session_id = session.session_id
+        caller = request.user
+        callee = get_object_or_404(User, id=request.GET['callee_id'])
 
-            # Store this session ID in the database
-            session_id = session.session_id
-            caller = request.user
-            callee = get_object_or_404(User, id=request.GET['callee_id'])
+        chatSession = CallerCallee(
+            caller=caller, callee=callee, session_id=session_id
+        )
+        chatSession.save()
 
-            chatSession = CallerCallee(
-                caller=caller, callee=callee, session_id=session_id
-            )
-            chatSession.save()
-
-            context['message'] = 'Video Session created successfully'
+        context['message'] = 'Video Session created successfully'
 
         return JsonResponse(context)
 
