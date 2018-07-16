@@ -80,7 +80,6 @@ class ChatConsumer(AsyncConsumer):
 
     
     async def websocket_receive(self, event):
-        print("recieve", event)
         data = json.loads(event['text'])
         data['type'] = 'talk'
         data['user'] = self.scope['user'].userprofile.asdict()
@@ -88,12 +87,13 @@ class ChatConsumer(AsyncConsumer):
             self.channel_id,
             {
                 "type": "talk",
-                "id": json.dumps(data)
+                "data": json.dumps(data)
             }
         )
 
     async def talk(self, event):
         await self.send({
             "type": "websocket.send",
-            "text": event['id']
+            "text": event['data']
             })
+

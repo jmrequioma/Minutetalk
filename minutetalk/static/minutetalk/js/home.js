@@ -36,6 +36,7 @@ var vue = new Vue({
                 fav: false
             },
             caller: {},
+            callee: {},
             incomingcall: false,
             calling: false,
             name: '',
@@ -204,9 +205,20 @@ var vue = new Vue({
                 }
             })
         },
-        talk: function(id){
+        talk: function(id, first_name, last_name, img_src){
             this.calling = true
+            var callee = {
+                'id': id,
+                'name': first_name + ' ' + last_name,
+                'img_src': img_src
+            }
+            this.callee = callee
             talk(id)
+        },
+        cancel_call: function(id){
+            this.calling = false
+            cancel_call(id)
+
         }
     },
     watch: {

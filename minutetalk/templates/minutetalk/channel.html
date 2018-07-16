@@ -23,7 +23,7 @@
                         </v-btn>
                         </v-card-title>
                         <v-card-text>
-                            {{ channel.description}}}
+                            {{ channel.description}}
                         </v-card-text>
                     </v-card>
                 </v-flex>
@@ -39,7 +39,7 @@
                             <img src="/media/{{ user.img_src }}">
                             <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
                         </v-list-tile-avatar>
-                        <v-btn class="btn btn-3" @click="talk({{user.id}}, {{user.first_name}})">Talk!</v-btn>
+                        <v-btn class="btn btn-3" @click="talk({{user.id}}, '{{user.user.first_name}}', '{{user.user.last_name}}', '{{user.img_src}}')">Talk!</v-btn>
                     </div>
                 </v-flex>
                 {%endfor%}
@@ -58,7 +58,7 @@
 </v-content>
 
 
-<v-dialog v-model="incomingcall" width="500">
+<v-dialog v-model="incomingcall" width="500" persistent>
 <v-card>
   <v-card-title
     class="subheading font-weight-regular" style="padding-bottom: 15px;padding-top: 20px;">
@@ -93,7 +93,7 @@
 </v-card>
 </v-dialog>
 
-<!-- <v-dialog v-model="calling" width="500">
+<v-dialog v-model="calling" width="500" persistent>
          
     <v-card>
         <v-card-title class="subheading font-weight-regular" 
@@ -105,11 +105,11 @@
             <v-list two-line class="calleeinfo">
                 <v-list-tile class="calleedetails" style="padding-left: 0px;">
                 <v-list-tile-avatar size="50px" >
-                            <img :src="user.avatar">
+                            <img :src="'/media/' + [[ callee.img_src ]]">
                 </v-list-tile-avatar>
                 <v-list-tile-content>
-                    <v-list-tile-title>{{user.name}}</v-list-tile-title>
-                    <v-list-tile-sub-title>The call will start as long as callee will accept.</v-list-tile-sub-title>
+                    <v-list-tile-title>[[callee.name]]</v-list-tile-title>
+                    <v-list-tile-sub-title>The call will start as long as [[callee.name]] will accept.</v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-progress-circular :size="40" color="indigo darken-4" indeterminate></v-progress-circular>
                 </v-list-tile>
@@ -118,9 +118,9 @@
           
             <v-card-actions class="">
                 <v-spacer></v-spacer>
-                <v-btn flat @click.prevet="caling = false">Cancel</v-btn>
+                <v-btn flat @click.native="calling=false" @click="cancel_call(callee.id)">Cancel</v-btn>
             </v-card>
-</v-dialog> -->
+</v-dialog>
 
 {% endblock %}
 {% block js %}
@@ -146,11 +146,17 @@
                     element.parentNode.parentNode.removeChild(parent);
                 }
             } else if (data['type'] == 'talk') {
-                if(data['id'] == '{{request.user.userprofile.id}}'){
-                    vue.incomingcall = true
-                    vue.caller = data['user']
-                    console.log('Lets talk')
-                    console.log(data)
+                if(data['connect']){
+                    if(data['id'] == '{{request.user.userprofile.id}}'){
+                        vue.incomingcall = true
+                        vue.caller = data['user']
+                        console.log('Lets talk')
+                        console.log(data)
+                    }
+                } else {
+                    if(data['id'] == '{{request.user.userprofile.id}}'){
+                        vue.incomingcall = false
+                    }
                 }
             }
         }
@@ -165,8 +171,13 @@
         }
     }
     function talk(id){
-        socket.send(JSON.stringify({'id': id}))
+        socket.send(JSON.stringify({'id': id, 'connect': true}))
     }
+
+    function cancel_call(id){
+        socket.send(JSON.stringify({'id': id, 'connect': false}))
+    }
+
     
     
 </script>
