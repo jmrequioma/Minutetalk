@@ -1,10 +1,7 @@
-{% extends 'minutetalk/home.html' %} {% block content %}
-<v-content>
+{% extends 'minutetalk/home.html' %} 
+{% block content %}
+<v-content >
     <v-container fluid grid-list-xl>
-        <v-btn icon small>
-            <v-icon dark left>arrow_back</v-icon>
-        </v-btn>
-
         <template>
             <v-layout row wrap>
                 <v-flex xs12 class="text-xs-center">
@@ -32,22 +29,74 @@
                 </v-flex>
             </v-layout>
             <v-flex xs12 sm6 md3>
-                <v-text-field class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field>
+                <v-text-field class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details color="indigo"></v-text-field>
             </v-flex>
-            <v-layout row wrap>
+            <v-layout  row wrap>
                 {% for user in users %}
                 <v-flex d-flex xs10 sm3>
-                    <div>
+                    <div id="{{user.id}}" :key="{{user.id}}">
                         <v-list-tile-avatar size="200px">
                             <img src="/media/{{ user.img_src }}">
                             <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
                         </v-list-tile-avatar>
-                        <v-btn round @click="start_call({{user.user.id}})">Talk!</v-btn>
+                        <v-btn class="btn btn-3">Talk!</v-btn>
                     </div>
                 </v-flex>
                 {%endfor%}
+                <v-flex v-for="user in users" d-flex xs10 sm3>
+                    <div :id="[[user.id]]">
+                        <v-list-tile-avatar size="200px">
+                            <img :src="/media/[[ user.img_src ]]">
+                            <p class="name">[[user.first_name]] [[user.last_name]]</p>
+                        </v-list-tile-avatar>
+                        <v-btn class="btn btn-3">Talk!</v-btn>
+                    </div>
+                </v-flex>
             </v-layout>
         </template>
     </v-container>
 </v-content>
+
 {% endblock %}
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript">
+    window.onload = function() {
+        console.log("asjdfhasfhasdkjf")
+        var endpoint= 'ws://' + window.location.host + window.location.pathname
+        var socket = new WebSocket(endpoint)
+
+        socket.onmessage = function (e) {
+            var data =  JSON.parse(e.data)
+            if(data['join']){        
+                if("{{user}}" != data['username']){
+                    console.log(data['username'], "joined the channel")
+                    var element = document.getElementById(data['id']);
+                    if(!element){
+                        vue.users.push(data)
+                    }
+                }
+            } else {
+                console.log(data['id'])
+                var element = document.getElementById(data['id']);
+                var parent = element.parentNode
+                element.parentNode.parentNode.removeChild(parent);
+
+
+            }
+        }
+        socket.onopen = function (e) {
+            console.log("open", e)
+        }
+        socket.onerror= function (e) {
+            console.log("error", e)
+        }
+        socket.onclose= function (e) {
+            console.log("close", e)
+        }
+     
+    }
+    
+</script>
+{%endblock js%}
+

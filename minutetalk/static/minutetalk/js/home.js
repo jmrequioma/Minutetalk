@@ -24,11 +24,13 @@ var vue = new Vue({
                 gender: '',
                 test: '',
             },
+            currentpass: '',
+            password_match: false,
             changepass: {
-                oldpassword: '',
                 newpassword: '',
                 confirmpassword: ''
             },
+            users : [],
             channel: {
                 show_favorite: false,
                 fav: false
@@ -57,6 +59,9 @@ var vue = new Vue({
             ageRules: [
                 v => this.is_valid_field(v) || 'Age is required',
                 v => this.is_valid_age(v) || 'You must be 18 years old'
+            ],
+            passwordMatchRules: [
+                v => this.password_match || 'Incorrect Password'
             ],
 
             iconlist: [{
@@ -133,7 +138,7 @@ var vue = new Vue({
             return v && v.length >= 8
         },
         is_valid_password2: function(v) {
-            return v == this.form.password
+            return v == this.changepass.newpassword && v.length >= 8
         },
         is_valid_email: function(v) {
             return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v)
@@ -158,25 +163,43 @@ var vue = new Vue({
                     last_name: this.form.lname,
                     email: this.form.email,
                     username: this.form.username,
-                    password1: this.form.password,
+                    password1: this.editformpass,
+                    password2: this.editformpass,
                     age: this.form.age,
                     gender: this.form.gender,
                     csrfmiddlewaretoken: this.$refs.editForm.csrfmiddlewaretoken.value
                 },
                 success: response => {
+                    console.log(response['error'])
                     console.log("success")
                 }
             });
+            this.editformpass = ""
+        },
+        edit_pass: function() {
+            $.ajax({
+                url: 'edit_pass',
+                type: 'POST',
+                data: {
+                    currentpass: this.currentpass,
+                    password1: this.changepass.newpassword,
+                    password2: this.changepass.confirmpassword,
+                    csrfmiddlewaretoken: this.$refs.changePassword.csrfmiddlewaretoken.value
+                },
+                success: response => {
+                    console.log("success")
+                }
+            });
+            this.reset()
         },
         reset: function() {
             this.isEditing = false;
             this.editprofile = false;
             this.changepassword = false;
-            this.changepass.oldpassword = ''
+            this.changepass.currentpass = ''
             this.changepass.newpassword = ''
             this.changepass.confirmpassword = ''
             this.$refs.changePassword.reset();
-            init();
         },
         start_call: function(callee_id){
             $.ajax({
@@ -217,22 +240,44 @@ var vue = new Vue({
 
             }
         },
+        currentpass: function(){
+            var value = false;
+            $.ajax({
+                    async: false,
+                    url: 'ajax/check_password',
+                    data: {
+                        'password': this.currentpass,
+                    },
+                    success: function(data) {
+                        value = data['password_match']
+                    }
+                });
+            this.password_match=  value
+        }
     },
     computed: {
         r() {
             return this.search_result;
         },
-        validate() {
+        valid_prof_form() {
             fname = this.form.fname;
             lname = this.form.lname;
             email = this.form.email;
             username = this.form.username;
-            pass1 = this.form.password;
-            pass2 = this.form.cpassword;
             age = this.form.age;
             gender = this.form.gender;
             return !this.isEditing || (this.isEditing && (!fname || !lname || !email || !username || !age || !gender ||
-                !this.is_valid_email(email) || !this.is_valid_age(age) || ((pass1 != pass2) && (!this.is_valid_password(pass1) || !this.is_valid_password2(pass2)))));
+                !this.is_valid_email(email) || !this.is_valid_age(age) ));
+        },
+        valid_pass_form(){
+            new_pass = this.changepass.newpassword
+            conf_pass = this.changepass.confirmpassword
+            return !this.password_match ||  !this.is_valid_password(new_pass) || !this.is_valid_password2(conf_pass)
         }
     }
 });
+
+
+
+
+

@@ -49,35 +49,41 @@ class SignUpView(generic.View):
             print('DATA: ')
             print(data)
             user = User.objects.create_user(
-                username=data['username'],password=data['password1'],email=data['email'], first_name=data['first_name'], last_name=data['last_name']
-                )
+                username=data['username'], password=data['password1'], 
+                email=data['email'], first_name=data['first_name'], 
+                last_name=data['last_name']
+            )
             userprofile = UserProfile(
-                user=user,gender=data['gender'], age=data['age']
-                )
+                user=user, gender=data['gender'], age=data['age']
+            )
             userprofile.save()
             print(data['img_src'])
             if data['img_src']:
-                addUserImage(request,userprofile)
+                addUserImage(request, userprofile)
 
-            user = authenticate(request, username=request.POST['username'], password=request.POST['password1'])
+            user = authenticate(
+                request, username=request.POST['username'], 
+                password=request.POST['password1'])
             if user is not None:
                 login(request, user)
                 return JsonResponse({})
             return JsonResponse({"error": "Some error occured during sign up"})
-        return JsonResponse({"error" : form.errors})
+        return JsonResponse({"error": form.errors})
 
 
 class HomeView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         channels_list = ChannelType.objects.all()
-        my_channels = get_object_or_404(UserProfile,user=request.user).fav_channels.all()
+        my_channels = get_object_or_404(
+            UserProfile, user=request.user).fav_channels.all()
         context = {
             'user': request.user,
             'channels_list': channels_list,
             'my_channels': my_channels,
         }
         return render(request, 'minutetalk/channel_view.html', context)
+
 
 class SignOut(generic.View):
 
@@ -86,22 +92,22 @@ class SignOut(generic.View):
         return redirect('minutetalk:index')
 
 
-class JoinChannel(LoginRequiredMixin,generic.View):
+class JoinChannel(LoginRequiredMixin, generic.View):
 
     def get(self, request, channel_id):
-        channel = get_object_or_404(Channel,id=channel_id)
+        channel = get_object_or_404(Channel, id=channel_id)
         user = request.user.userprofile
         online_users = channel.current_channel.exclude(user=request.user)
         my_channels = user.fav_channels.all()
         user.my_channel = channel
         user.save()
         context = {
-            'channel' : channel,
-            'my_channels' : my_channels,
+            'channel': channel,
+            'my_channels': my_channels,
             'users': online_users,
-            'fav' : user.fav_channels.filter(id=channel_id).exists()
+            'fav': user.fav_channels.filter(id=channel_id).exists()
         }
-        return render(request, 'minutetalk/channel.html',context)
+        return render(request, 'minutetalk/channel.html', context)
 
 
 class SearchChannel(LoginRequiredMixin, generic.View):
@@ -112,30 +118,71 @@ class SearchChannel(LoginRequiredMixin, generic.View):
         context = []
         for x in data:
             d = {
-                'title' : x.title,
-                'description' : x.description,
-                'src' : x.img_src.name,
-                'id' : x.id        
+                'title': x.title,
+                'description': x.description,
+                'src': x.img_src.name,
+                'id': x.id
             }
             context.append(d)
-        return JsonResponse({'titles' : context })
-      
+        return JsonResponse({'titles': context})
+
 
 class EditProfile(LoginRequiredMixin, generic.View):
 
-    def get(self, request):
-        request.POST['pasword1'] = 'p@ssw0rd'
-        request.POST['pasword2'] = 'p@ssw0rd'
-        form = UserProfileForm(request.POST)
-        if forms.is_valid():
-            form.edit(request)
+    def post(self, request):
+        # form = UserProfileForm(request.POST)
+        # if form.is_valid():
+            # form.edit(request)
+            # print(request.POST['password1'])
+        data = request.POST
+        if (request.user.check_password(request.POST['password1'])): 
+            user = request.user
+            userProfile = request.user.userprofile
+            user.first_name = data["first_name"]
+            user.last_name = data["last_name"]
+            user.email = data["email"]
+            userProfile.age = data["age"]
+            userProfile.gender = data["gender"]
+            user.save()
+            userProfile.save()
+            return JsonResponse({})
+
+        else:    
+            return JsonResponse({'error': 'Incorrect Password'})
+
+
+class EditPassword(LoginRequiredMixin, generic.View):
+
+    def post(self, request):
+        # form = UserProfileForm(request.POST)
+        # if form.is_valid():
+            # form.edit(request)
+            # print(request.POST['password1'])
+        data = request.POST
+        user = request.user
+        if (not user.check_password(request.POST['oldpassword'])): 
+            return JsonResponse({'error': 'Current Password is incorrect'})
+        if(data['password1'] != data['password2']):
+            return JsonResponse({'error': 'New Password and Confirm Password do not match'})
+
+        user.set_password(data['password1'])
+        user.save()
         return JsonResponse({})
+
+class CheckPassword(LoginRequiredMixin, generic.View):
+
+    def get(self, request):
+        
+        if (request.user.check_password(request.GET['password'])): 
+            return JsonResponse({'password_match': True})
+        else:
+           return JsonResponse({'password_match':False})
 
 
 class AddFavoriteChannel(LoginRequiredMixin, generic.View):
-    
+
     def get(self, request):
-        channel_id = request.GET.get('channel_id');
+        channel_id = request.GET.get('channel_id')
         user = get_object_or_404(UserProfile, user=request.user)
         channel = get_object_or_404(Channel, id=request.GET.get('channel_id'))
         context = {}
@@ -159,9 +206,11 @@ class VideoChatView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
 
         if CallerCallee.objects.filter(caller=request.user).exists():
-            session_id = CallerCallee.objects.get(caller=request.user).session_id
+            session_id = CallerCallee.objects.get(
+                caller=request.user).session_id
         else:
-            session_id = CallerCallee.objects.get(callee=request.user).session_id
+            session_id = CallerCallee.objects.get(
+                callee=request.user).session_id
 
         # Generate a Token from just a session_id (fetched from a database)
         token = opentok.generate_token(session_id)
@@ -170,11 +219,11 @@ class VideoChatView(LoginRequiredMixin, generic.View):
         token = opentok.generate_token(session_id)
 
         context = {
-            'session_id' : session_id, 
+            'session_id': session_id,
             'token': token,
-            'apikey' : api_key,
+            'apikey': api_key,
         }
-        return render(request, 'minutetalk/livestream.html',context)
+        return render(request, 'minutetalk/livestream.html', context)
 
 
 class CreateSessionView(LoginRequiredMixin, generic.View):
@@ -185,18 +234,20 @@ class CreateSessionView(LoginRequiredMixin, generic.View):
             context['message'] = 'Session already created'
         else:
 
-            # Create a session that attempts to send streams directly between clients (falling back
-            # to use the OpenTok TURN server to relay streams if the clients cannot connect):
+            # Create a session that attempts to send streams directly between 
+            # clients (falling back
+            # to use the OpenTok TURN server to relay streams if the clients 
+            # cannot connect):
             session = opentok.create_session()
 
             # Store this session ID in the database
             session_id = session.session_id
             caller = request.user
-            callee = get_object_or_404(User,id=request.GET['callee_id'])
+            callee = get_object_or_404(User, id=request.GET['callee_id'])
 
             chatSession = CallerCallee(
-                caller=caller,callee=callee,session_id=session_id
-                )
+                caller=caller, callee=callee, session_id=session_id
+            )
             chatSession.save()
 
             context['message'] = 'Video Session created successfully'
@@ -204,12 +255,14 @@ class CreateSessionView(LoginRequiredMixin, generic.View):
         return JsonResponse(context)
 
 # Converts base64 image to Contentfile
-def addUserImage(request,userprofile):
+
+
+def addUserImage(request, userprofile):
     image_data = request.POST['img_src']
     format, imgstr = image_data.split(';base64,')
     print("format", format)
     ext = format.split('/')[-1]
 
-    data = ContentFile(base64.b64decode(imgstr))  
+    data = ContentFile(base64.b64decode(imgstr))
     file_name = userprofile.user.username + ext
     userprofile.img_src.save(file_name, data, save=True)
