@@ -83,21 +83,6 @@ var vue = new Vue({
         dropdown: function(option) {
             if (option == "Edit Profile") {
                 this.editprofile = true;
-                $.ajax({
-                    async: false,
-                    url: 'ajax/search',
-                    data: {
-                        'query': this.search_input,
-                    },
-                    success: function(data) {
-                        if (data.titles.length > 0) {
-                            this.show_search_result = true;
-                            a = data.titles;
-                        } else {
-                            this.show_search_result = false;
-                        }
-                    }
-                });
             } else if (option == "Change Password") {
                 console.log("Change password")
                 this.changepassword = true;
