@@ -3,17 +3,17 @@
 }
 
 @font-face {
-  src: url('/static/fonts/digital-7.ttf') format("truetype"); 
+  src: url('home/cf/minutetalk/minutetalk/static/fonts/digital-7.ttf') format("truetype"); 
   font-family: Digital-7;
 }
 
 @font-face {
-  src: url('/static/fonts/BebasNeue-Regular.ttf') format("truetype"); 
+  src: url('home/cf/minutetalk/minutetalk/static/fonts/BebasNeue-Regular.ttf') format("truetype"); 
   font-family: BebasNeue;
 }
 
 @font-face {
-  src: url('/static/fonts/CODE Bold.ttf') format("truetype"); 
+  src: url('home/cf/minutetalk/minutetalk/static/fonts/CODE Bold.ttf') format("truetype"); 
   font-family: Code;
 }
 
@@ -27,6 +27,20 @@ background: linear-gradient(to left, #CFDEF3, #E0EAFC); /* W3C, IE 10+/ Edge, Fi
   color: white;
   background: url(/static/images/triangles.png), #170733;
   font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+.display_err {
+    font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+    color: #170733;
+    text-align: center;
+    margin-top: 15%;
+}
+
+.display_err_404 {
+    font-family: 'Digital-7';
+    color: #170733;
+    text-align: center;
+    font-size: 200px;
 }
 
 .v-btn--active:before .v-btn:focus:before, .v-btn:hover:before .v-toolbar__content {

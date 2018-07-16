@@ -1,10 +1,6 @@
 {% extends 'minutetalk/home.html' %} {% block content %}
 <v-content>
     <v-container fluid grid-list-xl>
-        <v-btn icon small>
-            <v-icon dark left>arrow_back</v-icon>
-        </v-btn>
-
         <template>
             <v-layout row wrap>
                 <v-flex xs12 class="text-xs-center">
@@ -32,7 +28,7 @@
                 </v-flex>
             </v-layout>
             <v-flex xs12 sm6 md3>
-                <v-text-field class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details dark></v-text-field>
+                <v-text-field class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details color="indigo"></v-text-field>
             </v-flex>
             <v-layout row wrap>
                 {% for user in users %}
@@ -40,9 +36,9 @@
                     <div>
                         <v-list-tile-avatar size="200px">
                             <img src="/media/{{ user.img_src }}">
-                            <p class="name">{{user.first_name}} {{user.last_name}}</p>
+                            <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
                         </v-list-tile-avatar>
-                        <v-btn round>Talk!</v-btn>
+                        <v-btn class="btn btn-3">Talk!</v-btn>
                     </div>
                 </v-flex>
                 {%endfor%}

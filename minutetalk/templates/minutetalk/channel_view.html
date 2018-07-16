@@ -2,7 +2,7 @@
 <v-content>
     <v-container fluid grid-list-xl>
         <v-flex xs12 sm6 md3>
-            <v-text-field class="ml-2" ref="search" label="Search..." append-icon="search"  v-model="search_input" hide-details dark></v-text-field>
+            <v-text-field class="" ref="search" label="Search..." append-icon="search"  v-model="search_input" hide-details color="indigo"></v-text-field>
         </v-flex>
         <template v-if="!search_input.trim()">
             {% for channeltype in channels_list%}
@@ -11,7 +11,7 @@
             <v-layout row wrap>
                 {% for channel in channeltype.channel_set.all %}
                 <v-flex d-flex xs10 sm3>
-                    <v-card>
+                    <v-card hover>
                         <v-card-media height="200px" src="/media/{{ channel.img_src }}">
                             <v-card-text class="description">
                                 {{ channel.description}}
@@ -24,8 +24,8 @@
                             </div>
                         </v-card-title>
                         <v-card-actions>
-                            <v-btn flat color="red" href="{% url 'minutetalk:join_channel' channel.id %}"> Join                                
-                            </v-btn>
+                            <v-spacer></v-spacer>
+                            <v-btn class="btn2 btn-3" href="{% url 'minutetalk:join_channel' channel.id %}">Join</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-flex>
@@ -36,7 +36,7 @@
         <div v-if="search_input.trim()">
             <template>
                 <v-spacer>
-                    <h1>Search Result</h1></v-spacer>
+                    <h1 class="title">Search Result</h1></v-spacer>
                 <v-layout row wrap>
                     <v-flex d-flex xs10 sm3 v-for="channel in r" :key="channel.id">
                         <v-card>
@@ -49,7 +49,8 @@
                                 <h3 class="headline mb-0">[[channel.title]]</h3>
                             </v-card-title>
                             <v-card-actions>
-                                <v-btn @click="join_channel(channel.title,channel.id)" flat color="red">Join Channel</v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn class="btn2 btn-3" @click="join_channel(channel.title,channel.id)">Join</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
