@@ -40,7 +40,7 @@ class LogInView(generic.View):
         return JsonResponse(context)
 
 
-class SignUpView(generic.View):
+class SignUpView(generic.View): 
 
     def post(self, request, *args, **kwargs):
         form = UserProfileForm(request.POST)
@@ -232,7 +232,6 @@ class CreateSessionView(LoginRequiredMixin, generic.View):
         context = {}
         if CallerCallee.objects.filter(caller=request.user).exists():
             context['message'] = 'Session already created'
-
         else:
 
             # Create a session that attempts to send streams directly between 

@@ -42,6 +42,7 @@ class CallerCallee(models.Model):
     callee = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="callee")
     session_id = models.CharField(max_length=72)
+    accepted = models.BooleanField(default=False)
 
     def __str__(self):
         return 'Caller : {} \n Callee: : {}'.format(self.caller.first_name,
