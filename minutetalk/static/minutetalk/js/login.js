@@ -76,7 +76,7 @@ var a = new Vue({
         },
         login: function() {
             $.ajax({
-                url: 'minutetalk/login',
+                url: '/login',
                 type: 'POST',
                 data: {
                     username: this.form.loginusername,
@@ -91,7 +91,7 @@ var a = new Vue({
                         this.form.loginusername = ''
                         this.form.loginpassword = ''
                     } else {
-                        window.location.href = "minutetalk/home"
+                        window.location.href = "home"
                     }
                 }
             })
@@ -99,7 +99,7 @@ var a = new Vue({
         },
         signup: function() {
             $.ajax({
-                url: 'minutetalk/signup',
+                url: '/signup',
                 type: 'POST',
                 data: {
                     first_name: this.form.fname,
@@ -121,7 +121,7 @@ var a = new Vue({
                     } else {
                         this.reset()
                         console.log("REDIRECTING")
-                        window.location.href = "minutetalk/home"
+                        window.location.href = "home"
                     }
                 }
             })

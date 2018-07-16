@@ -25,8 +25,13 @@ SECRET_KEY = ')$*9-ezvp-yu$%(&=qcf8p^1vwt*ea1a82(ut#^)cvzc6y!re$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = ['*']
 
+# Opentok API Keys
+
+api_key = '46151822'
+api_secret = '224a06a7055d1c1f5518d6a0de1720e71fb11e3c'
 
 # Application definition
 
@@ -139,3 +144,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = '/'
 
+
+FIXTURE_DIRS = (
+   '/',
+)

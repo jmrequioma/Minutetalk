@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 
 
-
 class UserProfileForm(forms.ModelForm):
     GENDER_CHOICES = (
         ("Male", "Male"),
@@ -18,13 +17,13 @@ class UserProfileForm(forms.ModelForm):
     password2 = forms.CharField()
     first_name = forms.CharField()
     last_name = forms.CharField()
-    img_src = forms.CharField()
- 
+
     class Meta:
         model = UserProfile
-        fields = ['age','email','gender','username','password1','password2','first_name','last_name','img_src']
+        fields = ['age', 'email', 'gender', 'username',
+                  'password1', 'password2', 'first_name', 'last_name']
 
-    def edit(self,request):
+    def edit(self, request):
         data = self.cleaned_data
         user = request.user
         userProfile = request.user.userprofile
