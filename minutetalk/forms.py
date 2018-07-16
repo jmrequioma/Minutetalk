@@ -18,11 +18,10 @@ class UserProfileForm(forms.ModelForm):
     password2 = forms.CharField()
     first_name = forms.CharField()
     last_name = forms.CharField()
-    img_src = forms.CharField()
  
     class Meta:
         model = UserProfile
-        fields = ['age','email','gender','username','password1','password2','first_name','last_name','img_src']
+        fields = ['age','email','gender','username','password1','password2','first_name','last_name']
 
     def edit(self,request):
         data = self.cleaned_data

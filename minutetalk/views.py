@@ -1,15 +1,20 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views import generic
-from .models import UserProfile, ChannelType, Channel
-from django.contrib.auth.models import User
+from .models import UserProfile, ChannelType, Channel, CallerCallee
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-from django.http import JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import UserProfileForm
-import base64
 from django.core.files.base import ContentFile
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from .forms import UserProfileForm
+from django.views import generic
+from django.urls import reverse
+from opentok import OpenTok
+import base64
+
+api_key = '46151822'
+api_secret = '224a06a7055d1c1f5518d6a0de1720e71fb11e3c'
+opentok = OpenTok(api_key, api_secret)
 
 
 class IndexView(generic.View):
@@ -18,7 +23,6 @@ class IndexView(generic.View):
         if(request.user.is_authenticated):
             return HttpResponseRedirect(reverse('minutetalk:home'))
         return render(request, 'minutetalk/index.html')
-
 
 
 class LogInView(generic.View):
@@ -51,14 +55,16 @@ class SignUpView(generic.View):
                 user=user,gender=data['gender'], age=data['age']
                 )
             userprofile.save()
-            addUserImage(request,userprofile)
+            print(data['img_src'])
+            if data['img_src']:
+                addUserImage(request,userprofile)
+
             user = authenticate(request, username=request.POST['username'], password=request.POST['password1'])
             if user is not None:
                 login(request, user)
                 return JsonResponse({})
             return JsonResponse({"error": "Some error occured during sign up"})
         return JsonResponse({"error" : form.errors})
-
 
 
 class HomeView(LoginRequiredMixin, generic.View):
@@ -147,6 +153,58 @@ class AddFavoriteChannel(LoginRequiredMixin, generic.View):
             context['message'] = 'Added to favorites'
             return JsonResponse(context)
 
+
+class VideoChatView(LoginRequiredMixin, generic.View):
+
+    def get(self, request, *args, **kwargs):
+
+        if CallerCallee.objects.filter(caller=request.user).exists():
+            session_id = CallerCallee.objects.get(caller=request.user).session_id
+        else:
+            session_id = CallerCallee.objects.get(callee=request.user).session_id
+
+        # Generate a Token from just a session_id (fetched from a database)
+        token = opentok.generate_token(session_id)
+
+        connectionMetadata = request.user.username
+        token = opentok.generate_token(session_id)
+
+        context = {
+            'session_id' : session_id, 
+            'token': token,
+            'apikey' : api_key,
+        }
+        return render(request, 'minutetalk/livestream.html',context)
+
+
+class CreateSessionView(LoginRequiredMixin, generic.View):
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        if CallerCallee.objects.filter(caller=request.user).exists():
+            context['message'] = 'Session already created'
+
+        else:
+
+            # Create a session that attempts to send streams directly between clients (falling back
+            # to use the OpenTok TURN server to relay streams if the clients cannot connect):
+            session = opentok.create_session()
+
+            # Store this session ID in the database
+            session_id = session.session_id
+            caller = request.user
+            callee = get_object_or_404(User,id=request.GET['callee_id'])
+
+            chatSession = CallerCallee(
+                caller=caller,callee=callee,session_id=session_id
+                )
+            chatSession.save()
+
+            context['message'] = 'Video Session created successfully'
+
+        return JsonResponse(context)
+
+# Converts base64 image to Contentfile
 def addUserImage(request,userprofile):
     image_data = request.POST['img_src']
     format, imgstr = image_data.split(';base64,')
