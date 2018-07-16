@@ -15,6 +15,8 @@ urlpatterns = [
     path('videochat', views.VideoChatView.as_view(), name='favorite'),
 
     path('ajax/search', views.SearchChannel.as_view(), name='search_channel'),
-    path('ajax/add_to_favorite', views.AddFavoriteChannel.as_view(), name='favorite'),
-    path('ajax/session', views.CreateSessionView.as_view(), name='create_session'),
+    path('ajax/add_to_favorite', views.AddFavoriteChannel.as_view(),
+         name='favorite'),
+    path('ajax/session', views.CreateSessionView.as_view(),
+         name='create_session'),
 ]

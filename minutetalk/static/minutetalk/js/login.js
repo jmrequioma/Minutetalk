@@ -76,7 +76,7 @@ var a = new Vue({
         },
         login: function() {
             $.ajax({
-                url: 'login',
+                url: '/login',
                 type: 'POST',
                 data: {
                     username: this.form.loginusername,
@@ -99,7 +99,7 @@ var a = new Vue({
         },
         signup: function() {
             $.ajax({
-                url: 'signup',
+                url: '/signup',
                 type: 'POST',
                 data: {
                     first_name: this.form.fname,
