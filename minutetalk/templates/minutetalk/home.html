@@ -200,14 +200,10 @@
                 <!-- </v-content> -->
                 </v-dialog>
                 {% block content %} {% endblock %}
-
             </v-app>
-                
-
         </div>
     </div>
     <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
-    {% block js %} {%endblock js%}
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
     <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
@@ -215,6 +211,11 @@
     <script type="text/javascript" src="{% static 'minutetalk/js/home.js' %}"></script>
     <script type="text/javascript" src="{% static 'minutetalk/js/preloader.js' %}"></script>
     <script type="text/javascript">
+        var apiKey = '{{ apikey }}'
+        var sessionId = '{{ session_id }}'
+        var token = '{{ token }}'
+        console.log(apiKey)
+
         var fname1 = "{{user.first_name}}";
         var lname1 = "{{user.last_name}}";
         var email1 = "{{user.email}}";
@@ -235,5 +236,6 @@
         vue.channel.fav = ("{{fav}}" == "True")
 
     </script>
+    {% block js %} {%endblock js%}
 </body>
 </html>

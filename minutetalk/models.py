@@ -45,15 +45,12 @@ class Channel(models.Model):
     def __str__(self):
         return self.title
 
-
-class CallerCallee(models.Model):
-    caller = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="caller")
-    callee = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="callee")
-    session_id = models.CharField(max_length=72)
-    accepted = models.BooleanField(default=False)
+class ChatLog(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=400,blank=True)
+    session_id = models.CharField(max_length=72,blank=True)
 
     def __str__(self):
-        return 'Caller : {} \n Callee: : {}'.format(self.caller.first_name,
-                                                    self.callee.first_name)
+        return 'User : {} \n Session : {} \n Token : {}'.format(self.user.username,
+                                                    self.session_id, self.token)
