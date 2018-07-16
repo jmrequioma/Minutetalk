@@ -11,11 +11,21 @@ class UserProfile(models.Model):
     img_src = models.ImageField(upload_to='users/', default='users/noprof.jpg')
     fav_channels = models.ManyToManyField('Channel', null=True, blank=True)
     my_channel = models.ForeignKey('Channel', on_delete=models
-                                   .CASCADE, null=True,
+                                   .CASCADE, blank=True, null=True,
                                    related_name="current_channel")
 
     def __str__(self):
         return self.user.username
+
+    def asdict(self):
+        return {
+                'username': self.user.username,
+                'first_name': self.user.first_name,
+                'last_name': self.user.last_name,
+                'id': self.id,
+                'img_src': self.img_src.name
+                }
+
 
 
 class ChannelType(models.Model):

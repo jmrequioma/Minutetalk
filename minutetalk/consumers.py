@@ -14,14 +14,15 @@ class ChatConsumer(AsyncConsumer):
             self.channel_id,
             self.channel_name
         )
+
         user_dict ={
+            'type' : 'user',
             'join' : True,
             'username': user.username,
             'first_name': user.first_name,
             'last_name': user.last_name,
             'id': user.userprofile.id,
-            'img_src': ' '
-            # 'img_src': user.userprofile.img_src
+            'img_src': user.userprofile.img_src.name
         }
 
         await self.channel_layer.group_send(
@@ -47,7 +48,10 @@ class ChatConsumer(AsyncConsumer):
     async def websocket_disconnect(self, event):
         # clear the data in database
         user = self.scope['user']
+        user.userprofile.my_channel = None
+        user.userprofile.save()
         user_dict ={
+            'type' : 'user',
             'join' : False,
             'username': user.username,
             'id': user.userprofile.id,
@@ -77,3 +81,19 @@ class ChatConsumer(AsyncConsumer):
     
     async def websocket_receive(self, event):
         print("recieve", event)
+        data = json.loads(event['text'])
+        data['type'] = 'talk'
+        data['user'] = self.scope['user'].userprofile.asdict()
+        await self.channel_layer.group_send(
+            self.channel_id,
+            {
+                "type": "talk",
+                "id": json.dumps(data)
+            }
+        )
+
+    async def talk(self, event):
+        await self.send({
+            "type": "websocket.send",
+            "text": event['id']
+            })

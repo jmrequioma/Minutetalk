@@ -35,6 +35,9 @@ var vue = new Vue({
                 show_favorite: false,
                 fav: false
             },
+            caller: {},
+            incomingcall: false,
+            calling: false,
             name: '',
             details: '',
             firstnameRules: [
@@ -200,6 +203,10 @@ var vue = new Vue({
                     }
                 }
             })
+        },
+        talk: function(id){
+            this.calling = true
+            talk(id)
         }
     },
     watch: {

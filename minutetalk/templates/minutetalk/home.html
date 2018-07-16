@@ -33,7 +33,7 @@
                 <v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" app v-model="drawer" class=drawer>
                     <v-list dense>
                         <v-avatar size="80px" class="avatarimage">
-                            <!-- <img src="/media/{{user.userprofile.img_src}}"> -->
+                            <img src="/media/{{user.userprofile.img_src}}">
                         </v-avatar>
                         <v-spacer class="username" v-model="name">
                             [[name]]
@@ -85,14 +85,14 @@
                     <v-menu v-model=menupopout :close-on-content-click="false" :nudge-width="50" offset-y>
                         <v-btn icon slot="activator">
                             <v-avatar size="32px">
-                                <!-- <img src="/media/{{user.userprofile.img_src}}" alt="Avatar"> -->
+                                <img src="/media/{{user.userprofile.img_src}}" alt="Avatar">
                             </v-avatar>
                         </v-btn>
                         <v-card class=usericonright>
                             <v-list>
                                 <v-list-tile avatar>
                                     <v-list-tile-avatar>
-                                        <!-- <img src="/media/{{user.userprofile.img_src}}"> -->
+                                        <img src="/media/{{user.userprofile.img_src}}">
                                     </v-list-tile-avatar>
                                     <v-list-tile-content>
                                         <v-list-tile-title v-model="name">[[name]]</v-list-tile-title>
@@ -155,7 +155,7 @@
                             Confirm Your Changes
                         </v-card-title>
                         <v-avatar size="50px" class="avatarimage">
-                            <!-- <img src="/media/{{user.userprofile.img_src}}"> -->
+                            <img src="/media/{{user.userprofile.img_src}}">
                         </v-avatar>
                         <v-spacer class="username" v-model="name">
                             [[name]]
