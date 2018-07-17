@@ -9,17 +9,22 @@ var vue = new Vue({
             isEditing: false,
             drawer: null,
             menupopout: false,
-            search_input: '',
-            search_result: [],
-            show_search_result: false,
+            channel_search: '',
+            channel_result: [],
+            user_search: '',
+            user_result: [],
+            show_channel_result: false,
             queryHTML: null,
             editformpass: '',
             enterpass: false,
-            otheruser: {
-                name: 'Marie Curie Salera',
-                avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/22853443_1689141051097186_4885884491507680611_n.jpg?_nc_cat=0&oh=217127d24ad65e5ae3a53d9241e968d2&oe=5BAE5931',
-                fav: false
-            },
+            success: false,
+            errorpassword: true,
+            validsave: true,
+            validedit: false,
+            genderchoice: 'All',
+            gender: ['All', 'Male', 'Female'],
+            agechoice: 'All',
+            age: ['All', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
             form: {
                 fname: '',
                 lname: '',
@@ -29,6 +34,7 @@ var vue = new Vue({
                 gender: '',
                 test: '',
             },
+            editError: '',
             currentpass: '',
             password_match: false,
             changepass: {
@@ -44,6 +50,8 @@ var vue = new Vue({
             callee: {},
             incomingcall: false,
             calling: false,
+            calleebusy: false,
+            calleereject: false,
             name: '',
             details: '',
             firstnameRules: [
@@ -164,8 +172,15 @@ var vue = new Vue({
                     csrfmiddlewaretoken: this.$refs.editForm.csrfmiddlewaretoken.value
                 },
                 success: response => {
-                    console.log(response['error'])
-                    console.log("success")
+                    if (response['error']) {
+                        this.editError = response['error']
+                    } else {
+                        this.success = true
+                        this.enterpass = false
+                        setTimeout(function(){
+                            vue.success = false
+                        }, 1 * 1000); // Hide after 1 sec
+                    }
                 }
             });
             this.editformpass = ""
@@ -181,7 +196,10 @@ var vue = new Vue({
                     csrfmiddlewaretoken: this.$refs.changePassword.csrfmiddlewaretoken.value
                 },
                 success: response => {
-                    console.log("success")
+                    this.success = true
+                    setTimeout(function(){
+                        vue.success = false
+                        }, 1 * 1000); // Hide after 1 sec
                 }
             });
             this.reset()
@@ -234,31 +252,43 @@ var vue = new Vue({
         cancel_call: function(id){
             this.calling = false
             cancel_call(id)
+        },
+        decline_call: function(id){
+            decline_call(id)
 
         }
     },
     watch: {
-        search_input: function() {
-            var a = []
-            if (this.search_input.trim()) {
+        channel_search: function() {
+            var res = []
+            if (this.channel_search.trim()) {
                 $.ajax({
                     async: false,
-                    url: 'ajax/search',
+                    url: 'ajax/search_channel',
                     data: {
-                        'query': this.search_input,
+                        'query': this.channel_search,
                     },
                     success: function(data) {
                         if (data.titles.length > 0) {
-                            this.show_search_result = true;
-                            a = data.titles;
-                        } else {
-                            this.show_search_result = false;
+                            res = data.titles;
                         }
                     }
                 });
-                this.search_result = a
+                this.channel_result = res
 
             }
+        },
+        user_search: function() {
+            var channel_id = parseInt(window.location.pathname.substring(1))
+            this.user_result = filterUser(channel_id, this.user_search, this.agechoice, this.genderchoice)
+        },
+        agechoice: function() {
+            var channel_id = parseInt(window.location.pathname.substring(1))
+            this.user_result = filterUser(channel_id, this.user_search, this.agechoice, this.genderchoice)
+        },
+        genderchoice: function() {
+            var channel_id = parseInt(window.location.pathname.substring(1))
+            this.user_result = filterUser(channel_id, this.user_search, this.agechoice, this.genderchoice)
         },
         currentpass: function(){
             var value = false;
@@ -276,8 +306,11 @@ var vue = new Vue({
         }
     },
     computed: {
-        r() {
-            return this.search_result;
+        channel_search_result() {
+            return this.channel_result;
+        },
+        user_search_result() {
+            return this.user_result;
         },
         valid_prof_form() {
             fname = this.form.fname;

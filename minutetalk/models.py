@@ -14,7 +14,7 @@ class UserProfile(models.Model):
                                    .CASCADE, blank=True, null=True,
                                    related_name="current_channel")
     def __str__(self):
-        return self.user.username
+        return self.user.first_name + ' ' + self.user.last_name
 
     def asdict(self):
         return {
