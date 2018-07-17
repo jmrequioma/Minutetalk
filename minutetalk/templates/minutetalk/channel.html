@@ -31,7 +31,7 @@
             <h3 class="title" style="padding-left: 0px;">FILTER BY</h3>
             <v-layout align-center justify-start row fill-height>
                 <v-flex xs3 style="padding-top: 0px; padding-bottom: 20px;">
-                    <v-text-field label="Search Name" append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details  color="indigo"></v-text-field>
+                    <v-text-field label="Search Name" append-icon="search" v-model="user_search"  hide-details  color="indigo"></v-text-field>
                 </v-flex>
                 <v-flex xs2>
                     <v-select :items="gender" v-model="genderchoice"  label="Gender"  single-line color="indigo"></v-select>
@@ -41,7 +41,7 @@
                 </v-flex>
           </v-layout>
 
-            <v-layout row wrap>
+            <v-layout v-if="!user_search.trim() && agechoice == 'All' && genderchoice == 'All'" row wrap>
                 {% for user in users %}
                 <v-flex d-flex xs10 sm3>
                     <div id="{{user.id}}" :key="{{user.id}}">
@@ -62,6 +62,20 @@
                         <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
                     </div>
                 </v-flex>
+            </v-layout>
+            <v-layout  v-if="user_search.trim() || agechoice != 'All' || genderchoice != 'All'" row wrap>
+                <v-layout align-center justify-center row fill-height v-if="!user_result.length">
+                        <h2 class="result"> No results found.</h2>
+                    </v-layout>
+                <v-flex v-for="user in user_search_result" d-flex xs10 sm3>
+                    <div :id="[[user.id]]">
+                        <v-list-tile-avatar size="200px">
+                            <img :src="'/media/' + [[ user.img_src ]]">
+                            <p class="name">[[user.first_name]] [[user.last_name]]</p>
+                        </v-list-tile-avatar>
+                        <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
+                    </div>
+                </v-flex>                
             </v-layout>
         </template>
     </v-container>
@@ -270,6 +284,26 @@
         console.log('Sending session....')
         socket.send(JSON.stringify({'type': 'session', 'session_id': session_id , 'caller_id' : caller_id}))
         vue.startCall(session_id)
+    }
+    function filterUser(channel_id, name, age, gender){
+        var res = []
+        $.ajax({
+            async: false,
+            url: 'ajax/search_user',
+            data: {
+                'query': name,
+                'age': age,
+                'gender': gender,
+                'channel_id': channel_id
+            },
+            success: function(data) {
+                if (data.users.length > 0) {
+                    res = data.users;
+                }
+                
+            }
+        });
+        return res
     }
     
 </script>

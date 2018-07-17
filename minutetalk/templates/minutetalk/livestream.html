@@ -21,52 +21,93 @@
                 <v-navigation-drawer>
                     <v-list class="questionlist">
                         <v-subheader>MY QUESTIONS</v-subheader>
-                        <!--                         <template v-for="(item, index) in myquestion">
-                            <v-list-tile :key="item.title" ripple @click="">
-                                <v-list-tile-content>
-                                    <v-list-tile-title class="myquestion"></v-list-tile-title>
-                                </v-list-tile-content>
-                                <v-list-tile-avatar size="30px">
-                                    <img :src="user.avatar">
-                                </v-list-tile-avatar>
-                            </v-list-tile>
-                        </template>
-                        <v-divider></v-divider> -->
+                        {% for question in questions_list%}
+                        <v-list-tile id="{{question.id}}" ripple onclick="removeQuestion('{{question.text}}','{{question.id}}')">
+                            <v-list-tile-content>
+                                <v-list-tile-title class="myquestion">{{question.text}}</v-list-tile-title>
+                            </v-list-tile-content>
+                            <v-list-tile-avatar size="30px">
+                                <img src="/media/{{partner.img_src}}">
+                            </v-list-tile-avatar>
+                        </v-list-tile>
+                        {% endfor %}
+                        <v-divider></v-divider>
                         <v-subheader>INCOMING QUESTIONS</v-subheader>
-                        <!-- <template v-for="(item, index) in otherquestion">
-                            <v-list-tile :key="item.title">
-                                <v-list-tile-avatar size="30px">
-                                    <img :src="otheruser.avatar">
-                                </v-list-tile-avatar>
-                                <v-list-tile-content>
-                                    <small class="timedisplay">[[showtime()]]</small>
-                                    <v-list-tile-title class="otherquestion">[[item.question]]</v-list-tile-title>
-                                </v-list-tile-content>
-                            </v-list-tile>
-                        </template> -->
+                        <div id='incoming_messages'></div>
+
                     </v-list>
                 </v-navigation-drawer>
             </div>
         </v-container>
+                <button onclick="disconnect()"> DISCONNECT</button>
+        <!-- <button onclick="sendMessage()"> MESSAGE</button> -->
     </v-container>
     </v-container>
 </v-content>
 {% endblock %} {% block js %}
 <script>
-// replace these values with those generated in your TokBox Account
-// var apiKey = "46151822";
-// var sessionId = "1_MX40NjE1MTgyMn5-MTUzMTM4MzcwMDk2NX4wQ29icndnTEhhMWo5Z0x1T1NQMUZkb1d-UH4";
-// var token = "T1==cGFydG5lcl9pZD00NjE1MTgyMiZzaWc9NTJmYzIxNGQ1ZjBlNzI5MzczMTRhOTliOTgxZWU1YmRkZTBmOTViYTpzZXNzaW9uX2lkPTFfTVg0ME5qRTFNVGd5TW41LU1UVXpNVE00TXpjd01EazJOWDR3UTI5aWNuZG5URWhoTVdvNVoweDFUMU5RTVVaa2IxZC1VSDQmY3JlYXRlX3RpbWU9MTUzMTc0NDkxNCZub25jZT0wLjY4MTA5NTUzMjAyNDExNzImcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTUzMTgzMTMxMyZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
-// Handling all of our errors here by alerting them
+var endpoint = 'ws://' + window.location.host + '/videochat/' + sessionId;
+var socket = new WebSocket(endpoint)
+
+window.onload = function() {
+    socket.onmessage = function(e) {
+        var data = JSON.parse(e.data)
+        console.log('{{request.user.userprofile.id}}');
+        console.log(data['message']['receiver'])
+        if (data['message']['receiver'] == '{{request.user.userprofile.id}}') {
+            console.log('MESSAGE RECEIVED!')
+            var message = data['message']['message']
+            var element = "<v-list-tile>" +
+                "<v-list-tile-avatar size='30px'>" +
+                "<img src='/media/{{partner.img_src}}'>" +
+                "</v-list-tile-avatar>" +
+                "<v-list-tile-content>" +
+                "<small class='timedisplay'>" + '18:23' + "</small>" +
+                "<v-list-tile-title class='otherquestion'>" + message + "</v-list-tile-title>" +
+                "</v-list-tile-content>" +
+                "</v-list-tile>";
+            document.getElementById('incoming_messages').innerHTML += (element);        }
+    }
+    socket.onopen = function(e) {
+        console.log("open", e)
+    }
+    socket.onerror = function(e) {
+        console.log("error", e)
+    }
+    socket.onclose = function(e) {
+        console.log("close", e)
+    }
+}
+
+function removeQuestion(question_text, question_id) {
+    document.getElementById(question_id).remove();
+    sendMessage(question_text)
+}
+
+function sendMessage(text) {
+    console.log('Sending message...')
+    socket.send(JSON.stringify({
+        'receiver': partner_id,
+        'message': text
+    }));
+}
+
+
 function handleError(error) {
     if (error) {
         alert(error.message);
     }
 }
 
-function initializeSession() {
-    var session = OT.initSession(apiKey, sessionId);
+function disconnect() {
+    console.log("Disconnecting");
+    session.disconnect();
+    window.history.back();
+}
 
+var session = OT.initSession(apiKey, sessionId);
+
+function initializeSession() {
     // Subscribe to a newly created stream
     session.on('streamCreated', function(event) {
         session.subscribe(event.stream, 'subscriber', {
@@ -74,6 +115,13 @@ function initializeSession() {
             width: '100%',
             height: '100%'
         }, handleError);
+    });
+    
+    // Listener for diconnected streams
+    session.on("streamDestroyed", function(event) {
+        session.disconnect();
+        window.history.back();
+        console.log("Stream " + event.stream.name + " ended. " + event.reason);
     });
 
     // Create a publisher
@@ -93,6 +141,7 @@ function initializeSession() {
         }
     });
 }
+
 // (optional) add server code here
 initializeSession();
 </script>

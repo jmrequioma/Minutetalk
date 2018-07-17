@@ -1,4 +1,6 @@
+from .models import UserProfile, ChannelType, Channel, ChatLog, Question
 from .models import UserProfile, ChannelType, Channel, ChatLog
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
@@ -10,7 +12,9 @@ from .forms import UserProfileForm
 from django.views import generic
 from django.urls import reverse
 from opentok import OpenTok
+from random import sample
 import base64
+
 
 api_key = '46151822'
 api_secret = '224a06a7055d1c1f5518d6a0de1720e71fb11e3c'
@@ -98,6 +102,7 @@ class JoinChannel(LoginRequiredMixin, generic.View):
         channel = get_object_or_404(Channel, id=channel_id)
         user = request.user.userprofile
         online_users = channel.current_channel.exclude(user=request.user)
+        print(type(online_users))
         my_channels = user.fav_channels.all()
         user.my_channel = channel
         user.save()
@@ -113,8 +118,8 @@ class JoinChannel(LoginRequiredMixin, generic.View):
 class SearchChannel(LoginRequiredMixin, generic.View):
 
     def get(self, request):
-        username = request.GET.get('query')
-        data = Channel.objects.filter(title__contains=username)
+        channel_title = request.GET.get('query')
+        data = Channel.objects.filter(title__contains=channel_title)
         context = []
         for x in data:
             d = {
@@ -126,14 +131,42 @@ class SearchChannel(LoginRequiredMixin, generic.View):
             context.append(d)
         return JsonResponse({'titles': context})
 
+class SearchUser(LoginRequiredMixin, generic.View):
+
+    def get(self, request):
+        data = request.GET
+        name = data['query'].lower()
+        age = data['age']
+        gender = data['gender']
+
+        channel_id = request.GET.get('channel_id')
+        channel = get_object_or_404(Channel, id=channel_id)
+        users_in_channel = channel.current_channel.exclude(user=request.user)
+
+        if gender and gender != 'All':
+            users_in_channel = users_in_channel.filter(gender=gender)
+
+        if age and age != 'All':
+            index =  age.find('-')
+            lowerlimit =  int(age[:index])
+            upperlimit = int(age[index + 1:])
+            users_in_channel = users_in_channel.filter(age__gte=lowerlimit, age__lte=upperlimit)
+
+        context = []
+        for user in users_in_channel:
+            n = str(user).lower()
+            print(n, name, n.find(name) )
+            if(n.find(name) >= 0):
+                print(user)                
+                context.append(user.asdict())
+        return JsonResponse({"users": context})
+
+
+
 
 class EditProfile(LoginRequiredMixin, generic.View):
 
     def post(self, request):
-        # form = UserProfileForm(request.POST)
-        # if form.is_valid():
-            # form.edit(request)
-            # print(request.POST['password1'])
         data = request.POST
         if (request.user.check_password(request.POST['password1'])): 
             user = request.user
@@ -154,13 +187,9 @@ class EditProfile(LoginRequiredMixin, generic.View):
 class EditPassword(LoginRequiredMixin, generic.View):
 
     def post(self, request):
-        # form = UserProfileForm(request.POST)
-        # if form.is_valid():
-            # form.edit(request)
-            # print(request.POST['password1'])
         data = request.POST
         user = request.user
-        if (not user.check_password(request.POST['oldpassword'])): 
+        if (not user.check_password(request.POST['currentpass'])): 
             return JsonResponse({'error': 'Current Password is incorrect'})
         if(data['password1'] != data['password2']):
             return JsonResponse({'error': 'New Password and Confirm Password do not match'})
@@ -205,12 +234,17 @@ class VideoChatView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         chatlog = ChatLog.objects.filter(user=request.user).last()
-        
+        partner = ChatLog.objects.filter(session_id=chatlog.session_id).exclude(user=request.user).first()
+        channel = get_object_or_404(Channel,id=11)
+        questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
+        print(questions_list)
         context = {
             'apikey' : api_key,
             'session_id' : chatlog.session_id,
             'token' : chatlog.token,
-            'message' : 'Enjoy'
+            'message' : 'Enjoy',
+            'partner' : partner.user.userprofile,
+            'questions_list' : questions_list
         }
         return render(request, 'minutetalk/livestream.html',context)
 
@@ -219,9 +253,7 @@ class CreateToken(LoginRequiredMixin, generic.View):
     
     def get(self, request, *args, **kwargs):
         session_id = request.GET.get('session_id')
-        # Generate a Token from just a session_id (fetched from a database)
-        token = opentok.generate_token(session_id
-)
+        token = opentok.generate_token(session_id)
         connectionMetadata = request.user.username
         token = opentok.generate_token(session_id)
 
@@ -239,28 +271,13 @@ class CreateToken(LoginRequiredMixin, generic.View):
 class CreateSession(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
-        # Create a session that attempts to send streams directly between 
-        # clients (falling back
-        # to use the OpenTok TURN server to relay streams if the clients 
-        # cannot connect):
         session = opentok.create_session()
-
-        # Store this session ID in the database
         session_id = session.session_id
-        # caller = request.user
-        # callee = get_object_or_404(User, id=request.GET['callee_id'])
-
-        # chatSession = CallerCallee(
-        #     caller=caller, callee=callee, session_id=session_id
-        # )
-        # chatSession.save()
         context = {
             'message' : 'Video Session created successfully',
             'session' : session_id,  
         }
         return JsonResponse(context)
-
-# Converts base64 image to Contentfile
 
 
 def addUserImage(request, userprofile):

@@ -9,9 +9,11 @@ var vue = new Vue({
             isEditing: false,
             drawer: null,
             menupopout: false,
-            search_input: '',
-            search_result: [],
-            show_search_result: false,
+            channel_search: '',
+            channel_result: [],
+            user_search: '',
+            user_result: [],
+            show_channel_result: false,
             queryHTML: null,
             editformpass: '',
             enterpass: false,
@@ -19,10 +21,10 @@ var vue = new Vue({
             errorpassword: true,
             validsave: true,
             validedit: false,
-            genderchoice: '',
-            gender: ['Male', 'Female'],
-            agechoice: '',
-            age: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
+            genderchoice: 'All',
+            gender: ['All', 'Male', 'Female'],
+            agechoice: 'All',
+            age: ['All', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
             form: {
                 fname: '',
                 lname: '',
@@ -176,10 +178,8 @@ var vue = new Vue({
                         this.success = true
                         this.enterpass = false
                         setTimeout(function(){
-                            console.log("success = false")
                             vue.success = false
                         }, 1 * 1000); // Hide after 1 sec
-                        console.log("here")
                     }
                 }
             });
@@ -196,10 +196,10 @@ var vue = new Vue({
                     csrfmiddlewaretoken: this.$refs.changePassword.csrfmiddlewaretoken.value
                 },
                 success: response => {
+                    this.success = true
                     setTimeout(function(){
+                        vue.success = false
                         }, 1 * 1000); // Hide after 1 sec
-                        console.log("here")
-                    console.log("success")
                 }
             });
             this.reset()
@@ -259,27 +259,36 @@ var vue = new Vue({
         }
     },
     watch: {
-        search_input: function() {
-            var a = []
-            if (this.search_input.trim()) {
+        channel_search: function() {
+            var res = []
+            if (this.channel_search.trim()) {
                 $.ajax({
                     async: false,
-                    url: 'ajax/search',
+                    url: 'ajax/search_channel',
                     data: {
-                        'query': this.search_input,
+                        'query': this.channel_search,
                     },
                     success: function(data) {
                         if (data.titles.length > 0) {
-                            this.show_search_result = true;
-                            a = data.titles;
-                        } else {
-                            this.show_search_result = false;
+                            res = data.titles;
                         }
                     }
                 });
-                this.search_result = a
+                this.channel_result = res
 
             }
+        },
+        user_search: function() {
+            var channel_id = parseInt(window.location.pathname.substring(1))
+            this.user_result = filterUser(channel_id, this.user_search, this.agechoice, this.genderchoice)
+        },
+        agechoice: function() {
+            var channel_id = parseInt(window.location.pathname.substring(1))
+            this.user_result = filterUser(channel_id, this.user_search, this.agechoice, this.genderchoice)
+        },
+        genderchoice: function() {
+            var channel_id = parseInt(window.location.pathname.substring(1))
+            this.user_result = filterUser(channel_id, this.user_search, this.agechoice, this.genderchoice)
         },
         currentpass: function(){
             var value = false;
@@ -297,8 +306,11 @@ var vue = new Vue({
         }
     },
     computed: {
-        r() {
-            return this.search_result;
+        channel_search_result() {
+            return this.channel_result;
+        },
+        user_search_result() {
+            return this.user_result;
         },
         valid_prof_form() {
             fname = this.form.fname;

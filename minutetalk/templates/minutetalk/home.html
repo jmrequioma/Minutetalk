@@ -163,7 +163,7 @@
                         </v-toolbar>
                         <v-alert v-if="!!editError" v-model="errorpassword" type="error" outline transition="scale-transition" style="height: 50px; width: 320px;"> [[editError]] </v-alert>
                         <v-avatar size="50px" class="avatarimage">
-                             <!-- <img src="/media/{{user.userprofile.img_src}}"> -->
+                             <img src="/media/{{user.userprofile.img_src}}">
                         </v-avatar>
                         <v-spacer class="username" v-model="name">
                             [[name]]
@@ -235,10 +235,11 @@
     <script type="text/javascript" src="{% static 'minutetalk/js/home.js' %}"></script>
     <script type="text/javascript" src="{% static 'minutetalk/js/preloader.js' %}"></script>
     <script type="text/javascript">
+
         var apiKey = '{{ apikey }}'
         var sessionId = '{{ session_id }}'
         var token = '{{ token }}'
-        console.log(apiKey)
+        var partner_id = '{{ partner.id }}'
 
         var fname1 = "{{user.first_name}}";
         var lname1 = "{{user.last_name}}";

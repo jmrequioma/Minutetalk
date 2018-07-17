@@ -2,9 +2,9 @@
 <v-content>
     <v-container fluid grid-list-xl>
         <v-flex xs12 sm6 md3>
-            <v-text-field class="" ref="search" label="Search..." append-icon="search"  v-model="search_input" hide-details color="indigo"></v-text-field>
+            <v-text-field class="" ref="search" label="Search..." append-icon="search"  v-model="channel_search" hide-details color="indigo"></v-text-field>
         </v-flex>
-        <template v-if="!search_input.trim()">
+        <template v-if="!channel_search.trim()">
             {% for channeltype in channels_list%}
             <v-spacer>
                 <h1 class="title">{{channeltype.name}}</h1></v-spacer>
@@ -20,7 +20,7 @@
                         <v-card-title primary-title>
                             <div>
                                 <h3 class="headline mb-0">{{ channel.title}}</h3>
-                                <span>There are {{channel}} users online</span>
+                                <span>There are {{channel.current_channel.all| length}} users online</span>
                             </div>
                         </v-card-title>
                         <v-card-actions>
@@ -33,12 +33,16 @@
             </v-layout>
             {% endfor %}
         </template>
-        <div v-if="search_input.trim()">
+        <div v-if="channel_search.trim()">
             <template>
                 <v-spacer>
-                    <h1 class="title">Search Result</h1></v-spacer>
+                    <h1 class="title">Search Result</h1>
+                </v-spacer>
                 <v-layout row wrap>
-                    <v-flex d-flex xs10 sm3 v-for="channel in r" :key="channel.id">
+                    <v-layout align-center justify-center row fill-height v-if="!channel_result.length">
+                        <h2 class="result"> No results found.</h2>
+                    </v-layout>
+                    <v-flex d-flex xs10 sm3 v-for="channel in channel_search_result" :key="channel.id">
                         <v-card>
                             <v-card-media :src="'/media/' + channel.src" height="200px" width="25%">
                                 <v-card-text class="description">
@@ -50,7 +54,7 @@
                             </v-card-title>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn class="btn2 btn-3" @click="">Join</v-btn>
+                                <v-btn class="btn2 btn-3" :href="channel.id.toString()">Join</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
