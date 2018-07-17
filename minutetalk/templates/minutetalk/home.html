@@ -78,6 +78,9 @@
                             </a>
                         </span>
                     </v-toolbar-title>
+                    <!--  <v-alert v-if="validedit=true" v-model="validsave" dismissible type="success">
+                  Your changes have been successfully saved
+                </v-alert> -->
                     <v-spacer></v-spacer>
                     <v-btn icon>
                         <v-icon>notifications</v-icon>
@@ -150,12 +153,17 @@
         <!-- </v-content> -->
                 </v-dialog>
                 <v-dialog v-model="enterpass" persistent max-width="350px">
-                    <v-card>
-                        <v-card-title class="font-weight-medium subheading" primary-title>
-                            Confirm Your Changes
-                        </v-card-title>
+                   <v-card >
+                        <v-toolbar dark color="primary">
+                            <v-toolbar-title>Confirm Your Changes</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                             <v-btn color="transparent" icon @click.native="enterpass=false, editError='', editformpass=''">
+                                <v-icon>close</v-icon>
+                            </v-btn>
+                        </v-toolbar>
+                        <v-alert v-if="!!editError" v-model="errorpassword" type="error" outline transition="scale-transition" style="height: 50px; width: 320px;"> [[editError]] </v-alert>
                         <v-avatar size="50px" class="avatarimage">
-                            <!-- <img src="/media/{{user.userprofile.img_src}}"> -->
+                             <!-- <img src="/media/{{user.userprofile.img_src}}"> -->
                         </v-avatar>
                         <v-spacer class="username" v-model="name">
                             [[name]]
@@ -167,8 +175,24 @@
                         </form>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn class="btn btn-2" @click.native="enterpass=false" @click.prevent="edit">Ok</v-btn>
+                            <v-btn class="btn btn-2"  @click.prevent="edit">Ok</v-btn>
                         </v-card-actions>
+                    </v-card>
+                </v-dialog>
+                <v-dialog v-model="success" persistent max-width="350px">
+                    <v-card>
+                        <v-toolbar dark color="primary">
+                            <v-toolbar-title>Confirm Your Changes</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                        </v-toolbar>
+                        <div class="check_mark">
+                            <div class="sa-icon sa-success animate">
+                                <span class="sa-line sa-tip animateSuccessTip"></span>
+                                <span class="sa-line sa-long animateSuccessLong"></span>
+                                <div class="sa-placeholder"></div>
+                                <div class="sa-fix"></div>
+                          </div>
+                        </div>
                     </v-card>
                 </v-dialog>
                 <v-dialog transition="scale-transition" v-model="changepassword" no-click-animation persistent width="500px" height="1000px">
