@@ -19,6 +19,10 @@ var vue = new Vue({
             errorpassword: true,
             validsave: true,
             validedit: false,
+            genderchoice: '',
+            gender: ['Male', 'Female'],
+            agechoice: '',
+            age: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
             form: {
                 fname: '',
                 lname: '',
