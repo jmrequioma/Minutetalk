@@ -261,6 +261,12 @@ img {
   text-transform: uppercase;
 }
 
+.result {
+  font-family: 'Roboto', 'Arial', 'sans-serif';
+  color: #2e2242;
+  text-align: center;
+}
+
 .favoritebtn {
   background: transparent;
 }

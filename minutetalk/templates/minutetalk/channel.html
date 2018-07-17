@@ -29,9 +29,9 @@
                 </v-flex>
             </v-layout>
             <v-flex xs12 sm6 md3>
-                <v-text-field class="ml-2" label="Search..." append-icon="search" @click:append="() => (openSearch = !openSearch)" hide-details color="indigo"></v-text-field>
+                <v-text-field class="ml-2" label="Search..." append-icon="search" v-model="user_search"  hide-details color="indigo"></v-text-field>
             </v-flex>
-            <v-layout  row wrap>
+            <v-layout  v-if="!user_search.trim()" row wrap>
                 {% for user in users %}
                 <v-flex d-flex xs10 sm3>
                     <div id="{{user.id}}" :key="{{user.id}}">
@@ -52,6 +52,17 @@
                         <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
                     </div>
                 </v-flex>
+            </v-layout>
+            <v-layout  v-if="user_search.trim()" row wrap>
+                <v-flex v-for="user in user_search_result" d-flex xs10 sm3>
+                    <div :id="[[user.id]]">
+                        <v-list-tile-avatar size="200px">
+                            <img :src="'/media/' + [[ user.img_src ]]">
+                            <p class="name">[[user.first_name]] [[user.last_name]]</p>
+                        </v-list-tile-avatar>
+                        <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
+                    </div>
+                </v-flex>                
             </v-layout>
         </template>
     </v-container>
@@ -261,6 +272,7 @@
         socket.send(JSON.stringify({'type': 'session', 'session_id': session_id , 'caller_id' : caller_id}))
         vue.startCall(session_id)
     }
+    console.log('{{channel.id}}')
     
 </script>
 {%endblock js%}

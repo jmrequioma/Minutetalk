@@ -12,6 +12,7 @@ from django.urls import reverse
 from opentok import OpenTok
 import base64
 
+
 api_key = '46151822'
 api_secret = '224a06a7055d1c1f5518d6a0de1720e71fb11e3c'
 opentok = OpenTok(api_key, api_secret)
@@ -98,6 +99,7 @@ class JoinChannel(LoginRequiredMixin, generic.View):
         channel = get_object_or_404(Channel, id=channel_id)
         user = request.user.userprofile
         online_users = channel.current_channel.exclude(user=request.user)
+        print(type(online_users))
         my_channels = user.fav_channels.all()
         user.my_channel = channel
         user.save()
@@ -113,8 +115,8 @@ class JoinChannel(LoginRequiredMixin, generic.View):
 class SearchChannel(LoginRequiredMixin, generic.View):
 
     def get(self, request):
-        username = request.GET.get('query')
-        data = Channel.objects.filter(title__contains=username)
+        channel_title = request.GET.get('query')
+        data = Channel.objects.filter(title__contains=channel_title)
         context = []
         for x in data:
             d = {
@@ -125,6 +127,23 @@ class SearchChannel(LoginRequiredMixin, generic.View):
             }
             context.append(d)
         return JsonResponse({'titles': context})
+
+class SearchUser(LoginRequiredMixin, generic.View):
+
+    def get(self, request):
+        name = request.GET.get('query').lower()
+        channel_id = request.GET.get('channel_id')
+        channel = get_object_or_404(Channel, id=channel_id)
+        users_in_channel = channel.current_channel.exclude(user=request.user)
+        context = []
+        for user in users_in_channel:
+            n = str(user).lower()
+            if(n.find(name) >= 0):
+                print(user)                
+                context.append(user.asdict())
+        return JsonResponse({"users": context})
+
+
 
 
 class EditProfile(LoginRequiredMixin, generic.View):

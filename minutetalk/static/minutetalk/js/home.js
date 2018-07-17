@@ -9,9 +9,11 @@ var vue = new Vue({
             isEditing: false,
             drawer: null,
             menupopout: false,
-            search_input: '',
-            search_result: [],
-            show_search_result: false,
+            channel_search: '',
+            channel_result: [],
+            user_search: '',
+            user_result: [],
+            show_channel_result: false,
             queryHTML: null,
             editformpass: '',
             enterpass: false,
@@ -253,25 +255,46 @@ var vue = new Vue({
         }
     },
     watch: {
-        search_input: function() {
-            var a = []
-            if (this.search_input.trim()) {
+        channel_search: function() {
+            var res = []
+            if (this.channel_search.trim()) {
                 $.ajax({
                     async: false,
-                    url: 'ajax/search',
+                    url: 'ajax/search_channel',
                     data: {
-                        'query': this.search_input,
+                        'query': this.channel_search,
                     },
                     success: function(data) {
                         if (data.titles.length > 0) {
-                            this.show_search_result = true;
-                            a = data.titles;
-                        } else {
-                            this.show_search_result = false;
+                            res = data.titles;
                         }
                     }
                 });
-                this.search_result = a
+                this.channel_result = res
+
+            }
+        },
+        user_search: function() {
+            console.log(this.user_search)
+            var channel_id = parseInt(window.location.pathname.substring(1))
+            console.log(channel_id)
+            var res = []
+            if (this.user_search.trim()) {
+                $.ajax({
+                    async: false,
+                    url: 'ajax/search_user',
+                    data: {
+                        'query': this.user_search,
+                        'channel_id': channel_id
+                    },
+                    success: function(data) {
+                        if (data.users.length > 0) {
+                            res = data.users;
+                        }
+                        
+                    }
+                });
+                this.user_result = res
 
             }
         },
@@ -291,8 +314,11 @@ var vue = new Vue({
         }
     },
     computed: {
-        r() {
-            return this.search_result;
+        channel_search_result() {
+            return this.channel_result;
+        },
+        user_search_result() {
+            return this.user_result;
         },
         valid_prof_form() {
             fname = this.form.fname;
