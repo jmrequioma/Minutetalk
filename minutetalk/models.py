@@ -11,11 +11,21 @@ class UserProfile(models.Model):
     img_src = models.ImageField(upload_to='users/', default='users/noprof.jpg')
     fav_channels = models.ManyToManyField('Channel', null=True, blank=True)
     my_channel = models.ForeignKey('Channel', on_delete=models
-                                   .CASCADE, null=True,
+                                   .CASCADE, blank=True, null=True,
                                    related_name="current_channel")
 
     def __str__(self):
         return self.user.username
+
+    def asdict(self):
+        return {
+                'username': self.user.username,
+                'first_name': self.user.first_name,
+                'last_name': self.user.last_name,
+                'id': self.id,
+                'img_src': self.img_src.name
+                }
+
 
 
 class ChannelType(models.Model):
@@ -35,14 +45,12 @@ class Channel(models.Model):
     def __str__(self):
         return self.title
 
-
-class CallerCallee(models.Model):
-    caller = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="caller")
-    callee = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="callee")
-    session_id = models.CharField(max_length=72)
+class ChatLog(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=400,blank=True)
+    session_id = models.CharField(max_length=72,blank=True)
 
     def __str__(self):
-        return 'Caller : {} \n Callee: : {}'.format(self.caller.first_name,
-                                                    self.callee.first_name)
+        return 'User : {} \n Session : {} \n Token : {}'.format(self.user.username,
+                                                    self.session_id, self.token)

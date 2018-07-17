@@ -40,6 +40,10 @@ var vue = new Vue({
                 show_favorite: false,
                 fav: false
             },
+            caller: {},
+            callee: {},
+            incomingcall: false,
+            calling: false,
             name: '',
             details: '',
             firstnameRules: [
@@ -201,20 +205,46 @@ var vue = new Vue({
             this.changepass.confirmpassword = ''
             this.$refs.changePassword.reset();
         },
-        start_call: function(callee_id){
+        createSession: function(caller_id){
             $.ajax({
+                async:false,
                 url: 'ajax/session',
                 data: {
-                    'callee_id' : callee_id
                 },
                 success: response => {
-                    if (response['message']) {
-                        console.log(response['message'])
-                    } else {
-                        console.log('Session not created.')
-                    }
+                    console.log(response)
+                    sendSession(response['session'],caller_id)
                 }
             })
+        },
+        startCall: function(session_id){
+            console.log('Starting call....')
+            $.ajax({
+                async:false,
+                url: 'ajax/token',
+                data: {
+                    'session_id': session_id
+                },
+                success: response => {
+                    window.location.href += '/videochat'
+                }
+            })
+        },
+        talk: function(id, first_name, last_name, img_src){
+            this.calling = true
+            var callee = {
+                'id': id,
+                'name': first_name + ' ' + last_name,
+                'img_src': img_src
+            }
+            this.callee = callee
+            talk(id)
+            console.log('talk')
+        },
+        cancel_call: function(id){
+            this.calling = false
+            cancel_call(id)
+
         }
     },
     watch: {

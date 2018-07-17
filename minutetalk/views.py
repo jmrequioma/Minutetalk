@@ -1,4 +1,4 @@
-from .models import UserProfile, ChannelType, Channel, CallerCallee
+from .models import UserProfile, ChannelType, Channel, ChatLog
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
@@ -40,7 +40,7 @@ class LogInView(generic.View):
         return JsonResponse(context)
 
 
-class SignUpView(generic.View):
+class SignUpView(generic.View): 
 
     def post(self, request, *args, **kwargs):
         form = UserProfileForm(request.POST)
@@ -204,55 +204,60 @@ class AddFavoriteChannel(LoginRequiredMixin, generic.View):
 class VideoChatView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
+        chatlog = ChatLog.objects.filter(user=request.user).last()
+        
+        context = {
+            'apikey' : api_key,
+            'session_id' : chatlog.session_id,
+            'token' : chatlog.token,
+            'message' : 'Enjoy'
+        }
+        return render(request, 'minutetalk/livestream.html',context)
 
-        if CallerCallee.objects.filter(caller=request.user).exists():
-            session_id = CallerCallee.objects.get(
-                caller=request.user).session_id
-        else:
-            session_id = CallerCallee.objects.get(
-                callee=request.user).session_id
 
+class CreateToken(LoginRequiredMixin, generic.View):
+    
+    def get(self, request, *args, **kwargs):
+        session_id = request.GET.get('session_id')
         # Generate a Token from just a session_id (fetched from a database)
-        token = opentok.generate_token(session_id)
-
+        token = opentok.generate_token(session_id
+)
         connectionMetadata = request.user.username
         token = opentok.generate_token(session_id)
 
+        chatlog = ChatLog(user=request.user,token=token,session_id=session_id)
+        chatlog.save()
+
         context = {
-            'session_id': session_id,
-            'token': token,
-            'apikey': api_key,
+            'apikey' : api_key,
+            'session_id' : session_id,
+            'token' : token,
+            'message' : 'Chatlog created'
         }
-        return render(request, 'minutetalk/livestream.html', context)
+        return JsonResponse(context)
 
-
-class CreateSessionView(LoginRequiredMixin, generic.View):
+class CreateSession(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
-        context = {}
-        if CallerCallee.objects.filter(caller=request.user).exists():
-            context['message'] = 'Session already created'
+        # Create a session that attempts to send streams directly between 
+        # clients (falling back
+        # to use the OpenTok TURN server to relay streams if the clients 
+        # cannot connect):
+        session = opentok.create_session()
 
-        else:
+        # Store this session ID in the database
+        session_id = session.session_id
+        # caller = request.user
+        # callee = get_object_or_404(User, id=request.GET['callee_id'])
 
-            # Create a session that attempts to send streams directly between 
-            # clients (falling back
-            # to use the OpenTok TURN server to relay streams if the clients 
-            # cannot connect):
-            session = opentok.create_session()
-
-            # Store this session ID in the database
-            session_id = session.session_id
-            caller = request.user
-            callee = get_object_or_404(User, id=request.GET['callee_id'])
-
-            chatSession = CallerCallee(
-                caller=caller, callee=callee, session_id=session_id
-            )
-            chatSession.save()
-
-            context['message'] = 'Video Session created successfully'
-
+        # chatSession = CallerCallee(
+        #     caller=caller, callee=callee, session_id=session_id
+        # )
+        # chatSession.save()
+        context = {
+            'message' : 'Video Session created successfully',
+            'session' : session_id,  
+        }
         return JsonResponse(context)
 
 # Converts base64 image to Contentfile
