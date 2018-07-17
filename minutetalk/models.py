@@ -13,7 +13,6 @@ class UserProfile(models.Model):
     my_channel = models.ForeignKey('Channel', on_delete=models
                                    .CASCADE, blank=True, null=True,
                                    related_name="current_channel")
-
     def __str__(self):
         return self.user.username
 
@@ -25,7 +24,6 @@ class UserProfile(models.Model):
                 'id': self.id,
                 'img_src': self.img_src.name
                 }
-
 
 
 class ChannelType(models.Model):
@@ -40,10 +38,10 @@ class Channel(models.Model):
     img_src = models.FileField(
         upload_to='channels/', default='channels/nopic.jpg')
     title = models.CharField(max_length=20, null=True)
-    channel_type = models.ForeignKey('ChannelType', on_delete=models.CASCADE)
+    channel_type = models.ForeignKey('ChannelType', on_delete=models.CASCADE,null=True,blank=True)
 
     def __str__(self):
-        return self.title
+        return 'Channel: {} , id : {}'.format(self.title,str(self.id))
 
 class ChatLog(models.Model):
     user = models.ForeignKey(
@@ -54,3 +52,13 @@ class ChatLog(models.Model):
     def __str__(self):
         return 'User : {} \n Session : {} \n Token : {}'.format(self.user.username,
                                                     self.session_id, self.token)
+
+
+class Question(models.Model):
+    channel = models.ForeignKey(
+        Channel, on_delete=models.CASCADE)
+    text = models.CharField(max_length=100)
+
+    def __str__(self):
+        return 'Channel : {} \n Question : {} '.format(self.channel.title,
+                                                    self.text)

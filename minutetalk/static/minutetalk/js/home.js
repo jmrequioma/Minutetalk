@@ -15,6 +15,11 @@ var vue = new Vue({
             queryHTML: null,
             editformpass: '',
             enterpass: false,
+            otheruser: {
+                name: 'Marie Curie Salera',
+                avatar: 'https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.0-9/22853443_1689141051097186_4885884491507680611_n.jpg?_nc_cat=0&oh=217127d24ad65e5ae3a53d9241e968d2&oe=5BAE5931',
+                fav: false
+            },
             form: {
                 fname: '',
                 lname: '',

@@ -211,10 +211,11 @@
     <script type="text/javascript" src="{% static 'minutetalk/js/home.js' %}"></script>
     <script type="text/javascript" src="{% static 'minutetalk/js/preloader.js' %}"></script>
     <script type="text/javascript">
+
         var apiKey = '{{ apikey }}'
         var sessionId = '{{ session_id }}'
         var token = '{{ token }}'
-        console.log(apiKey)
+        var partner_id = '{{ partner.id }}'
 
         var fname1 = "{{user.first_name}}";
         var lname1 = "{{user.last_name}}";

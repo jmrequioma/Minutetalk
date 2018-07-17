@@ -83,7 +83,8 @@ body, html {
     padding-left: 15px;
 }
 .questions {
-    padding-top: 60px;
+    padding-top: 0px;
+    margin-top: 60px;
 }
 .timedisplay {
     padding-left: 125px;
