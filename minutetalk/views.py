@@ -148,7 +148,7 @@ class EditProfile(LoginRequiredMixin, generic.View):
             return JsonResponse({})
 
         else:    
-            return JsonResponse({'error': 'Incorrect Password'})
+            return JsonResponse({'error': 'Password is incorrect'})
 
 
 class EditPassword(LoginRequiredMixin, generic.View):

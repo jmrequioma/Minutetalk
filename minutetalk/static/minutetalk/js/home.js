@@ -15,6 +15,10 @@ var vue = new Vue({
             queryHTML: null,
             editformpass: '',
             enterpass: false,
+            success: false,
+            errorpassword: true,
+            validsave: true,
+            validedit: false,
             form: {
                 fname: '',
                 lname: '',
@@ -24,6 +28,7 @@ var vue = new Vue({
                 gender: '',
                 test: '',
             },
+            editError: '',
             currentpass: '',
             password_match: false,
             changepass: {
@@ -161,8 +166,17 @@ var vue = new Vue({
                     csrfmiddlewaretoken: this.$refs.editForm.csrfmiddlewaretoken.value
                 },
                 success: response => {
-                    console.log(response['error'])
-                    console.log("success")
+                    if (response['error']) {
+                        this.editError = response['error']
+                    } else {
+                        this.success = true
+                        this.enterpass = false
+                        setTimeout(function(){
+                            console.log("success = false")
+                            vue.success = false
+                        }, 1 * 1000); // Hide after 5 secs
+                        console.log("here")
+                    }
                 }
             });
             this.editformpass = ""
@@ -178,6 +192,7 @@ var vue = new Vue({
                     csrfmiddlewaretoken: this.$refs.changePassword.csrfmiddlewaretoken.value
                 },
                 success: response => {
+
                     console.log("success")
                 }
             });
