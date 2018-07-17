@@ -44,6 +44,8 @@ var vue = new Vue({
             callee: {},
             incomingcall: false,
             calling: false,
+            calleebusy: false,
+            calleereject: false,
             name: '',
             details: '',
             firstnameRules: [
@@ -246,6 +248,9 @@ var vue = new Vue({
         cancel_call: function(id){
             this.calling = false
             cancel_call(id)
+        },
+        decline_call: function(id){
+            decline_call(id)
 
         }
     },

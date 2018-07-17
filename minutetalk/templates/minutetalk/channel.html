@@ -82,7 +82,7 @@
     
   <v-card-actions class="">
     <v-spacer></v-spacer>
-    <v-btn flat @click="dialog = false">
+    <v-btn flat @click.native="incomingcall= false" @click="decline_call(caller.id)">
       Decline
     </v-btn>
     <v-btn flat @click="createSession(caller.id)">
@@ -122,6 +122,48 @@
             </v-card>
 </v-dialog>
 
+<v-dialog v-model="calleebusy" width="500">
+    <v-card>
+        <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
+            <v-list two-line class="calleeinfo">
+            <v-list-tile class="calleedetails" style="padding-left: 0px;">
+                <v-list-tile-avatar size="50px" >
+                    <img :src="'/media/' + [[ callee.img_src ]]">
+                </v-list-tile-avatar>
+                <v-list-tile-content>
+                    <v-list-tile-title>[[callee.name]] is busy.</v-list-tile-title>
+                    <v-list-tile-sub-title>You may call the user again some other time.</v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-btn color="transparent" icon @click.native="calleebusy=false">
+                    <v-icon>close</v-icon>
+                </v-btn>
+            </v-list-tile>
+            </v-list>
+        </v-card-text>
+    </v-card>
+</v-dialog>
+
+<v-dialog v-model="calleereject" width="500">
+    <v-card>
+        <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
+            <v-list two-line class="calleeinfo">
+            <v-list-tile class="calleedetails" style="padding-left: 0px;">
+                <v-list-tile-avatar size="50px" >
+                    <img :src="'/media/' + [[ callee.img_src ]]">
+                </v-list-tile-avatar>
+                <v-list-tile-content>
+                    <v-list-tile-title>[[callee.name]] rejected your call.</v-list-tile-title>
+                    <v-list-tile-sub-title>You may call the user again some other time.</v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-btn color="transparent" icon @click.native="calleereject=false">
+                    <v-icon>close</v-icon>
+                </v-btn>
+            </v-list-tile>
+            </v-list>
+        </v-card-text>
+    </v-card>
+</v-dialog>
+
 {% endblock %}
 {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -150,15 +192,37 @@
                 console.log('TALK TO ME')
                 if(data['connect']){
                     if(data['id'] == '{{request.user.userprofile.id}}'){
-                        vue.incomingcall = true
-                        vue.caller = data['user']
-                        console.log('Lets talk')
-                        console.log(data)
+                        if(!vue.incomingcall && !vue.calling) {
+                            vue.calleebusy = false
+                            vue.calleereject = false
+                            vue.incomingcall = true
+                            vue.caller = data['user']
+                        } else {
+                            //busy
+                            //send busy
+                            busy(data['user']['id'])
+                        }
                     }
                 } else {
-                    if(data['id'] == '{{request.user.userprofile.id}}'){
+                    // the person you are calling is busy
+                    if(data['busy']){
+                        if(data['id'] == '{{request.user.userprofile.id}}'){
+                            vue.calling = false
+                            vue.calleebusy = true
+                        }
+                    }
+                    if(data['reject']) {
+                        if(data['id'] == '{{request.user.userprofile.id}}'){
+                            vue.calling = false
+                            vue.calleereject = true
+                        }
+                    }
+                    // cancel call
+                    else if(data['id'] == '{{request.user.userprofile.id}}'){
                         vue.incomingcall = false
                     }
+
+                        
                 }
             } else if (data['type'] == 'session') {
                 console.log('Session accepted!')
@@ -181,8 +245,15 @@
         socket.send(JSON.stringify({'type': 'talk','id': id, 'connect': true}))
     }
 
+    function busy(id){
+        socket.send(JSON.stringify({'type': 'talk','id': id, 'busy': true, 'connect': false}))
+    }
+
     function cancel_call(id){
         socket.send(JSON.stringify({'type': 'talk', 'id': id, 'connect': false}))
+    }
+    function decline_call(id){
+        socket.send(JSON.stringify({'type': 'talk', 'id': id, 'reject': true, 'connect': false}))
     }
 
     function sendSession(session_id, caller_id){
