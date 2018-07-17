@@ -195,7 +195,7 @@ class EditPassword(LoginRequiredMixin, generic.View):
             # print(request.POST['password1'])
         data = request.POST
         user = request.user
-        if (not user.check_password(request.POST['oldpassword'])): 
+        if (not user.check_password(request.POST['currentpass'])): 
             return JsonResponse({'error': 'Current Password is incorrect'})
         if(data['password1'] != data['password2']):
             return JsonResponse({'error': 'New Password and Confirm Password do not match'})
