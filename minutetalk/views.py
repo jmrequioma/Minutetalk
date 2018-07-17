@@ -1,4 +1,5 @@
 from .models import UserProfile, ChannelType, Channel, ChatLog
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
@@ -131,13 +132,28 @@ class SearchChannel(LoginRequiredMixin, generic.View):
 class SearchUser(LoginRequiredMixin, generic.View):
 
     def get(self, request):
-        name = request.GET.get('query').lower()
+        data = request.GET
+        name = data['query'].lower()
+        age = data['age']
+        gender = data['gender']
+
         channel_id = request.GET.get('channel_id')
         channel = get_object_or_404(Channel, id=channel_id)
         users_in_channel = channel.current_channel.exclude(user=request.user)
+
+        if gender and gender != 'All':
+            users_in_channel = users_in_channel.filter(gender=gender)
+
+        if age and age != 'All':
+            index =  age.find('-')
+            lowerlimit =  int(age[:index])
+            upperlimit = int(age[index + 1:])
+            users_in_channel = users_in_channel.filter(age__gte=lowerlimit, age__lte=upperlimit)
+
         context = []
         for user in users_in_channel:
             n = str(user).lower()
+            print(n, name, n.find(name) )
             if(n.find(name) >= 0):
                 print(user)                
                 context.append(user.asdict())

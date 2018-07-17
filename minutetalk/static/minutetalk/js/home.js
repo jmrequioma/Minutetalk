@@ -21,6 +21,10 @@ var vue = new Vue({
             errorpassword: true,
             validsave: true,
             validedit: false,
+            genderchoice: 'All',
+            gender: ['All', 'Male', 'Female'],
+            agechoice: 'All',
+            age: ['All', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
             form: {
                 fname: '',
                 lname: '',
@@ -176,7 +180,7 @@ var vue = new Vue({
                         setTimeout(function(){
                             console.log("success = false")
                             vue.success = false
-                        }, 1 * 1000); // Hide after 5 secs
+                        }, 1 * 1000); // Hide after 1 sec
                         console.log("here")
                     }
                 }
@@ -194,7 +198,9 @@ var vue = new Vue({
                     csrfmiddlewaretoken: this.$refs.changePassword.csrfmiddlewaretoken.value
                 },
                 success: response => {
-
+                    setTimeout(function(){
+                        }, 1 * 1000); // Hide after 1 sec
+                        console.log("here")
                     console.log("success")
                 }
             });
@@ -275,28 +281,16 @@ var vue = new Vue({
             }
         },
         user_search: function() {
-            console.log(this.user_search)
             var channel_id = parseInt(window.location.pathname.substring(1))
-            console.log(channel_id)
-            var res = []
-            if (this.user_search.trim()) {
-                $.ajax({
-                    async: false,
-                    url: 'ajax/search_user',
-                    data: {
-                        'query': this.user_search,
-                        'channel_id': channel_id
-                    },
-                    success: function(data) {
-                        if (data.users.length > 0) {
-                            res = data.users;
-                        }
-                        
-                    }
-                });
-                this.user_result = res
-
-            }
+            this.user_result = filterUser(channel_id, this.user_search, this.agechoice, this.genderchoice)
+        },
+        agechoice: function() {
+            var channel_id = parseInt(window.location.pathname.substring(1))
+            this.user_result = filterUser(channel_id, this.user_search, this.agechoice, this.genderchoice)
+        },
+        genderchoice: function() {
+            var channel_id = parseInt(window.location.pathname.substring(1))
+            this.user_result = filterUser(channel_id, this.user_search, this.agechoice, this.genderchoice)
         },
         currentpass: function(){
             var value = false;

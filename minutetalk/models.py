@@ -17,8 +17,6 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.first_name + ' ' + self.user.last_name
 
-
-
     def asdict(self):
         return {
                 'username': self.user.username,

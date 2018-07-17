@@ -28,10 +28,20 @@
                     </v-card>
                 </v-flex>
             </v-layout>
-            <v-flex xs12 sm6 md3>
-                <v-text-field class="ml-2" label="Search..." append-icon="search" v-model="user_search"  hide-details color="indigo"></v-text-field>
-            </v-flex>
-            <v-layout  v-if="!user_search.trim()" row wrap>
+            <h3 class="title" style="padding-left: 0px;">FILTER BY</h3>
+            <v-layout align-center justify-start row fill-height>
+                <v-flex xs3 style="padding-top: 0px; padding-bottom: 20px;">
+                    <v-text-field label="Search Name" append-icon="search" v-model="user_search"  hide-details  color="indigo"></v-text-field>
+                </v-flex>
+                <v-flex xs2>
+                    <v-select :items="gender" v-model="genderchoice"  label="Gender"  single-line color="indigo"></v-select>
+                </v-flex>
+                <v-flex xs2>
+                    <v-select :items="age" v-model="agechoice" label="Age Range"  single-line color="indigo"></v-select>
+                </v-flex>
+          </v-layout>
+
+            <v-layout v-if="!user_search.trim() && agechoice == 'All' && genderchoice == 'All'" row wrap>
                 {% for user in users %}
                 <v-flex d-flex xs10 sm3>
                     <div id="{{user.id}}" :key="{{user.id}}">
@@ -53,7 +63,10 @@
                     </div>
                 </v-flex>
             </v-layout>
-            <v-layout  v-if="user_search.trim()" row wrap>
+            <v-layout  v-if="user_search.trim() || agechoice != 'All' || genderchoice != 'All'" row wrap>
+                <v-layout align-center justify-center row fill-height v-if="!user_result.length">
+                        <h2 class="result"> No results found.</h2>
+                    </v-layout>
                 <v-flex v-for="user in user_search_result" d-flex xs10 sm3>
                     <div :id="[[user.id]]">
                         <v-list-tile-avatar size="200px">
@@ -272,7 +285,26 @@
         socket.send(JSON.stringify({'type': 'session', 'session_id': session_id , 'caller_id' : caller_id}))
         vue.startCall(session_id)
     }
-    console.log('{{channel.id}}')
+    function filterUser(channel_id, name, age, gender){
+        var res = []
+        $.ajax({
+            async: false,
+            url: 'ajax/search_user',
+            data: {
+                'query': name,
+                'age': age,
+                'gender': gender,
+                'channel_id': channel_id
+            },
+            success: function(data) {
+                if (data.users.length > 0) {
+                    res = data.users;
+                }
+                
+            }
+        });
+        return res
+    }
     
 </script>
 {%endblock js%}
