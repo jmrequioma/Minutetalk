@@ -170,7 +170,7 @@
                         </v-spacer>
                         <form onsubmit="event.preventDefault()">
                             <v-flex style="padding-left: 20px; padding-right: 20px;">
-                                <v-text-field color="indigo darken-4" v-model="editformpass" prepend-icon="lock" name="editform_pass" label="Password" type="password"></v-text-field>
+                                <v-text-field color="indigo darken-4" v-model="editformpass" prepend-icon="lock" name="editform_pass" label="Password" type="password" v-on:keyup.enter="edit"></v-text-field>
                             </v-flex>
                         </form>
                         <v-card-actions>
@@ -180,7 +180,7 @@
                     </v-card>
                 </v-dialog>
                 <v-dialog v-model="success" persistent max-width="350px">
-                    <v-card>
+                    <v-card height="240px">
                         <v-toolbar dark color="primary">
                             <v-toolbar-title>Confirm Your Changes</v-toolbar-title>
                             <v-spacer></v-spacer>
@@ -209,9 +209,9 @@
                                 <v-card-text>
                                     <form ref="changePassword">
                                         {% csrf_token %}
-                                        <v-text-field color="indigo darken-4" v-model="currentpass" prepend-icon="lock_open" name="old_password" label="Current Password"  :rules="passwordMatchRules" type="password" ></v-text-field>
-                                        <v-text-field color="indigo darken-4" v-model="changepass.newpassword" prepend-icon="lock" name="new_password" label="New Password" :rules="passwordRules" type="password"></v-text-field>
-                                        <v-text-field color="indigo darken-4" v-model="changepass.confirmpassword" prepend-icon="lock" name="confirm_password" label="Confirm New Password" :rules="confirmRules" type="password"></v-text-field>
+                                        <v-text-field color="indigo darken-4" v-model="currentpass" prepend-icon="lock_open" name="old_password" label="Current Password"  :rules="passwordMatchRules" type="password" v-on:keyup.enter="edit_pass"></v-text-field>
+                                        <v-text-field color="indigo darken-4" v-model="changepass.newpassword" prepend-icon="lock" name="new_password" label="New Password" :rules="passwordRules" type="password" v-on:keyup.enter="edit_pass"></v-text-field>
+                                        <v-text-field color="indigo darken-4" v-model="changepass.confirmpassword" prepend-icon="lock" name="confirm_password" label="Confirm New Password" :rules="confirmRules" type="password" v-on:keyup.enter="edit_pass"></v-text-field>
                                     </form>
                                 </v-card-text>
                                 <v-card-actions>

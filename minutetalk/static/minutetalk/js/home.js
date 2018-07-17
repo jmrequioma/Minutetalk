@@ -172,7 +172,7 @@ var vue = new Vue({
                         setTimeout(function(){
                             console.log("success = false")
                             vue.success = false
-                        }, 1 * 1000); // Hide after 5 secs
+                        }, 1 * 1000); // Hide after 1 sec
                         console.log("here")
                     }
                 }
@@ -190,7 +190,9 @@ var vue = new Vue({
                     csrfmiddlewaretoken: this.$refs.changePassword.csrfmiddlewaretoken.value
                 },
                 success: response => {
-
+                    setTimeout(function(){
+                        }, 1 * 1000); // Hide after 1 sec
+                        console.log("here")
                     console.log("success")
                 }
             });
