@@ -113,7 +113,7 @@ function handleError(error) {
 }
 
 function disconnect() {
-    console.log("Disconnecting");
+    deleteSession()
     session.disconnect();
     window.history.back();
 }
@@ -132,6 +132,7 @@ function initializeSession() {
     
     // Listener for diconnected streams
     session.on("streamDestroyed", function(event) {
+        deleteSession();
         session.disconnect();
         window.history.back();
         console.log("Stream " + event.stream.name + " ended. " + event.reason);
@@ -155,6 +156,15 @@ function initializeSession() {
     });
 }
 
+function deleteSession(){
+    $.ajax({
+        url: '/ajax/delete_session',
+        data: {
+        },
+        success: response => {
+        }
+    })
+}
 // (optional) add server code here
 initializeSession();
 </script>
