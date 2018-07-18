@@ -14,20 +14,31 @@
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list> -->
+                            <button onclick="disconnect()"> DISCONNECT</button>
+
             <v-spacer></v-spacer>
         </div>
         <v-container class="questions">
+
+                <div class="pie degree" style="margin-left: 150px;">
+                    <span class="block"></span>
+                    <span id="time">60</span>
+                </div> 
+
             <div class="question">
-                <v-navigation-drawer>
-                    <v-list class="questionlist">
-                        <v-subheader>MY QUESTIONS</v-subheader>
+                <v-navigation-drawer style="width: 100%">
+                     <v-list class="questionlist" two-line>
+                        <v-subheader>MY QUESTIONS</v-subheader> 
                         {% for question in questions_list%}
                         <v-list-tile id="{{question.id}}" ripple onclick="removeQuestion('{{question.text}}','{{question.id}}')">
                             <v-list-tile-content>
-                                <v-list-tile-title class="myquestion">{{question.text}}</v-list-tile-title>
+                                <!-- <v-tooltip top ref="question.id" v-model="show"> -->
+                                    <p class="myquestion" >{{question.text}}</p>
+                                    <!-- <span>{{question.text}}</span> -->
+                                <!-- </v-tooltip> -->
                             </v-list-tile-content>
-                            <v-list-tile-avatar size="30px">
-                                <img src="/media/{{partner.img_src}}">
+                            <v-list-tile-avatar size="38px">
+                                <img src="/media/{{user.userprofile.img_src}}">
                             </v-list-tile-avatar>
                         </v-list-tile>
                         {% endfor %}
@@ -39,9 +50,7 @@
                 </v-navigation-drawer>
             </div>
         </v-container>
-                <button onclick="disconnect()"> DISCONNECT</button>
         <!-- <button onclick="sendMessage()"> MESSAGE</button> -->
-    </v-container>
     </v-container>
 </v-content>
 {% endblock %} {% block js %}
@@ -80,7 +89,11 @@ window.onload = function() {
 }
 
 function removeQuestion(question_text, question_id) {
-    document.getElementById(question_id).remove();
+    var element = document.getElementById(question_id)
+    element.classList.add("fade-out-right");
+    setTimeout(function(){
+        element.remove()
+    }, 1 * 900); 
     sendMessage(question_text)
 }
 
