@@ -174,6 +174,7 @@ class EditProfile(LoginRequiredMixin, generic.View):
             user.email = data['email']
             userProfile.age = data['age']
             userProfile.gender = data['gender']
+            addUserImage(request, userProfile)
             user.save()
             userProfile.save()
             return JsonResponse({})
@@ -231,30 +232,29 @@ class VideoChatView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         chatlog = ChatLog.objects.filter(user=request.user).last()
-        partner = ChatLog.objects.filter(session_id=chatlog.session_id).exclude(user=request.user).first()
-        channel = get_object_or_404(Channel,id=11)
-        questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
-        print(questions_list)
-        my_channels = get_object_or_404(
-            UserProfile, user=request.user).fav_channels.all()
-        context = {
-            'apikey' : api_key,
-            'session_id' : chatlog.session_id,
-            'token' : chatlog.token,
-            'message' : 'Enjoy',
-            'partner' : partner.user.userprofile,
-            'questions_list' : questions_list,
-            'my_channels' : my_channels,
-        }
-        return render(request, 'minutetalk/livestream.html',context)
-
+        if chatlog is not None:
+            partner = ChatLog.objects.filter(session_id=chatlog.session_id).exclude(user=request.user).first()
+            channel = get_object_or_404(Channel,id=11)
+            questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
+            print(questions_list)
+            my_channels = get_object_or_404(
+                UserProfile, user=request.user).fav_channels.all()
+            context = {
+                'apikey' : api_key,
+                'session_id' : chatlog.session_id,
+                'token' : chatlog.token,
+                'message' : 'Enjoy',
+                'partner' : partner.user.userprofile,
+                'questions_list' : questions_list,
+                'my_channels' : my_channels,
+            }
+            return render(request, 'minutetalk/livestream.html',context)
+        return render(request, 'minutetalk/not_found.html')
 
 class CreateToken(LoginRequiredMixin, generic.View):
     
     def get(self, request, *args, **kwargs):
         session_id = request.GET.get('session_id')
-        token = opentok.generate_token(session_id)
-        connectionMetadata = request.user.username
         token = opentok.generate_token(session_id)
 
         chatlog = ChatLog(user=request.user,token=token,session_id=session_id)
@@ -278,6 +278,14 @@ class CreateSession(LoginRequiredMixin, generic.View):
             'session' : session_id,  
         }
         return JsonResponse(context)
+
+class DeleteSession(LoginRequiredMixin, generic.View):
+
+    def get(self, request, *args, **kwargs):
+        print('Deleting session')
+        ChatLog.objects.filter(user=request.user).delete()
+        return JsonResponse({"message" : "Chatlog successfully deleted"}
+)
 
 class AdvertiseView(generic.View):
 

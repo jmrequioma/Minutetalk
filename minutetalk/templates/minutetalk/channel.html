@@ -321,9 +321,15 @@ function PopupCenter(url, title, w, h) {
     width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
     height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
 
-    var left = ((width / 2) - (w / 2)) + dualScreenLeft;
-    var top = ((height / 2) - (h / 2)) + dualScreenTop;
-    var newWindow = window.open(url, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+    var left = 'left=' + (((width / 2) - (w / 2)) + dualScreenLeft);
+    var top = ',top=' + (((height / 2) - (h / 2)) + dualScreenTop);
+    var parameter = "scrollbars=yes,width=1300,height=800," + left + top;
+    var newWindow;
+    setTimeout(function() {
+        newWindow = window.open(url, title, parameter);
+        newWindow.opener.focus()
+    }, 1000);
+}
 </script>
 {%endblock js%}
 

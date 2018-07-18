@@ -26,6 +26,7 @@ var vue = new Vue({
             agechoice: 'All',
             age: ['All', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
             show: true,
+            image: '',
             form: {
                 fname: '',
                 lname: '',
@@ -98,6 +99,26 @@ var vue = new Vue({
         }
     },
     methods: {
+        onFileChange(e) {
+            var files = e.target.files || e.dataTransfer.files;
+            if (!files.length)
+                return;
+            this.createImage(files[0]);
+        },
+        createImage(file) {
+            var image = new Image();
+            var reader = new FileReader();
+            var vm = this;
+
+            reader.onload = (e) => {
+                vm.image = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
+        removeImage: function(e) {
+            vue.isEditing = true;
+            this.image = '';
+        },
         dropdown: function(option) {
             if (option == "Edit Profile") {
                 this.editprofile = true;
@@ -131,8 +152,6 @@ var vue = new Vue({
                     }
                 }
             });
-
-
         },
         is_valid_field: function(v) {
             return !!v
@@ -162,6 +181,7 @@ var vue = new Vue({
                 url: 'edit_profile',
                 type: 'POST',
                 data: {
+                    img_src: this.$refs.img_src.src,
                     first_name: this.form.fname,
                     last_name: this.form.lname,
                     email: this.form.email,
@@ -181,6 +201,7 @@ var vue = new Vue({
                         setTimeout(function(){
                             vue.success = false
                         }, 1 * 1000); // Hide after 1 sec
+                        window.location.reload(true);
                     }
                 }
             });
