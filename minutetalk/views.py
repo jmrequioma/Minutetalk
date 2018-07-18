@@ -155,7 +155,6 @@ class SearchUser(LoginRequiredMixin, generic.View):
         context = []
         for user in users_in_channel:
             n = str(user).lower()
-            print(n, name, n.find(name) )
             if(n.find(name) >= 0):
                 print(user)                
                 context.append(user.asdict())

@@ -80,8 +80,8 @@ var vue = new Vue({
             passwordMatchRules: [
                 v => this.password_match || 'Incorrect Password'
             ],
-
-            iconlist: [{
+            iconlist: [
+                {
                     title: 'Edit Profile',
                     icon: 'person'
                 },
@@ -94,6 +94,7 @@ var vue = new Vue({
                     icon: 'exit_to_app'
                 }
             ],
+            questions: []
         }
     },
     methods: {
@@ -130,8 +131,6 @@ var vue = new Vue({
                     }
                 }
             });
-
-
         },
         is_valid_field: function(v) {
             return !!v

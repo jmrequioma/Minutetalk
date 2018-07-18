@@ -560,6 +560,7 @@ img {
   font-size: 15px;
   color: #280004;   
   text-align: left;
+  word-wrap: break-word;
 }
 
 .othermessage{
