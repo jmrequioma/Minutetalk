@@ -25,7 +25,7 @@ var vue = new Vue({
             gender: ['All', 'Male', 'Female'],
             agechoice: 'All',
             age: ['All', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
-            notClicked: true,
+            show: true,
             form: {
                 fname: '',
                 lname: '',

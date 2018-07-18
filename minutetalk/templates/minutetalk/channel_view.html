@@ -2,7 +2,7 @@
 <v-content>
     <v-container fluid grid-list-xl>
         <v-flex xs12 sm6 md3>
-            <v-text-field class="" ref="search" label="Search..." append-icon="search"  v-model="channel_search" hide-details color="indigo"></v-text-field>
+            <v-text-field class="" ref="search" label="Search..." append-icon="search" v-model="channel_search" hide-details color="indigo"></v-text-field>
         </v-flex>
         <template v-if="!channel_search.trim()">
             {% for channeltype in channels_list%}
@@ -63,4 +63,4 @@
         </div>
     </v-container>
 </v-content>
-{% endblock %}
+{% endblock %} 

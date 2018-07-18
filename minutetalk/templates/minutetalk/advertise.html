@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MinuteTalk</title>
+    {% load static %}
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="static/minutetalk/css/style.css">
+    <link rel="stylesheet" type="text/css" href="static/minutetalk/css/preloader.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="preloader-wrapper">
+        <div class="cssload-thecube">
+            <div class="cssload-cube cssload-c1"></div>
+            <div class="cssload-cube cssload-c2"></div>
+            <div class="cssload-cube cssload-c4"></div>
+            <div class="cssload-cube cssload-c3"></div>
+        </div>
+    </div>
+    <div id="app">
+        <div v-cloak>
+            <v-app light>
+                <v-toolbar class="white">
+                    <v-toolbar-title class="titlename">
+                        <a href="">
+                            <img src="{% static 'images/mt-logo.png' %}" style="width: 150px;"/>
+                        </a>
+                    </v-toolbar-title>
+                </v-toolbar>
+                <v-content>
+                   <v-container grid-list-md wrap style="max-height: 100%; " >
+                    <v-layout justify-space-around row fill-height>
+                        <v-flex xs12 text-xs-center>
+                            <h1 class="greet2">Need to reach an audience? We can do that for you!</h1>
+                        </v-flex>
+                    </v-layout>
+                    <v-layout>
+                    <v-flex xs6 >
+                        <v-card class="elevation-12 channel_create_wrapper" height="100%">
+<!--                         <v-toolbar>
+                            <v-toolbar-title class=advertise>ADVERTISE FORM</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                        </v-toolbar> -->
+                            <v-card-title class="">ADVERTISE FORM</v-card-title>
+                            <v-card-text>
+                                <v-alert v-if="!!signup_error" v-model="alert" type="error" outline transition="scale-transition"> [[signup_error]]</v-alert>
+                                <form method="post" enctype="multipart/form-data" id='signUpForm' ref="signup_form">
+                                    {% csrf_token %}
+                                    <div v-if="!image" class="mb-3">
+                                        <h2>Select an image</h2>
+                                        <input type="file" id="imageUpload" name="file" ref="img_src" @change="onFileChange">
+                                    </div>
+                                    <div v-else>
+                                        <img :src="image" ref="img_src" />
+                                        <v-btn round flat @click.prevent="removeImage">Remove Image</v-btn>
+                                    </div>
+                                    <v-spacer></v-spacer>
+                                    <v-text-field outline color="indigo darken-4" v-model="advertise.channelname" prepend-icon="tv"  label="Channel Name" :rules="firstnameRules" type="text"></v-text-field>
+                                    <v-autocomplete outline color="indigo darken-4" prepend-icon="group_work" name="gender" :items="channeltypes" v-model="advertise.channeltype" label="Channel Type"></v-autocomplete>
+                                    <v-text-field outline color="indigo darken-4" v-model="advertise.url" prepend-icon="public"  label="Url" :rules="lastnameRules" type="text"></v-text-field>
+                                    <v-textarea outline color="indigo darken-4" v-model="advertise.description" prepend-icon="description" name="email" label="Description" type="text"></v-textarea>
+                                </form>
+                            </v-card-text>
+                        </v-card>
+                    </v-flex>
+                    <v-flex xs6>
+                        <v-card class="elevation-12 payment_wrapper" height="100%">
+<!--                         <v-toolbar>
+                            <v-toolbar-title class=advertise>ADVERTISE FORM</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                        </v-toolbar> -->
+                            <v-card-title>PAYMENT FORM</v-card-title>
+                            <v-card-text>
+                                <v-alert v-if="!!signup_error" v-model="alert" type="error" outline transition="scale-transition"> [[signup_error]]</v-alert>
+                                <form method="post" enctype="multipart/form-data" id='signUpForm' ref="signup_form">
+                                    {% csrf_token %}
+                                        <h2>Accepted Cards</h2>
+                                        <img src="https://nathaliamelofit.com/wp-content/uploads/2018/06/creditcards.png" class="mb-3"/>
+                                    <v-text-field outline color="indigo darken-4" v-model="advertise.cardname" prepend-icon="person" name="first_name" label="Card Holder's Name" type="text"></v-text-field>
+                                    <v-text-field outline color="indigo darken-4" v-model="advertise.cardnumber"prepend-icon="credit_card" name="last_name" label="Card Number" mask="credit-card"></v-text-field>
+                                    <v-layout align-center justify-start row fill-height>
+                                        <v-flex xs6>
+                                        <v-menu ref="menu" :close-on-content-click="false" v-model="menu" :nudge-right="40" :return-value.sync="advertise.expirydate" lazy transition="scale-transition" offset-y full-width max-width="290px" min-width="290px">
+                                                <v-text-field  outline color= "indigo darken-4" slot="activator" v-model="advertise.expirydate" label="Expiry Date" prepend-icon="event" readonly></v-text-field>
+                                            <v-date-picker v-model="advertise.expirydate" type="month" no-title scrollable>
+                                            <v-spacer></v-spacer>
+                                            <v-btn flat  @click="menu = false">Cancel</v-btn>
+                                            <v-btn flat  @click="$refs.menu.save(advertise.expirydate)">OK</v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                        </v-flex>
+                                        <v-flex xs6>
+                                            <v-text-field outline color="indigo darken-4" v-model="advertise.cvc" prepend-icon="vpn_key" label="CVC"></v-text-field>
+                                        </v-flex>
+                                    </v-layout>
+
+                                    <v-text-field outline color="indigo darken-4" v-model="advertise.email" prepend-icon="mail" name="email" label="Email" :rules="emailRules" type="text"></v-text-field>
+                                </form>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn class="btn btn-2" @click="signup" @click.native="auth_modal=false, loginpage=true" :disabled="invalidSignup">Sign Up</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-flex>
+
+                    </v-layout>
+
+                   </v-container>
+
+                </v-content>
+            </v-app>
+        </div>  
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'minutetalk/js/login.js' %}"></script>
+    <script type="text/javascript" src="{% static 'minutetalk/js/preloader.js' %}"></script>
+    
+
+</body>
+
+</html>

@@ -18,9 +18,21 @@
 }
 
 .v-content__wrap {
-background: #E0EAFC;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to left, #CFDEF3, #E0EAFC);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to left, #CFDEF3, #E0EAFC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #E0EAFC;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #CFDEF3, #E0EAFC);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #CFDEF3, #E0EAFC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.channel_create_wrapper {
+  background: #E0EAFC;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #E0EAFC, white);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #E0EAFC, white); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.payment_wrapper {
+  background: #E0EAFC;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #E0EAFC, white);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #E0EAFC, white); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 .v-toolbar__content {
@@ -152,6 +164,14 @@ background: linear-gradient(to left, #CFDEF3, #E0EAFC); /* W3C, IE 10+/ Edge, Fi
   font-weight: 400;
   font-size: 64px;
 }
+
+.greet2 {
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+  color: #15063c;
+  font-weight: 400;
+  font-size: 32px;
+}
+
 .avatarimage{
 
   display: block;

@@ -25,7 +25,6 @@ class UserProfile(models.Model):
                 'img_src': self.img_src.name
                 }
 
-
 class ChannelType(models.Model):
     name = models.CharField(max_length=30)
 
@@ -39,6 +38,7 @@ class Channel(models.Model):
         upload_to='channels/', default='channels/nopic.jpg')
     title = models.CharField(max_length=20, null=True)
     channel_type = models.ForeignKey('ChannelType', on_delete=models.CASCADE,null=True,blank=True)
+    url = models.CharField(max_length=40, null=True, blank=True)
 
     def __str__(self):
         return 'Channel: {} , id : {}'.format(self.title,str(self.id))

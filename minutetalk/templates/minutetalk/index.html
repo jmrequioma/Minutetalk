@@ -42,8 +42,9 @@
                         <v-layout align-center justify-center row fill-height>
                             <v-flex xs6>
                                 <h1 class="greet"> MinuteTalk! It's time for a Mini Talk!</h1>
+                                <v-btn class = "btn btn-2" @click="auth_modal=true" >Go Talk!</v-btn>
+                                <v-btn class = "btn btn-2" href='/advertise' >Advertise!</v-btn>
                                 <v-dialog transition="scale-transition" v-model="auth_modal" persistent width="400px" height="600px">
-                                    <v-btn class = "btn btn-2" slot="activator" >Go Talk!</v-btn>
                                     <v-content v-model="loginpage" v-if="loginpage">
                                         <v-layout>
                                             <v-flex>
