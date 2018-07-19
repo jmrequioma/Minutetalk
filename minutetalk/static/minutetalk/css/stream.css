@@ -150,3 +150,13 @@ body, html {
       opacity: 1;
     }
   }
+
+  
+.imagecenter {
+    padding-top: 15px;
+    padding-botton: 0px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}

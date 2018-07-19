@@ -97,7 +97,9 @@ var vue = new Vue({
                     icon: 'exit_to_app'
                 }
             ],
-            question: {}
+            question: {},
+            disconnect: false,
+            alertDisconnect: false
         }
     },
     methods: {
@@ -128,7 +130,7 @@ var vue = new Vue({
                 console.log("Change password")
                 this.changepassword = true;
             } else if (option == "Logout") {
-                window.location.href = "logout"
+                window.location.href = "/logout"
 
             }
         },
@@ -355,8 +357,3 @@ var vue = new Vue({
         }
     }
 });
-
-
-
-
-

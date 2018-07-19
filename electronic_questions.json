@@ -1,0 +1,11 @@
+[{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"Who is your favorite EDM Artist?"}},
+{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"Have you been to an EDM Concert before?"}},
+{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"When did you start to love EDM?"}},
+{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"What EDM song do you most listen to?"}},
+{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"What’s your favorite album?"}},
+{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"What artist do you always recommend when someone asks for a music recommendation?"}},
+{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"What was the last song you listened to?"}},
+{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"What’s the best way to discover new music?"}},
+{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"What song always puts you in a good mood?"}},
+{"model":"minutetalk.Question","pk":null,"fields":{"channel":0,"text":"Do you think your favorite music twenty years from now will be the same as it is today?"}}
+]

@@ -60,5 +60,5 @@ class Question(models.Model):
     text = models.CharField(max_length=100)
 
     def __str__(self):
-        return 'Channel : {} \n Question : {} '.format(self.channel.title,
-                                                    self.text)
+        return 'Channel : {} \n Question : {} id : {}'.format(self.channel.title,
+                                                    self.text,str(self.id))
