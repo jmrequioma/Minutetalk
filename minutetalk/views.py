@@ -221,7 +221,6 @@ class AddFavoriteChannel(LoginRequiredMixin, generic.View):
             return JsonResponse(context)
         else:
             print('Adding to favorite channels...')
-            print(user.fav_channels.all())
             print(channel)
             user.fav_channels.add(channel)
             user.save()
@@ -237,13 +236,16 @@ class VideoChatView(LoginRequiredMixin, generic.View):
         channel = get_object_or_404(Channel,id=11)
         questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
         print(questions_list)
+        my_channels = get_object_or_404(
+            UserProfile, user=request.user).fav_channels.all()
         context = {
             'apikey' : api_key,
             'session_id' : chatlog.session_id,
             'token' : chatlog.token,
             'message' : 'Enjoy',
             'partner' : partner.user.userprofile,
-            'questions_list' : questions_list
+            'questions_list' : questions_list,
+            'my_channels' : my_channels,
         }
         return render(request, 'minutetalk/livestream.html',context)
 

@@ -25,6 +25,7 @@ var vue = new Vue({
             gender: ['All', 'Male', 'Female'],
             agechoice: 'All',
             age: ['All', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
+            notClicked: true,
             form: {
                 fname: '',
                 lname: '',
@@ -54,6 +55,7 @@ var vue = new Vue({
             calleereject: false,
             name: '',
             details: '',
+            bool: true,
             firstnameRules: [
                 v => this.is_valid_field(v) || 'First Name is required'
             ],
@@ -94,7 +96,7 @@ var vue = new Vue({
                     icon: 'exit_to_app'
                 }
             ],
-            questions: []
+            question: {}
         }
     },
     methods: {
@@ -274,7 +276,6 @@ var vue = new Vue({
                     }
                 });
                 this.channel_result = res
-
             }
         },
         user_search: function() {
@@ -302,6 +303,9 @@ var vue = new Vue({
                     }
                 });
             this.password_match=  value
+        },
+        bool: function() {
+            console.log("HEEHJEHJKEHEJKHEJKHEJHEJ")
         }
     },
     computed: {

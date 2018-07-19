@@ -14,13 +14,10 @@ urlpatterns = [
     path('edit_profile', views.EditProfile.as_view(), name='edit_profile'),
     path('edit_pass', views.EditPassword.as_view(), name='edit_password'),
     path('<int:channel_id>/videochat', views.VideoChatView.as_view(), name='videochat'),
-    
     path('ajax/token', views.CreateToken.as_view(), name='token'),
-
     path('ajax/search_channel', views.SearchChannel.as_view(), name='search_channel'),
     path('ajax/search_user', views.SearchUser.as_view(), name='search_user'),
     path('ajax/check_password', views.CheckPassword.as_view(), name='check_password'),
-
     path('ajax/add_to_favorite', views.AddFavoriteChannel.as_view(),
          name='favorite'),
     path('ajax/session', views.CreateSession.as_view(),
