@@ -234,7 +234,7 @@ class VideoChatView(LoginRequiredMixin, generic.View):
         chatlog = ChatLog.objects.filter(user=request.user).last()
         if chatlog is not None:
             partner = ChatLog.objects.filter(session_id=chatlog.session_id).exclude(user=request.user).first()
-            channel = get_object_or_404(Channel,id=11)
+            channel = get_object_or_404(Channel,id=2)
             questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
             print(questions_list)
             my_channels = get_object_or_404(
