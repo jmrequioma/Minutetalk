@@ -1,13 +1,13 @@
 from django import forms
-from .models import UserProfile
+from .models import UserProfile, Channel
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 
 
 class UserProfileForm(forms.ModelForm):
     GENDER_CHOICES = (
-        ("Male", "Male"),
-        ("Female", "Female")
+        ('Male', 'Male'),
+        ('Female', 'Female')
     )
     age = forms.IntegerField()
     email = forms.EmailField()
@@ -28,31 +28,31 @@ class UserProfileForm(forms.ModelForm):
         user = request.user
         userProfile = request.user.userprofile
 
-        user.first_name = data["first_name"]
-        user.last_name = data["last_name"]
-        user.email = data["email"]
-        userProfile.age = data["age"]
-        userProfile.gender = data["gender"]
+        user.first_name = data['first_name']
+        user.last_name = data['last_name']
+        user.email = data['email']
+        userProfile.age = data['age']
+        userProfile.gender = data['gender']
         user.save()
         userProfile.save()
 
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("Username is already taken")
+            raise forms.ValidationError('Username is already taken')
         return username
 
     def clean_age(self):
         age = self.cleaned_data['age']
         if age < 18:
-            raise forms.ValidationError("User must be 18 years old or above")
+            raise forms.ValidationError('User must be 18 years old or above')
         return age
 
     def clean_password(self):
         password1 = self.cleaned_data['password1']
         password2 = self.cleaned_data['password2']
         if password1 != password2:
-            raise forms.ValidationError("Password does not match")
+            raise forms.ValidationError('Password does not match')
         return password1
 
 
@@ -60,3 +60,20 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
+
+
+class ChannelForm(forms.ModelForm):
+
+    title = forms.CharField()
+    description = forms.CharField()
+    url = forms.CharField()
+
+    class Meta:
+        model = Channel
+        fields = ['title', 'description', 'url']
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if Channel.objects.filter(title=title).exists():
+            raise forms.ValidationError('Channel with {} title already exists.'.format(title))
+        return title

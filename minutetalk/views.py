@@ -39,7 +39,7 @@ class LogInView(generic.View):
             login(request, user)
             return JsonResponse({})
         context = {
-            "error": "Username or Password is incorrect"
+            'error': 'Username or Password is incorrect'
         }
         return JsonResponse(context)
 
@@ -71,8 +71,8 @@ class SignUpView(generic.View):
             if user is not None:
                 login(request, user)
                 return JsonResponse({})
-            return JsonResponse({"error": "Some error occured during sign up"})
-        return JsonResponse({"error": form.errors})
+            return JsonResponse({'error': 'Some error occured during sign up'})
+        return JsonResponse({'error': form.errors})
 
 
 class HomeView(LoginRequiredMixin, generic.View):
@@ -158,9 +158,7 @@ class SearchUser(LoginRequiredMixin, generic.View):
             if(n.find(name) >= 0):
                 print(user)                
                 context.append(user.asdict())
-        return JsonResponse({"users": context})
-
-
+        return JsonResponse({'users': context})
 
 
 class EditProfile(LoginRequiredMixin, generic.View):
@@ -170,11 +168,12 @@ class EditProfile(LoginRequiredMixin, generic.View):
         if (request.user.check_password(request.POST['password1'])): 
             user = request.user
             userProfile = request.user.userprofile
-            user.first_name = data["first_name"]
-            user.last_name = data["last_name"]
-            user.email = data["email"]
-            userProfile.age = data["age"]
-            userProfile.gender = data["gender"]
+            user.first_name = data['first_name']
+            user.last_name = data['last_name']
+            user.email = data['email']
+            userProfile.age = data['age']
+            userProfile.gender = data['gender']
+            addUserImage(request, userProfile)
             user.save()
             userProfile.save()
             return JsonResponse({})
@@ -232,30 +231,29 @@ class VideoChatView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         chatlog = ChatLog.objects.filter(user=request.user).last()
-        partner = ChatLog.objects.filter(session_id=chatlog.session_id).exclude(user=request.user).first()
-        channel = get_object_or_404(Channel,id=11)
-        questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
-        print(questions_list)
-        my_channels = get_object_or_404(
-            UserProfile, user=request.user).fav_channels.all()
-        context = {
-            'apikey' : api_key,
-            'session_id' : chatlog.session_id,
-            'token' : chatlog.token,
-            'message' : 'Enjoy',
-            'partner' : partner.user.userprofile,
-            'questions_list' : questions_list,
-            'my_channels' : my_channels,
-        }
-        return render(request, 'minutetalk/livestream.html',context)
-
+        if chatlog is not None:
+            partner = ChatLog.objects.filter(session_id=chatlog.session_id).exclude(user=request.user).first()
+            channel = get_object_or_404(Channel,id=11)
+            questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
+            print(questions_list)
+            my_channels = get_object_or_404(
+                UserProfile, user=request.user).fav_channels.all()
+            context = {
+                'apikey' : api_key,
+                'session_id' : chatlog.session_id,
+                'token' : chatlog.token,
+                'message' : 'Enjoy',
+                'partner' : partner.user.userprofile,
+                'questions_list' : questions_list,
+                'my_channels' : my_channels,
+            }
+            return render(request, 'minutetalk/livestream.html',context)
+        return render(request, 'minutetalk/not_found.html')
 
 class CreateToken(LoginRequiredMixin, generic.View):
     
     def get(self, request, *args, **kwargs):
         session_id = request.GET.get('session_id')
-        token = opentok.generate_token(session_id)
-        connectionMetadata = request.user.username
         token = opentok.generate_token(session_id)
 
         chatlog = ChatLog(user=request.user,token=token,session_id=session_id)
@@ -280,11 +278,37 @@ class CreateSession(LoginRequiredMixin, generic.View):
         }
         return JsonResponse(context)
 
+class DeleteSession(LoginRequiredMixin, generic.View):
+
+    def get(self, request, *args, **kwargs):
+        print('Deleting session')
+        ChatLog.objects.filter(user=request.user).delete()
+        return JsonResponse({"message" : "Chatlog successfully deleted"}
+)
+
+class AdvertiseView(generic.View):
+
+    def get(self, request, *args, **kwargs):
+        channel_type_list = ChannelType.objects.all()
+        context = {
+            'channel_type_list' : channel_type_list,
+        }
+        return render(request, 'minutetalk/advertise.html',context)
+
+
+class ValidateAdvertise(generic.View):
+
+    def get(self, request, *args, **kwargs):
+        form = ChannelForm(request.POST)
+        if form.is_valid():
+            return JsonResponse({'message' : 'Success'})
+        return JsonResponse({'error': form.errors})
+
 
 def addUserImage(request, userprofile):
     image_data = request.POST['img_src']
     format, imgstr = image_data.split(';base64,')
-    print("format", format)
+    print('format', format)
     ext = format.split('/')[-1]
 
     data = ContentFile(base64.b64decode(imgstr))
