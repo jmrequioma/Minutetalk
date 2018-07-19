@@ -66,6 +66,19 @@
 
 } 
 
+.display_err {
+    font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+    color: #170733;
+    text-align: center;
+    margin-top: 15%;
+}
+
+.display_err_404 {
+    font-family: 'Digital-7';
+    color: #170733;
+    text-align: center;
+    font-size: 200px;
+}
 
 .btn {
   padding: 2px;
