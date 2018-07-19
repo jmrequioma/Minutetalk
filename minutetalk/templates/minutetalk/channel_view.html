@@ -12,7 +12,7 @@
                 {% for channel in channeltype.channel_set.all %}
                 <v-flex d-flex xs10 sm3>
                     <v-card href="{% url 'minutetalk:join_channel' channel.id %}" hover style="max-width: 400px;">
-                        <v-card-media height="200px" src="/media/{{ channel.img_src }}">
+                        <v-card-media height="200px" src="{{ channel.img_src.url}}">
                             <v-card-text class="description">
                                 {{ channel.description}}
                             </v-card-text>

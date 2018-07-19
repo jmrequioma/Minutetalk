@@ -6,7 +6,7 @@
             <v-layout row wrap>
                 <v-flex xs12 class="text-xs-center">
                     <v-card width="100%">
-                        <v-card-media height="350px" src="/media/{{ channel.img_src }}">
+                        <v-card-media height="350px" src="{{ channel.img_src.url }}">
                         </v-card-media>
                         <v-card-title primary-title class="justify-center">
                             <div class="text-xs-center">
@@ -46,7 +46,7 @@
                 <v-flex d-flex xs10 sm3>
                     <div id="{{user.id}}" :key="{{user.id}}">
                         <v-list-tile-avatar size="200px">
-                            <img src="/media/{{ user.img_src }}">
+                            <img src="{{ user.img_src.url }}">
                             <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
                         </v-list-tile-avatar>
                         <v-btn class="btn btn-3" @click="talk({{user.id}}, '{{user.user.first_name}}', '{{user.user.last_name}}', '{{user.img_src}}')">Talk!</v-btn>

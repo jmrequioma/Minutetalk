@@ -10,7 +10,7 @@
             <v-list>
                 <v-list-tile two-line class="chatname">
                     <v-list-tile-avatar size="40px">
-                        <img src="/media/{{partner.img_src}}">
+                        <img src="{{partner.img_src.url}}">
                     </v-list-tile-avatar>
                     <v-list-tile-content>
                         <v-list-tile-title class="otherusername">{{partner}}</v-list-tile-title>
@@ -42,7 +42,7 @@
                                     
                             </v-list-tile-content>
                             <v-list-tile-avatar size="38px">
-                                <img src="/media/{{user.userprofile.img_src}}">
+                                <img src="{{user.userprofile.img_src.url}}">
                             </v-list-tile-avatar>
                         </v-list-tile>
                         {% endfor %}
@@ -74,7 +74,7 @@
         <v-list two-line class="calleeinfo" style="padding-top: 15px;">
             <v-list-tile class="calleedetails" style="padding-left: 0px;">
                 <v-list-tile-avatar size="50px" >
-                    <img src="/media/{{partner.img_src}}">
+                    <img src="{{partner.img_src.url}}">
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                     <v-list-tile-title>Your call with {{partner}} has been disconnected.</v-list-tile-title>
