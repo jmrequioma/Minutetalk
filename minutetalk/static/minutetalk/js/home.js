@@ -286,7 +286,7 @@ var vue = new Vue({
     },
     watch: {
         channel_search: function() {
-            var res = []
+            // var res = []
             if (this.channel_search.trim()) {
                 $.ajax({
                     async: false,
@@ -295,12 +295,11 @@ var vue = new Vue({
                         'query': this.channel_search,
                     },
                     success: function(data) {
-                        if (data.titles.length > 0) {
-                            res = data.titles;
-                        }
+                        // if (data.titles.length > 0) {
+                            vue.channel_result = data.titles
+                        // }
                     }
                 });
-                this.channel_result = res
             }
         },
         user_search: function() {
@@ -357,3 +356,4 @@ var vue = new Vue({
         }
     }
 });
+

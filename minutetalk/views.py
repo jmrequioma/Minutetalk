@@ -1,14 +1,14 @@
 from .models import UserProfile, ChannelType, Channel, ChatLog, Question
 from .models import UserProfile, ChannelType, Channel, ChatLog
-from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.base import ContentFile
+from django.core.validators import validate_email
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from .forms import UserProfileForm
+from .forms import UserProfileForm, ChannelForm, PaymentForm
 from django.views import generic
 from django.urls import reverse
 from opentok import OpenTok
@@ -63,7 +63,9 @@ class SignUpView(generic.View):
             userprofile.save()
             print(data['img_src'])
             if data['img_src']:
-                addUserImage(request, userprofile)
+                res = addImage(data['img_src'], userprofile.user.username)
+                userprofile.img_src.save(res['file_name'], res['data'], save=True)
+
 
             user = authenticate(
                 request, username=request.POST['username'], 
@@ -173,7 +175,8 @@ class EditProfile(LoginRequiredMixin, generic.View):
             user.email = data['email']
             userProfile.age = data['age']
             userProfile.gender = data['gender']
-            addUserImage(request, userProfile)
+            res = addImage(request.POST['img_src'], userprofile.user.username)
+            userprofile.img_src.save(res['file_name'], res['data'], save=True)
             user.save()
             userProfile.save()
             return JsonResponse({})
@@ -283,8 +286,7 @@ class DeleteSession(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         print('Deleting session')
         ChatLog.objects.filter(user=request.user).delete()
-        return JsonResponse({"message" : "Chatlog successfully deleted"}
-)
+        return JsonResponse({"message" : "Chatlog successfully deleted"})
 
 class AdvertiseView(generic.View):
 
@@ -305,13 +307,29 @@ class ValidateAdvertise(generic.View):
             return JsonResponse({'message' : 'Success'})
         return JsonResponse({'error': form.errors})
 
+class CreateChannel(generic.View):
 
-def addUserImage(request, userprofile):
-    image_data = request.POST['img_src']
+    def post(self, request):   
+        channelForm = ChannelForm(request.POST)
+        paymentForm = PaymentForm(request.POST)
+        print(request.POST['channel_type']) 
+
+        if channelForm.is_valid() and paymentForm.is_valid():
+            channel = channelForm.save()
+            if request.POST['img_src']:
+                res = addImage(request.POST['img_src'], channel.title)
+                channel.img_src.save(res['file_name'], res['data'], save=True)
+            return JsonResponse({})
+        else:
+            if ('title' in channelForm.errors):
+                return JsonResponse({'channel_error': channelForm.errors['title']})
+        return JsonResponse({'channel_error': channelForm.errors, 'payment_error': paymentForm.errors})
+
+
+def addImage(image_data, name):
     format, imgstr = image_data.split(';base64,')
-    print('format', format)
     ext = format.split('/')[-1]
 
     data = ContentFile(base64.b64decode(imgstr))
-    file_name = userprofile.user.username + ext
-    userprofile.img_src.save(file_name, data, save=True)
+    file_name = name + ext
+    return {'file_name': file_name, 'data':data}

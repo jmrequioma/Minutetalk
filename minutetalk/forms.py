@@ -1,7 +1,8 @@
 from django import forms
-from .models import UserProfile, Channel
+from .models import UserProfile, Channel, ChannelType, Payment
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
+from django.shortcuts import  get_object_or_404
 
 
 class UserProfileForm(forms.ModelForm):
@@ -64,16 +65,52 @@ class UserForm(forms.ModelForm):
 
 class ChannelForm(forms.ModelForm):
 
+    channel_type = forms.ModelChoiceField(queryset=ChannelType.objects.all(), to_field_name="name")
     title = forms.CharField()
     description = forms.CharField()
-    url = forms.CharField()
+    url = forms.URLField()
 
     class Meta:
         model = Channel
-        fields = ['title', 'description', 'url']
+        fields = ['channel_type', 'description', 'url', 'title']
+
+
+
+    def clean_channel_type(self):
+        channel_type = self.cleaned_data['channel_type']
+        if not ChannelType.objects.filter(name=channel_type).exists():
+            raise forms.ValidationError('Channel Type {} does not exists.'.format(channel_type))
+        return channel_type
 
     def clean_title(self):
         title = self.cleaned_data['title']
-        if Channel.objects.filter(title=title).exists():
-            raise forms.ValidationError('Channel with {} title already exists.'.format(title))
-        return title
+        if 'channel_type' in self.cleaned_data:
+            channel_type = self.cleaned_data['channel_type']
+            channels = get_object_or_404(ChannelType, name__iexact=channel_type).channel_set.all()
+            if channels.filter(title__iexact=title).exists():
+                raise forms.ValidationError('{} already exists in {} Channel Type.'.format(title, channel_type))
+            return title
+        else:
+            raise forms.ValidationError('Channel Type cannot be empty')
+
+
+    def clean_description(self):
+        desc = self.cleaned_data['description']
+        if len(desc) > 100:
+            raise forms.ValidationError('Description must not exceed 100 characters')
+        return desc
+
+
+
+class PaymentForm(forms.ModelForm):
+    email = forms.EmailField()
+    cardname = forms.CharField()
+    cardnumber = forms.CharField(max_length=16)
+    expirydate = forms.CharField()
+    cvc = forms.CharField(max_length=4)
+    
+    class Meta:
+        model = Payment
+        fields = ['email', 'cardname', 'cardnumber', 'expirydate', 'cvc']
+
+

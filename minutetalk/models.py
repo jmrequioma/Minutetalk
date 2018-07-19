@@ -36,8 +36,8 @@ class Channel(models.Model):
     description = models.CharField(max_length=100, null=True)
     img_src = models.FileField(
         upload_to='channels/', default='channels/nopic.jpg')
-    title = models.CharField(max_length=20, null=True)
     channel_type = models.ForeignKey('ChannelType', on_delete=models.CASCADE,null=True,blank=True)
+    title = models.CharField(max_length=20, null=True)
     url = models.CharField(max_length=40, null=True, blank=True)
 
     def __str__(self):
@@ -53,7 +53,6 @@ class ChatLog(models.Model):
         return 'User : {} \n Session : {} \n Token : {}'.format(self.user.username,
                                                     self.session_id, self.token)
 
-
 class Question(models.Model):
     channel = models.ForeignKey(
         Channel, on_delete=models.CASCADE)
@@ -62,3 +61,11 @@ class Question(models.Model):
     def __str__(self):
         return 'Channel : {} \n Question : {} id : {}'.format(self.channel.title,
                                                     self.text,str(self.id))
+
+class Payment(models.Model):
+    email = models.EmailField()
+    cardname = models.CharField(max_length=20)
+    cardnumber = models.CharField(max_length=16)
+    expirydate = models.CharField(max_length=10)
+    cvc = models.CharField(max_length=4)
+
