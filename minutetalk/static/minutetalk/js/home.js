@@ -102,6 +102,9 @@ var vue = new Vue({
             alertDisconnect: false
         }
     },
+    mounted () {
+                console.log(this.$vuetify.breakpoint)
+            },
     methods: {
         onFileChange(e) {
             var files = e.target.files || e.dataTransfer.files;
@@ -251,13 +254,14 @@ var vue = new Vue({
                 }
             })
         },
-        startCall: function(session_id){
-            console.log('Starting call....')
+        startCall: function(session_id, channel_id){
+            console.log(channel_id)
             $.ajax({
                 async:false,
                 url: 'ajax/token',
                 data: {
-                    'session_id': session_id
+                    'session_id': session_id,
+                    'channel_id': channel_id,
                 },
                 success: response => {
                     window.location.href += '/videochat'

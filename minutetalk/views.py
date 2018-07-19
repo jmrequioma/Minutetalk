@@ -83,10 +83,12 @@ class HomeView(LoginRequiredMixin, generic.View):
         channels_list = ChannelType.objects.all()
         my_channels = get_object_or_404(
             UserProfile, user=request.user).fav_channels.all()
+        featured_channels = Channel.objects.filter(featured=True)
         context = {
             'user': request.user,
             'channels_list': channels_list,
             'my_channels': my_channels,
+            'featured_channels' : featured_channels,
         }
         return render(request, 'minutetalk/channel_view.html', context)
 
@@ -250,6 +252,8 @@ class VideoChatView(LoginRequiredMixin, generic.View):
                 'partner' : partner.user.userprofile,
                 'questions_list' : questions_list,
                 'my_channels' : my_channels,
+                'channel_id': chatlog.channel.id
+
             }
             return render(request, 'minutetalk/livestream.html',context)
         return render(request, 'minutetalk/not_found.html')
@@ -257,19 +261,14 @@ class VideoChatView(LoginRequiredMixin, generic.View):
 class CreateToken(LoginRequiredMixin, generic.View):
     
     def get(self, request, *args, **kwargs):
-        session_id = request.GET.get('session_id')
+        session_id = request.GET['session_id']
+        print(request.GET)
+        channel_id = request.GET['channel_id']
         token = opentok.generate_token(session_id)
-
-        chatlog = ChatLog(user=request.user,token=token,session_id=session_id)
+        channel = get_object_or_404(Channel,id=channel_id)
+        chatlog = ChatLog(user=request.user,token=token,session_id=session_id,channel=channel)
         chatlog.save()
-
-        context = {
-            'apikey' : api_key,
-            'session_id' : session_id,
-            'token' : token,
-            'message' : 'Chatlog created'
-        }
-        return JsonResponse(context)
+        return JsonResponse({})
 
 class CreateSession(LoginRequiredMixin, generic.View):
 

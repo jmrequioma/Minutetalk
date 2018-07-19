@@ -29,17 +29,18 @@ class ChannelType(models.Model):
     name = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.name
+        return 'Name:{} id: {}'.format(self.name, str(self.id))
 
 
 class Channel(models.Model):
-    description = models.CharField(max_length=100, null=True)
+    description = models.CharField(max_length=900, null=True)
     img_src = models.FileField(
         upload_to='channels/', default='channels/nopic.jpg')
     channel_type = models.ForeignKey('ChannelType', on_delete=models.CASCADE,null=True,blank=True)
     title = models.CharField(max_length=20, null=True)
     url = models.CharField(max_length=40, null=True, blank=True)
-
+    featured = models.BooleanField(default=False)
+    
     def __str__(self):
         return 'Channel: {} , id : {}'.format(self.title,str(self.id))
 
@@ -48,6 +49,7 @@ class ChatLog(models.Model):
         User, on_delete=models.CASCADE)
     token = models.CharField(max_length=400,blank=True)
     session_id = models.CharField(max_length=72,blank=True)
+    channel =models.ForeignKey('Channel', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return 'User : {} \n Session : {} \n Token : {}'.format(self.user.username,

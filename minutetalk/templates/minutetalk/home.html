@@ -34,7 +34,7 @@
                 <v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" app v-model="drawer" class=drawer>
                     <v-list dense>
                         <v-avatar size="80px" class="avatarimage">
-                            <img src="/media/{{user.userprofile.img_src}}">
+                            <img src="{{user.userprofile.img_src.url}}">
                         </v-avatar>
                         <v-spacer class="username" v-model="name">
                             [[name]]
@@ -46,7 +46,7 @@
                         {% for channel in my_channels %}
                         <v-list-tile id="{{channel.id}}" ripple href="{%url 'minutetalk:join_channel' channel.id %}">
                             <v-list-tile-avatar size="30px">
-                                <img src="/media/{{channel.img_src}}">
+                                <img src="{{channel.img_src.url}}">
                             </v-list-tile-avatar>
                             <v-list-tile-content>
                                 <v-list-tile-title class="mychanneltitle">
@@ -54,10 +54,11 @@
                                 </v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
-                        {% endfor %} {% if channel %}
+                        {% endfor %}
+                        {% if channel %}
                         <v-list-tile v-if="channel.show_favorite" ripple href="{%url 'minutetalk:join_channel' channel.id %}">
                             <v-list-tile-avatar size="30px">
-                                <img src="/media/{{channel.img_src}}">
+                                <img src="{{channel.img_src.url}}">
                             </v-list-tile-avatar>
                             <v-list-tile-content>
                                 <v-list-tile-title class="mychanneltitle">
@@ -66,6 +67,20 @@
                             </v-list-tile-content>
                         </v-list-tile>
                         {% endif %}
+                        <v-divider></v-divider>
+                        <v-subheader>FEATURED CHANNELS</v-subheader>
+                        {% for fchannel in featured_channels %}
+                        <v-list-tile id="{{fchannel.id}}" ripple href="{%url 'minutetalk:join_channel' fchannel.id %}">
+                            <v-list-tile-avatar size="30px">
+                                <img src="{{fchannel.img_src.url}}">
+                            </v-list-tile-avatar>
+                            <v-list-tile-content>
+                                <v-list-tile-title class="mychanneltitle">
+                                    {{fchannel.title}}
+                                </v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+                        {% endfor %} 
                     </v-list>
                 </v-navigation-drawer>
                 <v-toolbar color="blue darken-3" dark app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
@@ -87,14 +102,14 @@
                     <v-menu v-model=menupopout :close-on-content-click="false" :nudge-width="50" offset-y>
                         <v-btn icon slot="activator">
                             <v-avatar size="32px">
-                                <img src="/media/{{user.userprofile.img_src}}" alt="Avatar">
+                                <img src="{{user.userprofile.img_src.url}}" alt="Avatar">
                             </v-avatar>
                         </v-btn>
                         <v-card class=usericonright>
                             <v-list>
                                 <v-list-tile avatar>
                                     <v-list-tile-avatar>
-                                        <img src="/media/{{user.userprofile.img_src}}">
+                                        <img src="{{user.userprofile.img_src.url}}">
                                     </v-list-tile-avatar>
                                     <v-list-tile-content>
                                         <v-list-tile-title v-model="name">[[name]]</v-list-tile-title>
@@ -170,7 +185,7 @@
                         </v-toolbar>
                         <v-alert v-if="!!editError" v-model="errorpassword" type="error" outline transition="scale-transition" style="height: 50px; width: 320px;"> [[editError]] </v-alert>
                         <v-avatar size="50px" class="avatarimage">
-                            <img src="/media/{{user.userprofile.img_src}}">
+                            <img src="{{user.userprofile.img_src.url}}">
                         </v-avatar>
                         <v-spacer class="username" v-model="name">
                             [[name]]

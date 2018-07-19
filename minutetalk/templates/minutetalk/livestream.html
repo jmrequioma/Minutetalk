@@ -10,7 +10,7 @@
             <v-list>
                 <v-list-tile two-line class="chatname">
                     <v-list-tile-avatar size="40px">
-                        <img src="/media/{{partner.img_src}}">
+                        <img src="{{partner.img_src.url}}">
                     </v-list-tile-avatar>
                     <v-list-tile-content>
                         <v-list-tile-title class="otherusername">{{partner}}</v-list-tile-title>
@@ -42,7 +42,7 @@
                                     
                             </v-list-tile-content>
                             <v-list-tile-avatar size="38px">
-                                <img src="/media/{{user.userprofile.img_src}}">
+                                <img src="{{user.userprofile.img_src.url}}">
                             </v-list-tile-avatar>
                         </v-list-tile>
                         {% endfor %}
@@ -74,7 +74,7 @@
         <v-list two-line class="calleeinfo" style="padding-top: 15px;">
             <v-list-tile class="calleedetails" style="padding-left: 0px;">
                 <v-list-tile-avatar size="50px" >
-                    <img src="/media/{{partner.img_src}}">
+                    <img src="{{partner.img_src.url}}">
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                     <v-list-tile-title>Your call with {{partner}} has been disconnected.</v-list-tile-title>
@@ -84,7 +84,7 @@
       </v-list>
     <v-card-actions>
         <v-spacer></v-spacer>
-         <v-btn flat color="indigo darken-4" onclick="window.history.back();">
+         <v-btn flat color="indigo darken-4" onclick="redirect()">
       RETURN TO CHANNEL
         </v-btn>
     </v-card-actions>
@@ -134,6 +134,7 @@ var apiKey = '{{ apikey }}'
 var sessionId = '{{ session_id }}'
 var token = '{{ token }}'
 var partner_id = '{{ partner.id }}'
+var channel_id = '{{channel_id}}'
 
 var endpoint = 'ws://' + window.location.host + '/videochat/' + sessionId;
 var socket = new WebSocket(endpoint)
@@ -295,7 +296,25 @@ function handleError(error) {
 function disconnect() {
     console.log("Disconnecting");
     session.disconnect();
-    window.history.back();
+    // window.history.back();
+    redirect()
+}
+
+function redirect(){
+    deleteSession()
+    window.location.href =  "/" + channel_id
+    
+}
+
+function deleteSession() {
+    $.ajax({
+        url: '/ajax/delete_session',
+        data: {
+        },
+        dataType: 'json',
+        success: response => {
+        }
+    })
 }
 
 var session = OT.initSession(apiKey, sessionId);
@@ -336,6 +355,7 @@ function initializeSession() {
         }
     });
 }
+
 
 // (optional) add server code here
 initializeSession();
