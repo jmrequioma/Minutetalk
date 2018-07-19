@@ -11,7 +11,7 @@
             <v-layout row wrap>
                 {% for channel in channeltype.channel_set.all %}
                 <v-flex d-flex xs10 sm3>
-                    <v-card hover>
+                    <v-card href="{% url 'minutetalk:join_channel' channel.id %}" hover style="max-width: 400px;">
                         <v-card-media height="200px" src="/media/{{ channel.img_src }}">
                             <v-card-text class="description">
                                 {{ channel.description}}
@@ -23,10 +23,10 @@
                                 <span>There are {{channel.current_channel.all| length}} users online</span>
                             </div>
                         </v-card-title>
-                        <v-card-actions>
+<!--                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn class="btn2 btn-3" href="{% url 'minutetalk:join_channel' channel.id %}">Join</v-btn>
-                        </v-card-actions>
+                        </v-card-actions> -->
                     </v-card>
                 </v-flex>
                 {% endfor %}

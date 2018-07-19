@@ -81,10 +81,12 @@ class HomeView(LoginRequiredMixin, generic.View):
         channels_list = ChannelType.objects.all()
         my_channels = get_object_or_404(
             UserProfile, user=request.user).fav_channels.all()
+        featured_channels = Channel.objects.filter(featured=True)
         context = {
             'user': request.user,
             'channels_list': channels_list,
             'my_channels': my_channels,
+            'featured_channels' : featured_channels,
         }
         return render(request, 'minutetalk/channel_view.html', context)
 
@@ -283,8 +285,7 @@ class DeleteSession(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         print('Deleting session')
         ChatLog.objects.filter(user=request.user).delete()
-        return JsonResponse({"message" : "Chatlog successfully deleted"}
-)
+        return JsonResponse({"message" : "Chatlog successfully deleted"})
 
 class AdvertiseView(generic.View):
 

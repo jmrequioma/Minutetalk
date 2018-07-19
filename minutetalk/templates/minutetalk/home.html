@@ -54,7 +54,8 @@
                                 </v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
-                        {% endfor %} {% if channel %}
+                        {% endfor %}
+                        {% if channel %}
                         <v-list-tile v-if="channel.show_favorite" ripple href="{%url 'minutetalk:join_channel' channel.id %}">
                             <v-list-tile-avatar size="30px">
                                 <img src="/media/{{channel.img_src}}">
@@ -66,6 +67,20 @@
                             </v-list-tile-content>
                         </v-list-tile>
                         {% endif %}
+                        <v-divider></v-divider>
+                        <v-subheader>FEATURED CHANNELS</v-subheader>
+                        {% for fchannel in featured_channels %}
+                        <v-list-tile id="{{fchannel.id}}" ripple href="{%url 'minutetalk:join_channel' fchannel.id %}">
+                            <v-list-tile-avatar size="30px">
+                                <img src="/media/{{fchannel.img_src}}">
+                            </v-list-tile-avatar>
+                            <v-list-tile-content>
+                                <v-list-tile-title class="mychanneltitle">
+                                    {{fchannel.title}}
+                                </v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+                        {% endfor %} 
                     </v-list>
                 </v-navigation-drawer>
                 <v-toolbar color="blue darken-3" dark app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>

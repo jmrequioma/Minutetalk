@@ -29,17 +29,18 @@ class ChannelType(models.Model):
     name = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.name
+        return 'Name:{} id: {}'.format(self.name, str(self.id))
 
 
 class Channel(models.Model):
-    description = models.CharField(max_length=100, null=True)
+    description = models.CharField(max_length=900, null=True)
     img_src = models.FileField(
         upload_to='channels/', default='channels/nopic.jpg')
-    title = models.CharField(max_length=20, null=True)
+    title = models.CharField(max_length=30, null=True)
     channel_type = models.ForeignKey('ChannelType', on_delete=models.CASCADE,null=True,blank=True)
     url = models.CharField(max_length=40, null=True, blank=True)
-
+    featured = models.BooleanField(default=False)
+    
     def __str__(self):
         return 'Channel: {} , id : {}'.format(self.title,str(self.id))
 

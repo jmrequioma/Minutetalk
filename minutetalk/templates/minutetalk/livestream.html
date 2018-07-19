@@ -298,6 +298,17 @@ function disconnect() {
     window.history.back();
 }
 
+function deleteSession() {
+    $.ajax({
+        url: '/ajax/delete_session',
+        data: {
+        },
+        dataType: 'json',
+        success: response => {
+        }
+    })
+}
+
 var session = OT.initSession(apiKey, sessionId);
 
 function initializeSession() {
@@ -336,6 +347,7 @@ function initializeSession() {
         }
     });
 }
+
 
 // (optional) add server code here
 initializeSession();

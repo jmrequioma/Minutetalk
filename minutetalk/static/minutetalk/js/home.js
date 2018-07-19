@@ -102,6 +102,9 @@ var vue = new Vue({
             alertDisconnect: false
         }
     },
+    mounted () {
+                console.log(this.$vuetify.breakpoint)
+            },
     methods: {
         onFileChange(e) {
             var files = e.target.files || e.dataTransfer.files;
