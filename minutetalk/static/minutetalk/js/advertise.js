@@ -36,7 +36,7 @@ var vue = new Vue({
             ],
 
             cardnameRules: [
-                v => this.is_valid_field(v) || 'Card name is required'
+                v => this.is_valid_field(v) || 'Card Holder\'s name is required'
             ],
 
             cvcRules: [
