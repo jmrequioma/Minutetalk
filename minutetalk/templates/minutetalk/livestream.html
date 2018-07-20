@@ -149,7 +149,7 @@ window.onload = function() {
             if (data['receiver'] == '{{request.user.userprofile.id}}') {
                 if(!answeredQuestion){
                     displayQuestion(data, 'YOUR')
-                    totaltime = 5
+                    totaltime = 60
                     setTimeout(function(){
                         console.log('start time')
                         starttime()
@@ -252,7 +252,7 @@ function sendDone(){
     }))
 }
 
-var totaltime = 5;
+var totaltime = 60;
 function update(percent) {
     var deg;
     if (percent < (totaltime / 2)) {
@@ -301,20 +301,11 @@ function disconnect() {
 }
 
 function redirect(){
-    deleteSession()
     window.location.href =  "/" + channel_id
-    
 }
 
 function deleteSession() {
-    $.ajax({
-        url: '/ajax/delete_session',
-        data: {
-        },
-        dataType: 'json',
-        success: response => {
-        }
-    })
+
 }
 
 var session = OT.initSession(apiKey, sessionId);

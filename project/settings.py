@@ -27,8 +27,10 @@ ALLOWED_HOSTS = ['*']
 
 # Opentok API Keys
 
-api_key = '46151822'
-api_secret = '224a06a7055d1c1f5518d6a0de1720e71fb11e3c'
+# api_key = '46151822'
+# api_secret = '224a06a7055d1c1f5518d6a0de1720e71fb11e3c'
+api_key = '46145962'
+api_secret = '6833bf2d2833e7f443a75a947d6cb3425aa84840'
 
 # Application definition
 

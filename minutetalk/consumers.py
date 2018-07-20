@@ -1,7 +1,7 @@
 import json
 from channels.consumer import AsyncConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import Channel
+from .models import Channel, ChatLog
 from django.shortcuts import get_object_or_404
 
 
@@ -117,6 +117,11 @@ class MessageConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Leave room group
+        chatLog = get_object_or_404(ChatLog, user=self.scope['user'])
+        chatLog.delete()
+        print("disconnnnnnnnnnnnnnnnnnnnnnnnnnnnect")
+
+        # ChatLog.objects.filter(user=request.user).delete()
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name

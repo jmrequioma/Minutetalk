@@ -57,6 +57,10 @@ var vue = new Vue({
             name: '',
             details: '',
             bool: true,
+            token: {
+                partner: false,
+                me: false
+            },
             firstnameRules: [
                 v => this.is_valid_field(v) || 'First Name is required'
             ],
@@ -254,7 +258,7 @@ var vue = new Vue({
                 }
             })
         },
-        startCall: function(session_id, channel_id){
+        createToken: function(session_id, channel_id, partnerId){
             console.log(channel_id)
             $.ajax({
                 async:false,
@@ -264,7 +268,17 @@ var vue = new Vue({
                     'channel_id': channel_id,
                 },
                 success: response => {
-                    window.location.href += '/videochat'
+                    // if partner has created token
+                    //      start call
+                    // else 
+                    //   created token = true
+                    //   send created token to partner
+                    if (vue.token.partner){
+                        window.location.href += '/videochat'
+                    } else {
+                        vue.token.me = true
+                        sendCreatedToken(partnerId)
+                    }
                 }
             })
         },

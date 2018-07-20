@@ -16,8 +16,10 @@ from random import sample
 import base64
 
 
-api_key = '46151822'
-api_secret = '224a06a7055d1c1f5518d6a0de1720e71fb11e3c'
+# api_key = '46151822'
+# api_secret = '224a06a7055d1c1f5518d6a0de1720e71fb11e3c'
+api_key = '46145962'
+api_secret = '6833bf2d2833e7f443a75a947d6cb3425aa84840'
 opentok = OpenTok(api_key, api_secret)
 
 
@@ -61,7 +63,6 @@ class SignUpView(generic.View):
                 user=user, gender=data['gender'], age=data['age']
             )
             userprofile.save()
-            print(data['img_src'])
             if data['img_src']:
                 res = addImage(data['img_src'], userprofile.user.username)
                 userprofile.img_src.save(res['file_name'], res['data'], save=True)
@@ -178,8 +179,14 @@ class EditProfile(LoginRequiredMixin, generic.View):
             user.email = data['email']
             userProfile.age = data['age']
             userProfile.gender = data['gender']
-            res = addImage(request.POST['img_src'], userprofile.user.username)
-            userprofile.img_src.save(res['file_name'], res['data'], save=True)
+
+            image_data = request.POST['img_src']
+            if not image_data:
+                userProfile.img_src = UserProfile._meta.get_field('img_src').get_default()
+            elif (image_data.find('/media/users/') < 0) and image_data.find(';base64,'):
+                res = addImage(request.POST['img_src'], userProfile.user.username)
+                print(res['file_name'], res['data'])
+                userProfile.img_src.save(res['file_name'], res['data'], save=True)
             user.save()
             userProfile.save()
             return JsonResponse({})
