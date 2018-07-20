@@ -117,15 +117,29 @@ class MessageConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Leave room group
-        chatLog = get_object_or_404(ChatLog, user=self.scope['user'])
+        chatLog = ChatLog.objects.filter(user=self.scope['user'])
         chatLog.delete()
-        print("disconnnnnnnnnnnnnnnnnnnnnnnnnnnnect")
 
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "chat.disconnect",
+                "data": {'type': 'disconnect'}
+            }
+
+        )
         # ChatLog.objects.filter(user=request.user).delete()
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
+
+    async def chat_disconnect(self,event):
+        message = event['data']
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
 
     # Receive message from WebSocket
     async def receive(self, text_data):

@@ -180,6 +180,9 @@ window.onload = function() {
             answeredQuestion = false
             disableButton = false
             document.getElementById('question').style="opacity:1"
+        } else if (data['type'] == 'disconnect'){
+            session.disconnect();
+            vue.disconnect = true
         } 
     }
     socket.onopen = function(e) {

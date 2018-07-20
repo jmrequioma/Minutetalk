@@ -111,11 +111,14 @@ class JoinChannel(LoginRequiredMixin, generic.View):
         my_channels = user.fav_channels.all()
         user.my_channel = channel
         user.save()
+        featured_channels = Channel.objects.filter(featured=True)
         context = {
             'channel': channel,
             'my_channels': my_channels,
             'users': online_users,
-            'fav': user.fav_channels.filter(id=channel_id).exists()
+            'fav': user.fav_channels.filter(id=channel_id).exists(),
+            'featured_channels' : featured_channels,
+
         }
         return render(request, 'minutetalk/channel.html', context)
 
@@ -248,9 +251,9 @@ class VideoChatView(LoginRequiredMixin, generic.View):
             partner = ChatLog.objects.filter(session_id=chatlog.session_id).exclude(user=request.user).first()
             channel = get_object_or_404(Channel,id=11)
             questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
-            print(questions_list)
             my_channels = get_object_or_404(
                 UserProfile, user=request.user).fav_channels.all()
+            featured_channels = Channel.objects.filter(featured=True)
             context = {
                 'apikey' : api_key,
                 'session_id' : chatlog.session_id,
@@ -259,8 +262,8 @@ class VideoChatView(LoginRequiredMixin, generic.View):
                 'partner' : partner.user.userprofile,
                 'questions_list' : questions_list,
                 'my_channels' : my_channels,
-                'channel_id': chatlog.channel.id
-
+                'channel_id': chatlog.channel.id,
+                'featured_channels' : featured_channels
             }
             return render(request, 'minutetalk/livestream.html',context)
         return render(request, 'minutetalk/not_found.html')
