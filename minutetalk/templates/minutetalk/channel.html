@@ -41,7 +41,6 @@
                 </v-flex>
             </v-layout>
             <v-layout row wrap>
-                
                 <v-layout align-center justify-start row fill-height>
                     <v-flex xs1 style="height: 30px;">
                         <v-select outline :items="gender" v-model="genderchoice" label="Gender" single-line color="indigo"></v-select>
@@ -59,42 +58,42 @@
                     </div>
                 </div>
             </v-layout>
-                <v-layout v-if="!user_search.trim() && agechoice == 'All' && genderchoice == 'All'" row wrap>
-                    {% for user in users %}
-                    <v-flex d-flex xs10 sm3>
-                        <div id="{{user.id}}" :key="{{user.id}}">
-                            <v-list-tile-avatar size="200px">
-                                <img src="{{ user.img_src.url }}">
-                                <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
-                            </v-list-tile-avatar>
-                            <v-btn class="btn btn-3" @click="talk({{user.id}}, '{{user.user.first_name}}', '{{user.user.last_name}}', '{{user.img_src}}')">Talk!</v-btn>
-                        </div>
-                    </v-flex>
-                    {%endfor%}
-                    <v-flex v-for="user in users" d-flex xs10 sm3>
-                        <div :id="[[user.id]]">
-                            <v-list-tile-avatar size="200px">
-                                <img :src="'/media/' + [[ user.img_src ]]">
-                                <p class="name">[[user.first_name]] [[user.last_name]]</p>
-                            </v-list-tile-avatar>
-                            <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
-                        </div>
-                    </v-flex>
+            <v-layout v-if="!user_search.trim() && agechoice == 'All' && genderchoice == 'All'" row wrap>
+                {% for user in users %}
+                <v-flex d-flex xs10 sm3>
+                    <div id="{{user.id}}" :key="{{user.id}}">
+                        <v-list-tile-avatar size="200px">
+                            <img src="{{ user.img_src.url }}">
+                            <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
+                        </v-list-tile-avatar>
+                        <v-btn class="btn btn-3" @click="talk({{user.id}}, '{{user.user.first_name}}', '{{user.user.last_name}}', '{{user.img_src}}')">Talk!</v-btn>
+                    </div>
+                </v-flex>
+                {%endfor%}
+                <v-flex v-for="user in users" d-flex xs10 sm3>
+                    <div :id="[[user.id]]">
+                        <v-list-tile-avatar size="200px">
+                            <img :src="'/media/' + [[ user.img_src ]]">
+                            <p class="name">[[user.first_name]] [[user.last_name]]</p>
+                        </v-list-tile-avatar>
+                        <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
+                    </div>
+                </v-flex>
+            </v-layout>
+            <v-layout v-if="user_search.trim() || agechoice != 'All' || genderchoice != 'All'" row wrap>
+                <v-layout align-center justify-center row fill-height v-if="!user_result.length">
+                    <h2 class="result"> No results found.</h2>
                 </v-layout>
-                <v-layout v-if="user_search.trim() || agechoice != 'All' || genderchoice != 'All'" row wrap>
-                    <v-layout align-center justify-center row fill-height v-if="!user_result.length">
-                        <h2 class="result"> No results found.</h2>
-                    </v-layout>
-                    <v-flex v-for="user in user_search_result" d-flex xs10 sm3>
-                        <div :id="[[user.id]]">
-                            <v-list-tile-avatar size="200px">
-                                <img :src="'/media/' + [[ user.img_src ]]">
-                                <p class="name">[[user.first_name]] [[user.last_name]]</p>
-                            </v-list-tile-avatar>
-                            <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
-                        </div>
-                    </v-flex>
-                </v-layout>
+                <v-flex v-for="user in user_search_result" d-flex xs10 sm3>
+                    <div :id="[[user.id]]">
+                        <v-list-tile-avatar size="200px">
+                            <img :src="'/media/' + [[ user.img_src ]]">
+                            <p class="name">[[user.first_name]] [[user.last_name]]</p>
+                        </v-list-tile-avatar>
+                        <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
+                    </div>
+                </v-flex>
+            </v-layout>
         </template>
     </v-container>
 </v-content>
@@ -237,7 +236,9 @@ window.onload = function() {
                         vue.calleebusy = true
                     }
                 }
+
                 if (data['reject']) {
+                    console.log("rejected")
                     if (data['id'] == '{{request.user.userprofile.id}}') {
                         vue.calling = false
                         vue.calleereject = true
@@ -245,26 +246,38 @@ window.onload = function() {
                 }
                 // cancel call
                 else if (data['id'] == '{{request.user.userprofile.id}}') {
+                    console.log("incoming call false")
                     vue.incomingcall = false
                 }
-
-
             }
         } else if (data['type'] == 'session') {
             console.log('Session accepted!')
             if (data['caller_id'] == '{{request.user.userprofile.id}}') {
-                vue.startCall(data['session_id'])
+                vue.createToken(data['session_id'], '{{channel.id}}', data['callee_id'])
+            } else if (data['callee_id'] == '{{request.user.userprofile.id}}') {
+                vue.createToken(data['session_id'], '{{channel.id}}', data['caller_id'])
             }
+        } else if (data['type'] == 'createdToken') {
+            if (data['id'] == '{{request.user.userprofile.id}}') {
+                console.log('created token', '{{request.user.userprofile}}')
+                if (vue.token.me) {
+                    window.location.href += '/videochat'
+                } else {
+                    vue.token.partner = true
+                }
+            }
+
+
         }
-    }
-    socket.onopen = function(e) {
-        console.log("open", e)
-    }
-    socket.onerror = function(e) {
-        console.log("error", e)
-    }
-    socket.onclose = function(e) {
-        console.log("close", e)
+        socket.onopen = function(e) {
+            console.log("open", e)
+        }
+        socket.onerror = function(e) {
+            console.log("error", e)
+        }
+        socket.onclose = function(e) {
+            console.log("close", e)
+        }
     }
 }
 
@@ -285,10 +298,17 @@ function decline_call(id) {
 }
 
 function sendSession(session_id, caller_id) {
+    console.log('{{channel.id}}')
     console.log('Sending session....')
-    socket.send(JSON.stringify({ 'type': 'session', 'session_id': session_id, 'caller_id': caller_id }))
-    vue.startCall(session_id)
+    socket.send(JSON.stringify({ 'type': 'session', 'session_id': session_id, 'caller_id': caller_id, 'callee_id': '{{request.user.userprofile.id}}' }))
+    // vue.createToken(session_id, '{{channel.id}}')
 }
+
+function sendCreatedToken(partnerId) {
+    socket.send(JSON.stringify({ 'type': 'createdToken', 'id': partnerId }))
+}
+
+
 
 function filterUser(channel_id, name, age, gender) {
     var res = []

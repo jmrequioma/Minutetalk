@@ -151,7 +151,6 @@ body, html {
     }
   }
 
-  
 .imagecenter {
     padding-top: 15px;
     padding-botton: 0px;
@@ -159,4 +158,43 @@ body, html {
     margin-left: auto;
     margin-right: auto;
     width: 50%;
+}
+
+#videoDisplay {
+  position: absolute; 
+  z-index: 1; 
+  height: 100%; 
+  width: 100%; 
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+}
+#questionText, #ratingDisplay, #rateResult{
+  position: absolute; 
+  width: 100%; 
+  color: white; 
+  z-index: 1;
+  top: 50%; 
+  left:50%; 
+  text-align: center; 
+  transform: translate(-50%, -50%);
+  display: none;
+}
+
+
+.fa {
+    font-size: 50px;
+    cursor: pointer;
+    user-select: none;
+    transition: all .2s ease-in-out;
+    color: gray;
+}
+
+.fa-thumbs-up:hover {
+  color: blue;
+  transform: scale(1.1);
+}
+
+.fa-thumbs-down:hover {
+  color: red;
+  transform: scale(1.1);
 }

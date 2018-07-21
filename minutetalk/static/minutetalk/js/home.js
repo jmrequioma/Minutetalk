@@ -58,6 +58,10 @@ var vue = new Vue({
             name: '',
             details: '',
             bool: true,
+            token: {
+                partner: false,
+                me: false
+            },
             firstnameRules: [
                 v => this.is_valid_field(v) || 'First Name is required'
             ],
@@ -255,16 +259,27 @@ var vue = new Vue({
                 }
             })
         },
-        startCall: function(session_id){
-            console.log('Starting call....')
+        createToken: function(session_id, channel_id, partnerId){
+            console.log(channel_id)
             $.ajax({
                 async:false,
                 url: 'ajax/token',
                 data: {
-                    'session_id': session_id
+                    'session_id': session_id,
+                    'channel_id': channel_id,
                 },
                 success: response => {
-                    window.location.href += '/videochat'
+                    // if partner has created token
+                    //      start call
+                    // else 
+                    //   created token = true
+                    //   send created token to partner
+                    if (vue.token.partner){
+                        window.location.href += '/videochat'
+                    } else {
+                        vue.token.me = true
+                        sendCreatedToken(partnerId)
+                    }
                 }
             })
         },
@@ -290,7 +305,7 @@ var vue = new Vue({
     },
     watch: {
         channel_search: function() {
-            var res = []
+            // var res = []
             if (this.channel_search.trim()) {
                 $.ajax({
                     async: false,
@@ -299,12 +314,11 @@ var vue = new Vue({
                         'query': this.channel_search,
                     },
                     success: function(data) {
-                        if (data.titles.length > 0) {
-                            res = data.titles;
-                        }
+                        // if (data.titles.length > 0) {
+                            vue.channel_result = data.titles
+                        // }
                     }
                 });
-                this.channel_result = res
             }
         },
         user_search: function() {
@@ -361,3 +375,4 @@ var vue = new Vue({
         }
     }
 });
+

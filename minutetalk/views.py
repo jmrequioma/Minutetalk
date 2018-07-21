@@ -1,25 +1,23 @@
 from .models import UserProfile, ChannelType, Channel, ChatLog, Question
 from .models import UserProfile, ChannelType, Channel, ChatLog
-from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.base import ContentFile
+from django.core.validators import validate_email
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from .forms import UserProfileForm
+from .forms import UserProfileForm, ChannelForm, PaymentForm
 from django.views import generic
 from django.urls import reverse
 from opentok import OpenTok
 from random import sample
 import base64
 
-
 api_key = '46156832'
 api_secret = '1c0a02b17eb94595982a488aca6742eabc62997e'
 opentok = OpenTok(api_key, api_secret)
-
 
 class IndexView(generic.View):
 
@@ -61,9 +59,10 @@ class SignUpView(generic.View):
                 user=user, gender=data['gender'], age=data['age']
             )
             userprofile.save()
-            print(data['img_src'])
             if data['img_src']:
-                addUserImage(request, userprofile)
+                res = addImage(data['img_src'], userprofile.user.username)
+                userprofile.img_src.save(res['file_name'], res['data'], save=True)
+
 
             user = authenticate(
                 request, username=request.POST['username'], 
@@ -108,11 +107,14 @@ class JoinChannel(LoginRequiredMixin, generic.View):
         my_channels = user.fav_channels.all()
         user.my_channel = channel
         user.save()
+        featured_channels = Channel.objects.filter(featured=True)
         context = {
             'channel': channel,
             'my_channels': my_channels,
             'users': online_users,
-            'fav': user.fav_channels.filter(id=channel_id).exists()
+            'fav': user.fav_channels.filter(id=channel_id).exists(),
+            'featured_channels' : featured_channels,
+
         }
         return render(request, 'minutetalk/channel.html', context)
 
@@ -177,7 +179,14 @@ class EditProfile(LoginRequiredMixin, generic.View):
             user.email = data['email']
             userProfile.age = data['age']
             userProfile.gender = data['gender']
-            addUserImage(request, userProfile)
+
+            image_data = request.POST['img_src']
+            if not image_data:
+                userProfile.img_src = UserProfile._meta.get_field('img_src').get_default()
+            elif (image_data.find('/media/users/') < 0) and image_data.find(';base64,'):
+                res = addImage(request.POST['img_src'], userProfile.user.username)
+                print(res['file_name'], res['data'])
+                userProfile.img_src.save(res['file_name'], res['data'], save=True)
             user.save()
             userProfile.save()
             return JsonResponse({})
@@ -239,9 +248,9 @@ class VideoChatView(LoginRequiredMixin, generic.View):
             partner = ChatLog.objects.filter(session_id=chatlog.session_id).exclude(user=request.user).first()
             channel = get_object_or_404(Channel,id=11)
             questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
-            print(questions_list)
             my_channels = get_object_or_404(
                 UserProfile, user=request.user).fav_channels.all()
+            featured_channels = Channel.objects.filter(featured=True)
             context = {
                 'apikey' : api_key,
                 'session_id' : chatlog.session_id,
@@ -250,6 +259,8 @@ class VideoChatView(LoginRequiredMixin, generic.View):
                 'partner' : partner.user.userprofile,
                 'questions_list' : questions_list,
                 'my_channels' : my_channels,
+                'channel_id': chatlog.channel.id,
+                'featured_channels' : featured_channels
             }
             return render(request, 'minutetalk/livestream.html',context)
         return render(request, 'minutetalk/not_found.html')
@@ -257,19 +268,14 @@ class VideoChatView(LoginRequiredMixin, generic.View):
 class CreateToken(LoginRequiredMixin, generic.View):
     
     def get(self, request, *args, **kwargs):
-        session_id = request.GET.get('session_id')
+        session_id = request.GET['session_id']
+        print(request.GET)
+        channel_id = request.GET['channel_id']
         token = opentok.generate_token(session_id)
-
-        chatlog = ChatLog(user=request.user,token=token,session_id=session_id)
+        channel = get_object_or_404(Channel,id=channel_id)
+        chatlog = ChatLog(user=request.user,token=token,session_id=session_id,channel=channel)
         chatlog.save()
-
-        context = {
-            'apikey' : api_key,
-            'session_id' : session_id,
-            'token' : token,
-            'message' : 'Chatlog created'
-        }
-        return JsonResponse(context)
+        return JsonResponse({})
 
 class CreateSession(LoginRequiredMixin, generic.View):
 
@@ -307,13 +313,29 @@ class ValidateAdvertise(generic.View):
             return JsonResponse({'message' : 'Success'})
         return JsonResponse({'error': form.errors})
 
+class CreateChannel(generic.View):
 
-def addUserImage(request, userprofile):
-    image_data = request.POST['img_src']
+    def post(self, request):   
+        channelForm = ChannelForm(request.POST)
+        paymentForm = PaymentForm(request.POST)
+        print(request.POST['channel_type']) 
+
+        if channelForm.is_valid() and paymentForm.is_valid():
+            channel = channelForm.save()
+            if request.POST['img_src']:
+                res = addImage(request.POST['img_src'], channel.title)
+                channel.img_src.save(res['file_name'], res['data'], save=True)
+            return JsonResponse({})
+        else:
+            if ('title' in channelForm.errors):
+                return JsonResponse({'channel_error': channelForm.errors['title']})
+        return JsonResponse({'channel_error': channelForm.errors, 'payment_error': paymentForm.errors})
+
+
+def addImage(image_data, name):
     format, imgstr = image_data.split(';base64,')
-    print('format', format)
     ext = format.split('/')[-1]
 
     data = ContentFile(base64.b64decode(imgstr))
-    file_name = userprofile.user.username + ext
-    userprofile.img_src.save(file_name, data, save=True)
+    file_name = name + ext
+    return {'file_name': file_name, 'data':data}

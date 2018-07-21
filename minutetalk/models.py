@@ -29,15 +29,15 @@ class ChannelType(models.Model):
     name = models.CharField(max_length=30)
 
     def __str__(self):
-        return 'Name:{} id: {}'.format(self.name, str(self.id))
+        return self.name
 
 
 class Channel(models.Model):
     description = models.CharField(max_length=900, null=True)
     img_src = models.FileField(
         upload_to='channels/', default='channels/nopic.jpg')
-    title = models.CharField(max_length=30, null=True)
     channel_type = models.ForeignKey('ChannelType', on_delete=models.CASCADE,null=True,blank=True)
+    title = models.CharField(max_length=20, null=True)
     url = models.CharField(max_length=40, null=True, blank=True)
     featured = models.BooleanField(default=False)
     
@@ -49,11 +49,11 @@ class ChatLog(models.Model):
         User, on_delete=models.CASCADE)
     token = models.CharField(max_length=400,blank=True)
     session_id = models.CharField(max_length=72,blank=True)
+    channel =models.ForeignKey('Channel', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return 'User : {} \n Session : {} \n Token : {}'.format(self.user.username,
                                                     self.session_id, self.token)
-
 
 class Question(models.Model):
     channel = models.ForeignKey(
@@ -63,3 +63,11 @@ class Question(models.Model):
     def __str__(self):
         return 'Channel : {} \n Question : {} id : {}'.format(self.channel.title,
                                                     self.text,str(self.id))
+
+class Payment(models.Model):
+    email = models.EmailField()
+    cardname = models.CharField(max_length=20)
+    cardnumber = models.CharField(max_length=16)
+    expirydate = models.CharField(max_length=10)
+    cvc = models.CharField(max_length=4)
+

@@ -1,14 +1,21 @@
 {% extends 'minutetalk/home.html' %} {% block content %} {% load static %}
-<v-content >
+<v-content>
     <v-container class="videoarea" fluid fill-height>
         <div id="videos">
             <div id="subscriber">
-                <h1 style="color: white; position: absolute; z-index: 1;
-                padding-top: 15px;" id="questionDisplay"></h1>
+                <div id="videoDisplay">
+                    <h1 id="questionText"></h1>
+                    <div id="ratingDisplay">
+                        <p> {{partner}} finished answering. Please rate {{partner}}'s answer</p>
+                        <i id="thumbs-up" class="fa fa-thumbs-up"></i>
+                        <i id="thumbs-down" class="fa fa-thumbs-down"></i>
+                    </div>
+                    <div id="rateResult">
+                        <p> {{partner}} rated your answer: </p>
+                    </div>
+                </div>
             </div>
-            <div id="publisher">
-                
-            </div>
+            <div id="publisher"></div>
             <v-list>
                 <v-list-tile two-line class="chatname">
                     <v-list-tile-avatar size="40px">
@@ -38,7 +45,7 @@
                 <v-navigation-drawer style="width: 100%">
                     <v-list class="questionlist" two-line>
                         <v-subheader>MY QUESTIONS</v-subheader>
-                        <div id="question">
+                        <div id="questionList">
                             {% for question in questions_list%}
                             <v-list-tile id="{{question.id}}" ripple onclick="sendQuestion('{{question.text}}','{{question.id}}')">
                                 <v-list-tile-content>
@@ -53,11 +60,7 @@
                         <v-divider></v-divider>
                         <v-subheader>CURRENT QUESTION</v-subheader>
                         <v-list-tile v-if="question" two-line>
-                            <!-- <v-list-tile-avatar size='30px'>
-                                <img src='/media/{{partner.img_src}}'>
-                            </v-list-tile-avatar> -->
                             <v-list-tile-content>
-                                <!-- <small class='timedisplay'> [[question.time]] </small>  -->
                                 <v-list-tile-title class='myquestion'> [[question.text]] </v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
@@ -83,7 +86,7 @@
             </v-list>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn flat color="indigo darken-4" onclick="window.history.back();">
+                <v-btn flat color="indigo darken-4" onclick="redirect()">
                     RETURN TO CHANNEL
                 </v-btn>
             </v-card-actions>
@@ -125,17 +128,22 @@ var apiKey = '{{ apikey }}'
 var sessionId = '{{ session_id }}'
 var token = '{{ token }}'
 var partner_id = '{{ partner.id }}'
+var channel_id = '{{channel_id}}'
 
 var endpoint = 'ws://' + window.location.host + '/videochat/' + sessionId;
 var socket = new WebSocket(endpoint)
 var disableButton = false
 var answeredQuestion = false
 
+var video = true;
+
+var session = OT.initSession(apiKey, sessionId);
+var publisher;
+
 window.onload = function() {
     socket.onmessage = function(e) {
         var data = JSON.parse(e.data)['message']
         if (data['type'] == 'message') {
-
             if (data['receiver'] == '{{request.user.userprofile.id}}') {
                 if (!answeredQuestion) {
                     displayQuestion(data, 'YOUR')
@@ -147,28 +155,69 @@ window.onload = function() {
                             answeredQuestion = true
                             displayTimeEnd()
                             setTimeout(function() {
-
-
-                                if (!data['done']) {
-                                    sendMessage(vue.question.text, true)
-                                } else {
-                                    sendDone()
-                                }
+                                console.log('partner rate me now')
+                                sendRating('rating', partner_id, data['done'], null)
                             }, 2000);
-
                         }, totaltime * 1000);
                     }, 4000);
                 } else {
                     sendDone()
                 }
             } else {
-                displayQuestion(data, data['name'])
+                displayQuestion(data, '{{partner}}')
             }
+        } else if (data['type'] == 'rating') {
+            if (data['receiver'] == '{{request.user.userprofile.id}}') {
+                console.log('rating....')
+
+                // display rate button
+                // after i rated, send rating
+                document.getElementById("thumbs-up").onclick = function() { sendRating('rateResult', partner_id, data['done'], true) };
+                document.getElementById("thumbs-down").onclick = function() { sendRating('rateResult', partner_id, data['done'], false) };
+
+                document.getElementById('videoDisplay').style.display = 'block'
+                document.getElementById('ratingDisplay').style.display = 'block'
+                // put onclick function of like button sendRating('rateResult', partner_id, data['done'], rating)
+            }
+
+        } else if (data['type'] == 'rateResult') {
+            if (data['receiver'] == '{{request.user.userprofile.id}}') {
+                // data['rating']
+                document.getElementById('questionText').style.display = 'none'
+                var el = document.getElementById('rateResult')
+                var icon = document.createElement('i');
+                el.style.display = 'block'
+                if (data['rating']) {
+                    icon.className = "fa fa-thumbs-up"
+                    icon.style.color = "blue"
+                } else {
+                    icon.className = "fa fa-thumbs-down"
+                    icon.style.color = "red"
+                }
+                el.appendChild(icon)
+
+
+                console.log('{{partner}} rated your question', data['rating'])
+
+                setTimeout(function() {
+                    el.style.display = 'none'
+                    if (!data['done']) {
+                        sendMessage(vue.question.text, true)
+                    } else {
+                        sendDone()
+                    }
+                }, 2000)
+            }
+
         } else if (data['type'] == 'question_answered') {
             console.log("Question is already answered")
+            document.getElementById('videoDisplay').style.display = 'none'
             answeredQuestion = false
             disableButton = false
-            document.getElementById('question').style = "opacity:1"
+            document.getElementById('questionList').style = "opacity:1"
+        } else if (data['type'] == 'disconnect') {
+            session.disconnect();
+            vue.disconnect = true
         }
     }
     socket.onopen = function(e) {
@@ -182,36 +231,50 @@ window.onload = function() {
     }
 }
 
+
+// display on top of video
 function displayTimeEnd() {
-    var display = document.getElementById('questionDisplay')
-    document.getElementById('question').style = "opacity:0.5"
-    display.innerHTML = 'Time is up'
+    var display = document.getElementById('videoDisplay')
+    var text = document.getElementById('questionText')
+    display.style.display = "block"
+
+    text.innerHTML = 'Time is up'
+    text.style.display = "block"
+
     setTimeout(function() {
-        display.innerHTML = ''
+        text.innerHTML = '{{partner}} is rating your answer'
     }, 2000);
 }
 
 function displayQuestion(data, name) {
     // disable button of question
     disableButton = true
+    document.getElementById('questionList').style = "opacity:0.5"
 
     // display question
     var message = data['message']
     vue.question = { "text": message }
-    var display = document.getElementById('questionDisplay')
-    document.getElementById('question').style = "opacity:0.5"
-    display.innerHTML = vue.question.text
+
+    var display = document.getElementById('videoDisplay')
+    var text = document.getElementById('questionText')
+    display.style.display = "block"
+
+    text.innerHTML = 'It\'s ' + name + ' turn to answer'
+    text.style.display = "block"
 
     // display whose turn is it, after 2 seconds
     setTimeout(function() {
-        display.innerHTML = 'It\'s ' + name + ' turn to answer'
+        text.innerHTML = vue.question.text
+
         setTimeout(function() {
-            display.innerHTML = ''
-            console.log('display end')
+            display.style.display = "none"
+            text.style.display = "none"
 
         }, 2000);
     }, 2000);
 }
+
+
 
 function sendQuestion(question_text, question_id) {
     if (!disableButton) {
@@ -230,7 +293,7 @@ function sendMessage(text, done) {
     socket.send(JSON.stringify({
         'type': 'message',
         'receiver': partner_id,
-        'name': '{{partner}}',
+        // 'name': '{{partner}}',
         'done': done,
         'message': text
     }));
@@ -242,6 +305,19 @@ function sendDone() {
     }))
 }
 
+// sendRating('rating', partner_id, data['done'])
+function sendRating(socketType, receiver_id, doneValue, rating) {
+    socket.send(JSON.stringify({
+        'type': socketType,
+        'receiver': receiver_id,
+        'done': doneValue,
+        'rating': rating
+    }));
+    document.getElementById('ratingDisplay').style.display = 'none'
+
+}
+
+// timer
 var totaltime = 5;
 
 function update(percent) {
@@ -286,69 +362,64 @@ function handleError(error) {
 function disconnect() {
     console.log("Disconnecting");
     session.disconnect();
-    window.history.back();
+    // window.history.back();
+    redirect()
 }
 
-function deleteSession() {
-    $.ajax({
-        url: '/ajax/delete_session',
-        data: {},
-        dataType: 'json',
-        success: response => {}
-    })
+function redirect() {
+    window.location.href = "/" + channel_id
 }
 
 function toogleVideo() {
     video = !video
     publisher.publishVideo(video);
-    console.log(publisher.publishVideo)
 }
-var video = true;
 
-var session = OT.initSession(apiKey, sessionId);
-// Create a publisher
-var publisher;
+
 
 function handleError(error) {
     if (error) {
-      console.error('Received an error', error);
+        console.error('Received an error', error);
     }
-  }
-  function initializeSession() {
+}
+
+function initializeSession() {
 
     // Subscribe to a newly created stream
     session.on('streamCreated', function streamCreated(event) {
-      var subscriberOptions = {
-        insertMode: 'append',
-        width: '100%',
-        height: '100%'
-      };
-      session.subscribe(event.stream, 'subscriber', subscriberOptions, handleError);
+        var subscriberOptions = {
+            insertMode: 'append',
+            width: '100%',
+            height: '100%'
+        };
+        session.subscribe(event.stream, 'subscriber', subscriberOptions, handleError);
     });
 
-    session.on('sessionDisconnected', function sessionDisconnected(event) {
-      console.log('You were disconnected from the session.', event.reason);
+    session.on("streamDestroyed", function(event) {
+        session.disconnect();
+        // window.history.back();
+        // show modal
+        vue.disconnect = true
+        console.log("Stream " + event.stream.name + " ended. " + event.reason);
     });
 
     var publishPromise = publish();
 
     // Connect to the session
     session.connect(token, function callback(error) {
-      if (error) {
-        handleError(error);
-      } else {
-        // If the connection is successful, initialize a publisher and publish to the session
-        publishPromise.then(function publishThen(publisher) {
-          session.publish(publisher, handleError);
-        }).catch(handleError);
-      }
+        if (error) {
+            handleError(error);
+        } else {
+            publishPromise.then(function publishThen(publisher) {
+                session.publish(publisher, handleError);
+            }).catch(handleError);
+        }
     });
-  }
+}
 
+initializeSession();
 
-    initializeSession();
-
-    var getFilteredCanvas = function getFilteredCanvas(mediaStream) {
+var getFilteredCanvas = function getFilteredCanvas(mediaStream) {
     var WIDTH = 640;
     var HEIGHT = 480;
     var videoEl = document.createElement('video');
@@ -356,7 +427,7 @@ function handleError(error) {
     videoEl.setAttribute('playsinline', '');
     videoEl.muted = true;
     setTimeout(function timeout() {
-      videoEl.play();
+        videoEl.play();
     });
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
@@ -369,167 +440,166 @@ function handleError(error) {
     tmpCanvas.height = HEIGHT;
 
     videoEl.addEventListener('resize', function resize() {
-      canvas.width = tmpCanvas.width = videoEl.videoWidth;
-      canvas.height = tmpCanvas.height = videoEl.videoHeight;
+        canvas.width = tmpCanvas.width = videoEl.videoWidth;
+        canvas.height = tmpCanvas.height = videoEl.videoHeight;
     });
 
     var reqId;
 
     // Draw each frame of the video
     var drawFrame = function drawFrame() {
-      // Draw the video element onto the temporary canvas and pull out the image data
-      tmpCtx.drawImage(videoEl, 0, 0, tmpCanvas.width, tmpCanvas.height);
-      var imgData = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height);
-      // Apply the currently selected filter and get the new image data
-      imgData = Filters.selectedFilter(imgData);
-      // Draw the filtered image data onto the main canvas
-      ctx.putImageData(imgData, 0, 0);
+        // Draw the video element onto the temporary canvas and pull out the image data
+        tmpCtx.drawImage(videoEl, 0, 0, tmpCanvas.width, tmpCanvas.height);
+        var imgData = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height);
+        // Apply the currently selected filter and get the new image data
+        imgData = Filters.selectedFilter(imgData);
+        // Draw the filtered image data onto the main canvas
+        ctx.putImageData(imgData, 0, 0);
 
-      reqId = requestAnimationFrame(drawFrame);
+        reqId = requestAnimationFrame(drawFrame);
     };
 
     reqId = requestAnimationFrame(drawFrame);
 
     return {
-      canvas: canvas,
-      stop: function stop() {
-        // Stop the video element, the media stream and the animation frame loop
-        videoEl.pause();
-        if (mediaStream.stop) {
-          mediaStream.stop();
+        canvas: canvas,
+        stop: function stop() {
+            // Stop the video element, the media stream and the animation frame loop
+            videoEl.pause();
+            if (mediaStream.stop) {
+                mediaStream.stop();
+            }
+            if (MediaStreamTrack && MediaStreamTrack.prototype.stop) {
+                // Newer spec
+                mediaStream.getTracks().forEach(function each(track) { track.stop(); });
+            }
+            cancelAnimationFrame(reqId);
         }
-        if (MediaStreamTrack && MediaStreamTrack.prototype.stop) {
-          // Newer spec
-          mediaStream.getTracks().forEach(function each(track) { track.stop(); });
-        }
-        cancelAnimationFrame(reqId);
-      }
     };
-  };
+};
 
-  // Returns a Promise to a Publisher
-  function publish() {
+// Returns a Promise to a Publisher
+function publish() {
     // Request access to the microphone and camera
     return OT.getUserMedia().then(function gotMedia(mediaStream) {
-      var filteredCanvas = getFilteredCanvas(mediaStream);
+        var filteredCanvas = getFilteredCanvas(mediaStream);
 
-      var publisherOptions = {
-        insertMode: 'append',
-        width: '100%',
-        height: '100%',
-        // Pass in the canvas stream video track as our custom videoSource
-        videoSource: filteredCanvas.canvas.captureStream(30).getVideoTracks()[0],
-        // Pass in the audio track from our underlying mediaStream as the audioSource
-        audioSource: mediaStream.getAudioTracks()[0]
-      };
-      return new Promise(function promise(resolve, reject) {
-        publisher = OT.initPublisher('publisher', publisherOptions, function initComplete(err) {
-          if (err) {
-            filteredCanvas.stop();
-            reject(err);
-          } else {
-            resolve(publisher);
-          }
-        });
-        publisher.on('destroyed', function destroyed() {
-          // When the publisher is destroyed we cleanup
-          filteredCanvas.stop();
-        });
+        var publisherOptions = {
+            insertMode: 'append',
+            width: '100%',
+            height: '100%',
+            // Pass in the canvas stream video track as our custom videoSource
+            videoSource: filteredCanvas.canvas.captureStream(30).getVideoTracks()[0],
+            // Pass in the audio track from our underlying mediaStream as the audioSource
+            audioSource: mediaStream.getAudioTracks()[0]
+        };
+        return new Promise(function promise(resolve, reject) {
+            publisher = OT.initPublisher('publisher', publisherOptions, function initComplete(err) {
+                if (err) {
+                    filteredCanvas.stop();
+                    reject(err);
+                } else {
+                    resolve(publisher);
+                }
+            });
+            publisher.on('destroyed', function destroyed() {
+                // When the publisher is destroyed we cleanup
+                filteredCanvas.stop();
+            });
 
-        // We insert the canvas into the publisher element on iOS because the video element
-        // just stays black otherwise because of a bug https://bugs.webkit.org/show_bug.cgi?id=181663
-        if (navigator.userAgent.indexOf('iPhone OS') > -1) {
-          publisher.on('videoElementCreated', function videoElementCreated(event) {
-            event.element.parentNode.insertBefore(filteredCanvas.canvas, event.element);
-            filteredCanvas.canvas.style.width = '100%';
-            filteredCanvas.canvas.style.height = '100%';
-            filteredCanvas.canvas.style.position = 'absolute';
-            filteredCanvas.canvas.style.zIndex = 1;
-            filteredCanvas.canvas.style.objectFit = window.getComputedStyle(event.element).objectFit;
-          });
-        }
-      });
+            // We insert the canvas into the publisher element on iOS because the video element
+            // just stays black otherwise because of a bug https://bugs.webkit.org/show_bug.cgi?id=181663
+            if (navigator.userAgent.indexOf('iPhone OS') > -1) {
+                publisher.on('videoElementCreated', function videoElementCreated(event) {
+                    event.element.parentNode.insertBefore(filteredCanvas.canvas, event.element);
+                    filteredCanvas.canvas.style.width = '100%';
+                    filteredCanvas.canvas.style.height = '100%';
+                    filteredCanvas.canvas.style.position = 'absolute';
+                    filteredCanvas.canvas.style.zIndex = 1;
+                    filteredCanvas.canvas.style.objectFit = window.getComputedStyle(event.element).objectFit;
+                });
+            }
+        });
     });
-  };
+};
 
 var Filters = {
     none: function none(imgData) {
-      return imgData;
+        return imgData;
     },
 
     grayscale: function grayscale(imgData) {
-      const res = new Uint8ClampedArray(imgData.data.length);
-      for (let i = 0; i < imgData.data.length; i += 4) {
-        // Using the luminosity algorithm for grayscale 0.21 R + 0.72 G + 0.07 B
-        // https://www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale/
-        var inputRed = imgData.data[i];
-        var inputGreen = imgData.data[i + 1];
-        var inputBlue = imgData.data[i + 2];
-        res[i] = res[i + 1] = res[i + 2] = Math.round(0.21 * inputRed + 0.72 * inputGreen + 0.07 * inputBlue);
-        res[i + 3] = imgData.data[i + 3];
-      }
-      return new ImageData(res, imgData.width, imgData.height);
+        const res = new Uint8ClampedArray(imgData.data.length);
+        for (let i = 0; i < imgData.data.length; i += 4) {
+            // Using the luminosity algorithm for grayscale 0.21 R + 0.72 G + 0.07 B
+            // https://www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale/
+            var inputRed = imgData.data[i];
+            var inputGreen = imgData.data[i + 1];
+            var inputBlue = imgData.data[i + 2];
+            res[i] = res[i + 1] = res[i + 2] = Math.round(0.21 * inputRed + 0.72 * inputGreen + 0.07 * inputBlue);
+            res[i + 3] = imgData.data[i + 3];
+        }
+        return new ImageData(res, imgData.width, imgData.height);
     },
 
     sepia: function sepia(imgData) {
-      const res = new Uint8ClampedArray(imgData.data.length);
-      for (let i = 0; i < imgData.data.length; i += 4) {
-        // Using the algorithm for sepia from:
-        // https://www.techrepublic.com/blog/how-do-i/how-do-i-convert-images-to-grayscale-and-sepia-tone-using-c/
-        var inputRed = imgData.data[i];
-        var inputGreen = imgData.data[i + 1];
-        var inputBlue = imgData.data[i + 2];
-        res[i] = Math.round((inputRed * 0.393) + (inputGreen * 0.769) + (inputBlue * 0.189));
-        res[i + 1] = Math.round((inputRed * 0.349) + (inputGreen * 0.686) + (inputBlue * 0.168));
-        res[i + 2] = Math.round((inputRed * 0.272) + (inputGreen * 0.534) + (inputBlue * 0.131));
-        res[i + 3] = imgData.data[i + 3];
-      }
-      return new ImageData(res, imgData.width, imgData.height);
+        const res = new Uint8ClampedArray(imgData.data.length);
+        for (let i = 0; i < imgData.data.length; i += 4) {
+            // Using the algorithm for sepia from:
+            // https://www.techrepublic.com/blog/how-do-i/how-do-i-convert-images-to-grayscale-and-sepia-tone-using-c/
+            var inputRed = imgData.data[i];
+            var inputGreen = imgData.data[i + 1];
+            var inputBlue = imgData.data[i + 2];
+            res[i] = Math.round((inputRed * 0.393) + (inputGreen * 0.769) + (inputBlue * 0.189));
+            res[i + 1] = Math.round((inputRed * 0.349) + (inputGreen * 0.686) + (inputBlue * 0.168));
+            res[i + 2] = Math.round((inputRed * 0.272) + (inputGreen * 0.534) + (inputBlue * 0.131));
+            res[i + 3] = imgData.data[i + 3];
+        }
+        return new ImageData(res, imgData.width, imgData.height);
     },
 
     invert: function invert(imgData) {
-      const res = new Uint8ClampedArray(imgData.data.length);
-      for (let i = 0; i < imgData.data.length; i += 4) {
-        // Invert the colors red = 255 - inputRed etc.
-        res[i] = 255 - imgData.data[i];
-        res[i + 1] = 255 - imgData.data[i + 1];
-        res[i + 2] = 255 - imgData.data[i + 2];
-        res[i + 3] = imgData.data[i + 3]; // Leave alpha alone
-      }
-      return new ImageData(res, imgData.width, imgData.height);
+        const res = new Uint8ClampedArray(imgData.data.length);
+        for (let i = 0; i < imgData.data.length; i += 4) {
+            // Invert the colors red = 255 - inputRed etc.
+            res[i] = 255 - imgData.data[i];
+            res[i + 1] = 255 - imgData.data[i + 1];
+            res[i + 2] = 255 - imgData.data[i + 2];
+            res[i + 3] = imgData.data[i + 3]; // Leave alpha alone
+        }
+        return new ImageData(res, imgData.width, imgData.height);
     },
-    blur: function stackBlurImage( imageID, canvasID, radius, blurAlphaChannel ){
-        var img = document.getElementById( imageID );
+    blur: function stackBlurImage(imageID, canvasID, radius, blurAlphaChannel) {
+        var img = document.getElementById(imageID);
         var w = img.naturalWidth;
         var h = img.naturalHeight;
-           
-        var canvas = document.getElementById( canvasID );
-          
-        canvas.style.width  = w + "px";
+
+        var canvas = document.getElementById(canvasID);
+
+        canvas.style.width = w + "px";
         canvas.style.height = h + "px";
         canvas.width = w;
         canvas.height = h;
-        
+
         var context = canvas.getContext("2d");
-        context.clearRect( 0, 0, w, h );
-        context.drawImage( img, 0, 0 );
+        context.clearRect(0, 0, w, h);
+        context.drawImage(img, 0, 0);
 
-        if ( isNaN(radius) || radius < 1 ) return;
-        
-        if ( blurAlphaChannel )
-            stackBlurCanvasRGBA( canvasID, 0, 0, w, h, radius );
-        else 
-            stackBlurCanvasRGB( canvasID, 0, 0, w, h, radius );
+        if (isNaN(radius) || radius < 1) return;
+
+        if (blurAlphaChannel)
+            stackBlurCanvasRGBA(canvasID, 0, 0, w, h, radius);
+        else
+            stackBlurCanvasRGB(canvasID, 0, 0, w, h, radius);
     }
-  };
-  // Set the initial filter to none
-  Filters.selectedFilter = Filters.none;
+};
+// Set the initial filter to none
+Filters.selectedFilter = Filters.none;
 
-  // When the filter selector changes we update the selectedFilter
-  var filterSelector = document.querySelector('#filter');
-  filterSelector.addEventListener('change', function change() {
+// When the filter selector changes we update the selectedFilter
+var filterSelector = document.querySelector('#filter');
+filterSelector.addEventListener('change', function change() {
     Filters.selectedFilter = Filters[filterSelector.value];
-  });
+});
 </script>
-
 {% endblock %}
