@@ -16,8 +16,8 @@ from random import sample
 import base64
 
 
-api_key = '46151822'
-api_secret = '224a06a7055d1c1f5518d6a0de1720e71fb11e3c'
+api_key = '46156832'
+api_secret = '1c0a02b17eb94595982a488aca6742eabc62997e'
 opentok = OpenTok(api_key, api_secret)
 
 
@@ -78,10 +78,10 @@ class SignUpView(generic.View):
 class HomeView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
-        channels_list = ChannelType.objects.all()
+        channels_list = ChannelType.objects.exclude(name="Featured")
+        featured_channels = get_object_or_404(ChannelType,name="Featured")
         my_channels = get_object_or_404(
             UserProfile, user=request.user).fav_channels.all()
-        featured_channels = Channel.objects.filter(featured=True)
         context = {
             'user': request.user,
             'channels_list': channels_list,
@@ -128,7 +128,8 @@ class SearchChannel(LoginRequiredMixin, generic.View):
                 'title': x.title,
                 'description': x.description,
                 'src': x.img_src.name,
-                'id': x.id
+                'id': x.id,
+                'numberofUsers': len(x.current_channel.all())
             }
             context.append(d)
         return JsonResponse({'titles': context})

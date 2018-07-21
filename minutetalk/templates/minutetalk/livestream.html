@@ -1,12 +1,14 @@
 {% extends 'minutetalk/home.html' %} {% block content %} {% load static %}
-<v-content>
+<v-content >
     <v-container class="videoarea" fluid fill-height>
         <div id="videos">
             <div id="subscriber">
                 <h1 style="color: white; position: absolute; z-index: 1;
                 padding-top: 15px;" id="questionDisplay"></h1>
             </div>
-            <div id="publisher"></div>
+            <div id="publisher">
+                
+            </div>
             <v-list>
                 <v-list-tile two-line class="chatname">
                     <v-list-tile-avatar size="40px">
@@ -16,119 +18,108 @@
                         <v-list-tile-title class="otherusername">{{partner}}</v-list-tile-title>
                     </v-list-tile-content>
                     <button onclick="vue.alertDisconnect=true"> DISCONNECT</button>
-
+                    <button onclick="toogleVideo()">Disable Video</button>
+                    <select id="filter">
+                        <option value="none">None</option>
+                        <option value="grayscale">Grayscale</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="invert">Invert</option>
+                    </select>
                 </v-list-tile>
             </v-list>
-
             <v-spacer></v-spacer>
         </div>
         <v-container class="questions">
-
-                <div class="pie degree" style="margin-left: 150px;">
-                    <span class="block"></span>
-                    <span id="time">5</span>
-                </div> 
-
+            <div class="pie degree" style="margin-left: 150px;">
+                <span class="block"></span>
+                <span id="time">5</span>
+            </div>
             <div class="question">
                 <v-navigation-drawer style="width: 100%">
-                     <v-list class="questionlist" two-line>
-                        <v-subheader>MY QUESTIONS</v-subheader> 
+                    <v-list class="questionlist" two-line>
+                        <v-subheader>MY QUESTIONS</v-subheader>
                         <div id="question">
-                        {% for question in questions_list%}
-
-                        <v-list-tile  id="{{question.id}}" ripple onclick="sendQuestion('{{question.text}}','{{question.id}}')">
-                            <v-list-tile-content>
-                                    <p class="myquestion" >{{question.text}}</p>
-                                    
-                            </v-list-tile-content>
-                            <v-list-tile-avatar size="38px">
-                                <img src="{{user.userprofile.img_src.url}}">
-                            </v-list-tile-avatar>
-                        </v-list-tile>
-                        {% endfor %}
+                            {% for question in questions_list%}
+                            <v-list-tile id="{{question.id}}" ripple onclick="sendQuestion('{{question.text}}','{{question.id}}')">
+                                <v-list-tile-content>
+                                    <p class="myquestion">{{question.text}}</p>
+                                </v-list-tile-content>
+                                <v-list-tile-avatar size="38px">
+                                    <img src="{{user.userprofile.img_src.url}}">
+                                </v-list-tile-avatar>
+                            </v-list-tile>
+                            {% endfor %}
                         </div>
                         <v-divider></v-divider>
-
                         <v-subheader>CURRENT QUESTION</v-subheader>
-                        <v-list-tile v-if="question" two-line> 
+                        <v-list-tile v-if="question" two-line>
                             <!-- <v-list-tile-avatar size='30px'>
                                 <img src='/media/{{partner.img_src}}'>
                             </v-list-tile-avatar> -->
-                            
-                            <v-list-tile-content >
+                            <v-list-tile-content>
                                 <!-- <small class='timedisplay'> [[question.time]] </small>  -->
                                 <v-list-tile-title class='myquestion'> [[question.text]] </v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
-
                     </v-list>
                 </v-navigation-drawer>
             </div>
         </v-container>
     </v-container>
 </v-content>
-
 <v-dialog v-model="disconnect" persistent width="600">
     <v-card>
-    <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
-        <v-list two-line class="calleeinfo" style="padding-top: 15px;">
-            <v-list-tile class="calleedetails" style="padding-left: 0px;">
-                <v-list-tile-avatar size="50px" >
-                    <img src="{{partner.img_src.url}}">
-                </v-list-tile-avatar>
-                <v-list-tile-content>
-                    <v-list-tile-title>Your call with {{partner}} has been disconnected.</v-list-tile-title>
-                    <v-list-tile-sub-title>Don't worry! There are other people back on the channel.</v-list-tile-sub-title>
-                </v-list-tile-content>
-            </v-list-tile>
-      </v-list>
-    <v-card-actions>
-        <v-spacer></v-spacer>
-         <v-btn flat color="indigo darken-4" onclick="window.history.back();">
-      RETURN TO CHANNEL
-        </v-btn>
-    </v-card-actions>
-
-
-    </v-card-text>
+        <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
+            <v-list two-line class="calleeinfo" style="padding-top: 15px;">
+                <v-list-tile class="calleedetails" style="padding-left: 0px;">
+                    <v-list-tile-avatar size="50px">
+                        <img src="{{partner.img_src.url}}">
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Your call with {{partner}} has been disconnected.</v-list-tile-title>
+                        <v-list-tile-sub-title>Don't worry! There are other people back on the channel.</v-list-tile-sub-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+            </v-list>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn flat color="indigo darken-4" onclick="window.history.back();">
+                    RETURN TO CHANNEL
+                </v-btn>
+            </v-card-actions>
+        </v-card-text>
     </v-card>
 </v-dialog>
-
-
-<v-dialog persistent v-model="alertDisconnect" width="400" >
+<v-dialog persistent v-model="alertDisconnect" width="400">
     <v-card>
-    <v-avatar size="80px" class="imagecenter">
-        <img src="https://i.ytimg.com/vi/V3M0IWsE8pU/maxresdefault.jpg">
-    </v-avatar>
-    <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
-        <v-list two-line class="calleeinfo">
-            <v-list-tile class="calleedetails" style="padding-left: 0px;" >
-                <v-list-tile-content style="text-align: center;">
-                    <v-list-tile-title style="text-align: center;">Are you sure you want to disconnect?</v-list-tile-title>
-                    <v-list-tile-sub-title>{{user.name}} is going to miss you.</v-list-tile-sub-title>
-                </v-list-tile-content>
-            </v-list-tile>
-        </v-list>
-
-        <v-card-actions class="buttons">
-             <v-btn flat color="indigo darken-4" onclick="disconnect()">
-              YES
-            </v-btn>
-            <v-spacer></v-spacer>
-
-            <v-btn flat color="red darken-4" @click="alertDisconnect = false">
-              NO
-            </v-btn>
-        </v-card-actions>
-            
-    </v-card-text>
+        <v-avatar size="80px" class="imagecenter">
+            <img src="https://i.ytimg.com/vi/V3M0IWsE8pU/maxresdefault.jpg">
+        </v-avatar>
+        <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
+            <v-list two-line class="calleeinfo">
+                <v-list-tile class="calleedetails" style="padding-left: 0px;">
+                    <v-list-tile-content style="text-align: center;">
+                        <v-list-tile-title style="text-align: center;">Are you sure you want to disconnect?</v-list-tile-title>
+                        <v-list-tile-sub-title>{{user.name}} is going to miss you.</v-list-tile-sub-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+            </v-list>
+            <v-card-actions class="buttons">
+                <v-btn flat color="indigo darken-4" onclick="disconnect()">
+                    YES
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn flat color="red darken-4" @click="alertDisconnect = false">
+                    NO
+                </v-btn>
+            </v-card-actions>
+        </v-card-text>
     </v-card>
 </v-dialog>
-
-
-{% endblock %} 
-
-{% block js %}
+{% endblock %} {% block js %}
+<!-- <script type="text/javascript" src="{% static 'minutetalk/js/filter.js' %}"></script> -->
+<!-- <script type="text/javascript" src="{% static 'minutetalk/js/publish.js' %}"></script> -->
+<!-- <script type="text/javascript" src="{% static 'minutetalk/js/app.js' %}"></script> -->
 <script>
 var apiKey = '{{ apikey }}'
 var sessionId = '{{ session_id }}'
@@ -143,29 +134,29 @@ var answeredQuestion = false
 window.onload = function() {
     socket.onmessage = function(e) {
         var data = JSON.parse(e.data)['message']
-        if (data['type'] == 'message'){
+        if (data['type'] == 'message') {
 
             if (data['receiver'] == '{{request.user.userprofile.id}}') {
-                if(!answeredQuestion){
+                if (!answeredQuestion) {
                     displayQuestion(data, 'YOUR')
                     totaltime = 5
-                    setTimeout(function(){
+                    setTimeout(function() {
                         console.log('start time')
                         starttime()
-                        setTimeout(function(){
-                            answeredQuestion = true 
+                        setTimeout(function() {
+                            answeredQuestion = true
                             displayTimeEnd()
-                            setTimeout( function() {
+                            setTimeout(function() {
 
 
-                                if(!data['done']) {
+                                if (!data['done']) {
                                     sendMessage(vue.question.text, true)
                                 } else {
                                     sendDone()
                                 }
-                            } , 2000);
+                            }, 2000);
 
-                        }, totaltime * 1000);    
+                        }, totaltime * 1000);
                     }, 4000);
                 } else {
                     sendDone()
@@ -173,13 +164,12 @@ window.onload = function() {
             } else {
                 displayQuestion(data, data['name'])
             }
-        }
-        else if (data['type'] == 'question_answered'){
+        } else if (data['type'] == 'question_answered') {
             console.log("Question is already answered")
             answeredQuestion = false
             disableButton = false
-            document.getElementById('question').style="opacity:1"
-        } 
+            document.getElementById('question').style = "opacity:1"
+        }
     }
     socket.onopen = function(e) {
         console.log("open", e)
@@ -191,30 +181,31 @@ window.onload = function() {
         console.log("close", e)
     }
 }
-function displayTimeEnd(){
-   var display = document.getElementById('questionDisplay')
-    document.getElementById('question').style="opacity:0.5"
+
+function displayTimeEnd() {
+    var display = document.getElementById('questionDisplay')
+    document.getElementById('question').style = "opacity:0.5"
     display.innerHTML = 'Time is up'
-    setTimeout(function(){
+    setTimeout(function() {
         display.innerHTML = ''
     }, 2000);
 }
 
-function displayQuestion(data, name){
+function displayQuestion(data, name) {
     // disable button of question
     disableButton = true
 
     // display question
     var message = data['message']
-    vue.question = {"text": message}
+    vue.question = { "text": message }
     var display = document.getElementById('questionDisplay')
-    document.getElementById('question').style="opacity:0.5"
+    document.getElementById('question').style = "opacity:0.5"
     display.innerHTML = vue.question.text
 
     // display whose turn is it, after 2 seconds
-    setTimeout(function(){
+    setTimeout(function() {
         display.innerHTML = 'It\'s ' + name + ' turn to answer'
-        setTimeout(function(){
+        setTimeout(function() {
             display.innerHTML = ''
             console.log('display end')
 
@@ -223,13 +214,13 @@ function displayQuestion(data, name){
 }
 
 function sendQuestion(question_text, question_id) {
-    if(!disableButton){
+    if (!disableButton) {
         var element = document.getElementById(question_id)
         element.classList.add("fade-out-right");
-        setTimeout(function(){
+        setTimeout(function() {
             element.remove()
 
-        }, 900); 
+        }, 900);
         sendMessage(question_text, false)
     }
 }
@@ -245,13 +236,14 @@ function sendMessage(text, done) {
     }));
 }
 
-function sendDone(){
+function sendDone() {
     socket.send(JSON.stringify({
         'type': 'question_answered',
     }))
 }
 
 var totaltime = 5;
+
 function update(percent) {
     var deg;
     if (percent < (totaltime / 2)) {
@@ -267,22 +259,21 @@ function update(percent) {
     }
 }
 
-function starttime(){
+function starttime() {
     $('#time').text = totaltime;
     var count = totaltime
-    myCounter = setInterval(function () {
+    myCounter = setInterval(function() {
         count -= 1;
-        if(count<10){
-          $('#time').html('0'+count);
-        }
-        else{
-          $('#time').html(count);
+        if (count < 10) {
+            $('#time').html('0' + count);
+        } else {
+            $('#time').html(count);
         }
         update(count);
         if (count == 0) {
-            clearInterval(myCounter);            
+            clearInterval(myCounter);
         }
-    }, 1000);    
+    }, 1000);
 }
 
 
@@ -301,55 +292,244 @@ function disconnect() {
 function deleteSession() {
     $.ajax({
         url: '/ajax/delete_session',
-        data: {
-        },
+        data: {},
         dataType: 'json',
-        success: response => {
-        }
+        success: response => {}
     })
 }
 
+function toogleVideo() {
+    video = !video
+    publisher.publishVideo(video);
+    console.log(publisher.publishVideo)
+}
+var video = true;
+
 var session = OT.initSession(apiKey, sessionId);
+// Create a publisher
+var publisher;
 
-function initializeSession() {
+function handleError(error) {
+    if (error) {
+      console.error('Received an error', error);
+    }
+  }
+  function initializeSession() {
+
     // Subscribe to a newly created stream
-    session.on('streamCreated', function(event) {
-        session.subscribe(event.stream, 'subscriber', {
-            insertMode: 'append',
-            width: '100%',
-            height: '100%'
-        }, handleError);
-    });
-    
-    // Listener for diconnected streams
-    session.on("streamDestroyed", function(event) {
-        session.disconnect();
-        // window.history.back();
-        // show modal
-        vue.disconnect = true
-        console.log("Stream " + event.stream.name + " ended. " + event.reason);
-    });
-
-    // Create a publisher
-    var publisher = OT.initPublisher('publisher', {
+    session.on('streamCreated', function streamCreated(event) {
+      var subscriberOptions = {
         insertMode: 'append',
         width: '100%',
         height: '100%'
-    }, handleError);
+      };
+      session.subscribe(event.stream, 'subscriber', subscriberOptions, handleError);
+    });
+
+    session.on('sessionDisconnected', function sessionDisconnected(event) {
+      console.log('You were disconnected from the session.', event.reason);
+    });
+
+    var publishPromise = publish();
 
     // Connect to the session
-    session.connect(token, function(error) {
-        // If the connection is successful, publish to the session
-        if (error) {
-            handleError(error);
-        } else {
-            session.publish(publisher, handleError);
-        }
+    session.connect(token, function callback(error) {
+      if (error) {
+        handleError(error);
+      } else {
+        // If the connection is successful, initialize a publisher and publish to the session
+        publishPromise.then(function publishThen(publisher) {
+          session.publish(publisher, handleError);
+        }).catch(handleError);
+      }
     });
-}
+  }
 
 
-// (optional) add server code here
-initializeSession();
+    initializeSession();
+
+    var getFilteredCanvas = function getFilteredCanvas(mediaStream) {
+    var WIDTH = 640;
+    var HEIGHT = 480;
+    var videoEl = document.createElement('video');
+    videoEl.srcObject = mediaStream;
+    videoEl.setAttribute('playsinline', '');
+    videoEl.muted = true;
+    setTimeout(function timeout() {
+      videoEl.play();
+    });
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+
+    var tmpCanvas = document.createElement('canvas');
+    var tmpCtx = tmpCanvas.getContext('2d');
+    tmpCanvas.width = WIDTH;
+    tmpCanvas.height = HEIGHT;
+
+    videoEl.addEventListener('resize', function resize() {
+      canvas.width = tmpCanvas.width = videoEl.videoWidth;
+      canvas.height = tmpCanvas.height = videoEl.videoHeight;
+    });
+
+    var reqId;
+
+    // Draw each frame of the video
+    var drawFrame = function drawFrame() {
+      // Draw the video element onto the temporary canvas and pull out the image data
+      tmpCtx.drawImage(videoEl, 0, 0, tmpCanvas.width, tmpCanvas.height);
+      var imgData = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height);
+      // Apply the currently selected filter and get the new image data
+      imgData = Filters.selectedFilter(imgData);
+      // Draw the filtered image data onto the main canvas
+      ctx.putImageData(imgData, 0, 0);
+
+      reqId = requestAnimationFrame(drawFrame);
+    };
+
+    reqId = requestAnimationFrame(drawFrame);
+
+    return {
+      canvas: canvas,
+      stop: function stop() {
+        // Stop the video element, the media stream and the animation frame loop
+        videoEl.pause();
+        if (mediaStream.stop) {
+          mediaStream.stop();
+        }
+        if (MediaStreamTrack && MediaStreamTrack.prototype.stop) {
+          // Newer spec
+          mediaStream.getTracks().forEach(function each(track) { track.stop(); });
+        }
+        cancelAnimationFrame(reqId);
+      }
+    };
+  };
+
+  // Returns a Promise to a Publisher
+  function publish() {
+    // Request access to the microphone and camera
+    return OT.getUserMedia().then(function gotMedia(mediaStream) {
+      var filteredCanvas = getFilteredCanvas(mediaStream);
+
+      var publisherOptions = {
+        insertMode: 'append',
+        width: '100%',
+        height: '100%',
+        // Pass in the canvas stream video track as our custom videoSource
+        videoSource: filteredCanvas.canvas.captureStream(30).getVideoTracks()[0],
+        // Pass in the audio track from our underlying mediaStream as the audioSource
+        audioSource: mediaStream.getAudioTracks()[0]
+      };
+      return new Promise(function promise(resolve, reject) {
+        publisher = OT.initPublisher('publisher', publisherOptions, function initComplete(err) {
+          if (err) {
+            filteredCanvas.stop();
+            reject(err);
+          } else {
+            resolve(publisher);
+          }
+        });
+        publisher.on('destroyed', function destroyed() {
+          // When the publisher is destroyed we cleanup
+          filteredCanvas.stop();
+        });
+
+        // We insert the canvas into the publisher element on iOS because the video element
+        // just stays black otherwise because of a bug https://bugs.webkit.org/show_bug.cgi?id=181663
+        if (navigator.userAgent.indexOf('iPhone OS') > -1) {
+          publisher.on('videoElementCreated', function videoElementCreated(event) {
+            event.element.parentNode.insertBefore(filteredCanvas.canvas, event.element);
+            filteredCanvas.canvas.style.width = '100%';
+            filteredCanvas.canvas.style.height = '100%';
+            filteredCanvas.canvas.style.position = 'absolute';
+            filteredCanvas.canvas.style.zIndex = 1;
+            filteredCanvas.canvas.style.objectFit = window.getComputedStyle(event.element).objectFit;
+          });
+        }
+      });
+    });
+  };
+
+var Filters = {
+    none: function none(imgData) {
+      return imgData;
+    },
+
+    grayscale: function grayscale(imgData) {
+      const res = new Uint8ClampedArray(imgData.data.length);
+      for (let i = 0; i < imgData.data.length; i += 4) {
+        // Using the luminosity algorithm for grayscale 0.21 R + 0.72 G + 0.07 B
+        // https://www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale/
+        var inputRed = imgData.data[i];
+        var inputGreen = imgData.data[i + 1];
+        var inputBlue = imgData.data[i + 2];
+        res[i] = res[i + 1] = res[i + 2] = Math.round(0.21 * inputRed + 0.72 * inputGreen + 0.07 * inputBlue);
+        res[i + 3] = imgData.data[i + 3];
+      }
+      return new ImageData(res, imgData.width, imgData.height);
+    },
+
+    sepia: function sepia(imgData) {
+      const res = new Uint8ClampedArray(imgData.data.length);
+      for (let i = 0; i < imgData.data.length; i += 4) {
+        // Using the algorithm for sepia from:
+        // https://www.techrepublic.com/blog/how-do-i/how-do-i-convert-images-to-grayscale-and-sepia-tone-using-c/
+        var inputRed = imgData.data[i];
+        var inputGreen = imgData.data[i + 1];
+        var inputBlue = imgData.data[i + 2];
+        res[i] = Math.round((inputRed * 0.393) + (inputGreen * 0.769) + (inputBlue * 0.189));
+        res[i + 1] = Math.round((inputRed * 0.349) + (inputGreen * 0.686) + (inputBlue * 0.168));
+        res[i + 2] = Math.round((inputRed * 0.272) + (inputGreen * 0.534) + (inputBlue * 0.131));
+        res[i + 3] = imgData.data[i + 3];
+      }
+      return new ImageData(res, imgData.width, imgData.height);
+    },
+
+    invert: function invert(imgData) {
+      const res = new Uint8ClampedArray(imgData.data.length);
+      for (let i = 0; i < imgData.data.length; i += 4) {
+        // Invert the colors red = 255 - inputRed etc.
+        res[i] = 255 - imgData.data[i];
+        res[i + 1] = 255 - imgData.data[i + 1];
+        res[i + 2] = 255 - imgData.data[i + 2];
+        res[i + 3] = imgData.data[i + 3]; // Leave alpha alone
+      }
+      return new ImageData(res, imgData.width, imgData.height);
+    },
+    blur: function stackBlurImage( imageID, canvasID, radius, blurAlphaChannel ){
+        var img = document.getElementById( imageID );
+        var w = img.naturalWidth;
+        var h = img.naturalHeight;
+           
+        var canvas = document.getElementById( canvasID );
+          
+        canvas.style.width  = w + "px";
+        canvas.style.height = h + "px";
+        canvas.width = w;
+        canvas.height = h;
+        
+        var context = canvas.getContext("2d");
+        context.clearRect( 0, 0, w, h );
+        context.drawImage( img, 0, 0 );
+
+        if ( isNaN(radius) || radius < 1 ) return;
+        
+        if ( blurAlphaChannel )
+            stackBlurCanvasRGBA( canvasID, 0, 0, w, h, radius );
+        else 
+            stackBlurCanvasRGB( canvasID, 0, 0, w, h, radius );
+    }
+  };
+  // Set the initial filter to none
+  Filters.selectedFilter = Filters.none;
+
+  // When the filter selector changes we update the selectedFilter
+  var filterSelector = document.querySelector('#filter');
+  filterSelector.addEventListener('change', function change() {
+    Filters.selectedFilter = Filters[filterSelector.value];
+  });
 </script>
+
 {% endblock %}

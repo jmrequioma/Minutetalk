@@ -3,6 +3,7 @@
 
 <head>
     <title>MinuteTalk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
@@ -31,8 +32,8 @@
     <div id="home">
         <div v-cloak>
             <v-app id="inspire">
-                <v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" app v-model="drawer" class=drawer>
-                    <v-list dense>
+                <v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" app v-model="drawer">
+                    <v-list dense style="margin-top: 20px;">
                         <v-avatar size="80px" class="avatarimage">
                             <img src="{{user.userprofile.img_src.url}}">
                         </v-avatar>
@@ -67,20 +68,6 @@
                             </v-list-tile-content>
                         </v-list-tile>
                         {% endif %}
-                        <v-divider></v-divider>
-                        <v-subheader>FEATURED CHANNELS</v-subheader>
-                        {% for fchannel in featured_channels %}
-                        <v-list-tile id="{{fchannel.id}}" ripple href="{%url 'minutetalk:join_channel' fchannel.id %}">
-                            <v-list-tile-avatar size="30px">
-                                <img src="{{fchannel.img_src.url}}">
-                            </v-list-tile-avatar>
-                            <v-list-tile-content>
-                                <v-list-tile-title class="mychanneltitle">
-                                    {{fchannel.title}}
-                                </v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                        {% endfor %} 
                     </v-list>
                 </v-navigation-drawer>
                 <v-toolbar color="blue darken-3" dark app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
@@ -96,9 +83,6 @@
                   Your changes have been successfully saved
                 </v-alert> -->
                     <v-spacer></v-spacer>
-                    <v-btn icon>
-                        <v-icon>notifications</v-icon>
-                    </v-btn>
                     <v-menu v-model=menupopout :close-on-content-click="false" :nudge-width="50" offset-y>
                         <v-btn icon slot="activator">
                             <v-avatar size="32px">
@@ -263,7 +247,9 @@
     var sessionId = '{{ session_id }}'
     var token = '{{ token }}'
     var partner_id = '{{ partner.id }}'
-
+    var session
+    var publisher
+    var exports = {}
     var fname1 = "{{ user.first_name }}";
     var lname1 = "{{ user.last_name }}";
     var email1 = "{{ user.email }}";

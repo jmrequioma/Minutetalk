@@ -1,9 +1,8 @@
-{% extends 'minutetalk/home.html' %} 
-{% block content %}
-<v-content >
+{% extends 'minutetalk/home.html' %} {% block content %}
+<v-content>
     <v-container fluid grid-list-xl>
         <template>
-            <v-layout row wrap>
+            <!--             <v-layout row wrap>
                 <v-flex xs12 class="text-xs-center">
                     <v-card width="100%">
                         <v-card-media height="350px" src="{{ channel.img_src.url }}">
@@ -12,305 +11,311 @@
                             <div class="text-xs-center">
                                 <h3 class="headline mb-0 ">{{ channel.title}}</h3>
                             </div>
-                             <v-btn
-                                :class="channel.fav ? 'yellow--text' : 'grey--text'"
-                                icon
-                                @click="favorite({{channel.id}})"
-                                class="favoritebtn"
-                                flat
-                            >
+                            <v-btn :class="channel.fav ? 'yellow--text' : 'grey--text'" icon @click="favorite({{channel.id}})" class="favoritebtn" flat>
                                 <v-icon>star</v-icon>
-                        </v-btn>
+                            </v-btn>
                         </v-card-title>
                         <v-card-text>
                             {{ channel.description}}
                         </v-card-text>
                     </v-card>
                 </v-flex>
-            </v-layout>
-            <h3 class="title" style="padding-left: 0px;">FILTER BY</h3>
-            <v-layout align-center justify-start row fill-height>
-                <v-flex xs3 style="padding-top: 0px; padding-bottom: 20px;">
-                    <v-text-field label="Search Name" append-icon="search" v-model="user_search"  hide-details  color="indigo"></v-text-field>
+            </v-layout> -->
+            <v-layout row wrap>
+                <v-flex xs6>
+                    <v-card-media height="350px" src="{{ channel.img_src.url }}">
+                    </v-card-media>
                 </v-flex>
-                <v-flex xs2>
-                    <v-select :items="gender" v-model="genderchoice"  label="Gender"  single-line color="indigo"></v-select>
-                </v-flex>
-                <v-flex xs2>
-                    <v-select :items="age" v-model="agechoice" label="Age Range"  single-line color="indigo"></v-select>
-                </v-flex>
-          </v-layout>
-
-            <v-layout v-if="!user_search.trim() && agechoice == 'All' && genderchoice == 'All'" row wrap>
-                {% for user in users %}
-                <v-flex d-flex xs10 sm3>
-                    <div id="{{user.id}}" :key="{{user.id}}">
-                        <v-list-tile-avatar size="200px">
-                            <img src="{{ user.img_src.url }}">
-                            <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
-                        </v-list-tile-avatar>
-                        <v-btn class="btn btn-3" @click="talk({{user.id}}, '{{user.user.first_name}}', '{{user.user.last_name}}', '{{user.img_src}}')">Talk!</v-btn>
-                    </div>
-                </v-flex>
-                {%endfor%}
-                <v-flex v-for="user in users" d-flex xs10 sm3>
-                    <div :id="[[user.id]]">
-                        <v-list-tile-avatar size="200px">
-                            <img :src="'/media/' + [[ user.img_src ]]">
-                            <p class="name">[[user.first_name]] [[user.last_name]]</p>
-                        </v-list-tile-avatar>
-                        <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
-                    </div>
+                <v-flex xs6>
+                    <v-card-title primary-title class="justify-center">
+                        <div class="text-xs-center">
+                            <h3 class="headline mb-0 ">{{ channel.title}}</h3>
+                        </div>
+                        <v-btn :class="channel.fav ? 'yellow--text' : 'grey--text'" icon @click="favorite({{channel.id}})" class="favoritebtn" flat>
+                            <v-icon>star</v-icon>
+                        </v-btn>
+                    </v-card-title>
+                    <v-card-text>
+                        {{ channel.description}}
+                    </v-card-text>
                 </v-flex>
             </v-layout>
-            <v-layout  v-if="user_search.trim() || agechoice != 'All' || genderchoice != 'All'" row wrap>
-                <v-layout align-center justify-center row fill-height v-if="!user_result.length">
+            <v-layout row wrap>
+                
+                <v-layout align-center justify-start row fill-height>
+                    <v-flex xs1 style="height: 30px;">
+                        <v-select outline :items="gender" v-model="genderchoice" label="Gender" single-line color="indigo"></v-select>
+                    </v-flex>
+                    <v-flex xs1 style="height: 30px;">
+                        <v-select outline :items="age" v-model="agechoice" label="Age Range" single-line color="indigo"></v-select>
+                    </v-flex>
+                </v-layout>
+                <div class="search-container">
+                    <div class="search-icon-btn">
+                        <i class="fa fa-search"></i>
+                    </div>
+                    <div class="search-input">
+                        <input ref="search" type="search" class="search-bar" v-model="user_search" hide-details placeholder="Search...">
+                    </div>
+                </div>
+            </v-layout>
+                <v-layout v-if="!user_search.trim() && agechoice == 'All' && genderchoice == 'All'" row wrap>
+                    {% for user in users %}
+                    <v-flex d-flex xs10 sm3>
+                        <div id="{{user.id}}" :key="{{user.id}}">
+                            <v-list-tile-avatar size="200px">
+                                <img src="{{ user.img_src.url }}">
+                                <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
+                            </v-list-tile-avatar>
+                            <v-btn class="btn btn-3" @click="talk({{user.id}}, '{{user.user.first_name}}', '{{user.user.last_name}}', '{{user.img_src}}')">Talk!</v-btn>
+                        </div>
+                    </v-flex>
+                    {%endfor%}
+                    <v-flex v-for="user in users" d-flex xs10 sm3>
+                        <div :id="[[user.id]]">
+                            <v-list-tile-avatar size="200px">
+                                <img :src="'/media/' + [[ user.img_src ]]">
+                                <p class="name">[[user.first_name]] [[user.last_name]]</p>
+                            </v-list-tile-avatar>
+                            <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
+                        </div>
+                    </v-flex>
+                </v-layout>
+                <v-layout v-if="user_search.trim() || agechoice != 'All' || genderchoice != 'All'" row wrap>
+                    <v-layout align-center justify-center row fill-height v-if="!user_result.length">
                         <h2 class="result"> No results found.</h2>
                     </v-layout>
-                <v-flex v-for="user in user_search_result" d-flex xs10 sm3>
-                    <div :id="[[user.id]]">
-                        <v-list-tile-avatar size="200px">
-                            <img :src="'/media/' + [[ user.img_src ]]">
-                            <p class="name">[[user.first_name]] [[user.last_name]]</p>
-                        </v-list-tile-avatar>
-                        <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
-                    </div>
-                </v-flex>                
-            </v-layout>
+                    <v-flex v-for="user in user_search_result" d-flex xs10 sm3>
+                        <div :id="[[user.id]]">
+                            <v-list-tile-avatar size="200px">
+                                <img :src="'/media/' + [[ user.img_src ]]">
+                                <p class="name">[[user.first_name]] [[user.last_name]]</p>
+                            </v-list-tile-avatar>
+                            <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
+                        </div>
+                    </v-flex>
+                </v-layout>
         </template>
     </v-container>
 </v-content>
-
-
 <v-dialog v-model="incomingcall" width="500" persistent>
-<v-card>
-  <v-card-title
-    class="subheading font-weight-regular" style="padding-bottom: 15px;padding-top: 20px;">
-   Incoming Call
-  </v-card-title>
-
-  <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
-    <v-list two-line >
-        <v-list-tile style="padding-left: 0px;">
-            <v-list-tile-avatar size="50px" >
-                <img :src="'/media/' + [[ caller.img_src ]]">
-            </v-list-tile-avatar>
-            <v-list-tile-content>
-                <v-list-tile-title>[[caller.first_name]] [[caller.last_name]]</v-list-tile-title>
-                <v-list-tile-sub-title>The call will start as long as you will accept.</v-list-tile-sub-title>
-            </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-
-  </v-card-text>
-    
-  <v-card-actions class="">
-    <v-spacer></v-spacer>
-    <v-btn flat @click.native="incomingcall= false" @click="decline_call(caller.id)">
-      Decline
-    </v-btn>
-    <v-btn flat @click="createSession(caller.id)">
-      Accept
-    </v-btn>
-  </v-card-actions>
-
-</v-card>
-</v-dialog>
-
-<v-dialog v-model="calling" width="500" persistent>
-         
     <v-card>
-        <v-card-title class="subheading font-weight-regular" 
-                      style="padding-bottom: 15px; padding-top: 20px;">
-           Calling...
+        <v-card-title class="subheading font-weight-regular" style="padding-bottom: 15px;padding-top: 20px;">
+            Incoming Call
         </v-card-title>
-  
+        <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
+            <v-list two-line>
+                <v-list-tile style="padding-left: 0px;">
+                    <v-list-tile-avatar size="50px">
+                        <img :src="'/media/' + [[ caller.img_src ]]">
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title>[[caller.first_name]] [[caller.last_name]]</v-list-tile-title>
+                        <v-list-tile-sub-title>The call will start as long as you will accept.</v-list-tile-sub-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+            </v-list>
+        </v-card-text>
+        <v-card-actions class="">
+            <v-spacer></v-spacer>
+            <v-btn flat @click.native="incomingcall= false" @click="decline_call(caller.id)">
+                Decline
+            </v-btn>
+            <v-btn flat @click="createSession(caller.id)">
+                Accept
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+<v-dialog v-model="calling" width="500" persistent>
+    <v-card>
+        <v-card-title class="subheading font-weight-regular" style="padding-bottom: 15px; padding-top: 20px;">
+            Calling...
+        </v-card-title>
         <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
             <v-list two-line class="calleeinfo">
                 <v-list-tile class="calleedetails" style="padding-left: 0px;">
-                <v-list-tile-avatar size="50px" >
-                            <img :src="'/media/' + [[ callee.img_src ]]">
-                </v-list-tile-avatar>
-                <v-list-tile-content>
-                    <v-list-tile-title>[[callee.name]]</v-list-tile-title>
-                    <v-list-tile-sub-title>The call will start as long as [[callee.name]] will accept.</v-list-tile-sub-title>
-                </v-list-tile-content>
-                <v-progress-circular :size="40" color="indigo darken-4" indeterminate></v-progress-circular>
+                    <v-list-tile-avatar size="50px">
+                        <img :src="'/media/' + [[ callee.img_src ]]">
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title>[[callee.name]]</v-list-tile-title>
+                        <v-list-tile-sub-title>The call will start as long as [[callee.name]] will accept.</v-list-tile-sub-title>
+                    </v-list-tile-content>
+                    <v-progress-circular :size="40" color="indigo darken-4" indeterminate></v-progress-circular>
                 </v-list-tile>
             </v-list>
-          </v-card-text>
-          
-            <v-card-actions class="">
-                <v-spacer></v-spacer>
-                <v-btn flat @click.native="calling=false" @click="cancel_call(callee.id)">Cancel</v-btn>
-            </v-card>
+        </v-card-text>
+        <v-card-actions class="">
+            <v-spacer></v-spacer>
+            <v-btn flat @click.native="calling=false" @click="cancel_call(callee.id)">Cancel</v-btn>
+    </v-card>
 </v-dialog>
-
 <v-dialog v-model="calleebusy" width="500">
     <v-card>
         <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
             <v-list two-line class="calleeinfo">
-            <v-list-tile class="calleedetails" style="padding-left: 0px;">
-                <v-list-tile-avatar size="50px" >
-                    <img :src="'/media/' + [[ callee.img_src ]]">
-                </v-list-tile-avatar>
-                <v-list-tile-content>
-                    <v-list-tile-title>[[callee.name]] is busy.</v-list-tile-title>
-                    <v-list-tile-sub-title>You may call the user again some other time.</v-list-tile-sub-title>
-                </v-list-tile-content>
-                <v-btn color="transparent" icon @click.native="calleebusy=false">
-                    <v-icon>close</v-icon>
-                </v-btn>
-            </v-list-tile>
+                <v-list-tile class="calleedetails" style="padding-left: 0px;">
+                    <v-list-tile-avatar size="50px">
+                        <img :src="'/media/' + [[ callee.img_src ]]">
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title>[[callee.name]] is busy.</v-list-tile-title>
+                        <v-list-tile-sub-title>You may call the user again some other time.</v-list-tile-sub-title>
+                    </v-list-tile-content>
+                    <v-btn color="transparent" icon @click.native="calleebusy=false">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                </v-list-tile>
             </v-list>
         </v-card-text>
     </v-card>
 </v-dialog>
-
 <v-dialog v-model="calleereject" width="500">
     <v-card>
         <v-card-text style="padding-top: 0px; padding-bottom: 0px;">
             <v-list two-line class="calleeinfo">
-            <v-list-tile class="calleedetails" style="padding-left: 0px;">
-                <v-list-tile-avatar size="50px" >
-                    <img :src="'/media/' + [[ callee.img_src ]]">
-                </v-list-tile-avatar>
-                <v-list-tile-content>
-                    <v-list-tile-title>[[callee.name]] rejected your call.</v-list-tile-title>
-                    <v-list-tile-sub-title>You may call the user again some other time.</v-list-tile-sub-title>
-                </v-list-tile-content>
-                <v-btn color="transparent" icon @click.native="calleereject=false">
-                    <v-icon>close</v-icon>
-                </v-btn>
-            </v-list-tile>
+                <v-list-tile class="calleedetails" style="padding-left: 0px;">
+                    <v-list-tile-avatar size="50px">
+                        <img :src="'/media/' + [[ callee.img_src ]]">
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title>[[callee.name]] rejected your call.</v-list-tile-title>
+                        <v-list-tile-sub-title>You may call the user again some other time.</v-list-tile-sub-title>
+                    </v-list-tile-content>
+                    <v-btn color="transparent" icon @click.native="calleereject=false">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                </v-list-tile>
             </v-list>
         </v-card-text>
     </v-card>
 </v-dialog>
-
-{% endblock %}
-{% block js %}
+{% endblock %} {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script type="text/javascript">
-    var endpoint= 'ws://' + window.location.host + window.location.pathname
-    var socket = new WebSocket(endpoint)
-    window.onload = function() {
-        console.log('SOCKET')
-        socket.onmessage = function (e) {
-            var data =  JSON.parse(e.data)
-            if (data['type'] == 'user'){
-                if(data['join']){  
-                    console.log('JOINING')
-                    if("{{user}}" != data['username']){
-                        var element = document.getElementById(data['id']);
-                        if(!element){
-                            vue.users.push(data)
-                        }
-                    }
-                } else {
+var endpoint = 'ws://' + window.location.host + window.location.pathname
+var socket = new WebSocket(endpoint)
+window.onload = function() {
+    console.log('SOCKET')
+    socket.onmessage = function(e) {
+        var data = JSON.parse(e.data)
+        if (data['type'] == 'user') {
+            if (data['join']) {
+                console.log('JOINING')
+                if ("{{user}}" != data['username']) {
                     var element = document.getElementById(data['id']);
-                    var parent = element.parentNode
-                    element.parentNode.parentNode.removeChild(parent);
+                    if (!element) {
+                        vue.users.push(data)
+                    }
                 }
-            } else if (data['type'] == 'talk') {
-                console.log('TALK TO ME')
-                if(data['connect']){
-                    if(data['id'] == '{{request.user.userprofile.id}}'){
-                        if(!vue.incomingcall && !vue.calling) {
-                            vue.calleebusy = false
-                            vue.calleereject = false
-                            vue.incomingcall = true
-                            vue.caller = data['user']
-                        } else {
-                            //busy
-                            //send busy
-                            busy(data['user']['id'])
-                        }
+            } else {
+                var element = document.getElementById(data['id']);
+                var parent = element.parentNode
+                element.parentNode.parentNode.removeChild(parent);
+            }
+        } else if (data['type'] == 'talk') {
+            console.log('TALK TO ME')
+            if (data['connect']) {
+                if (data['id'] == '{{request.user.userprofile.id}}') {
+                    if (!vue.incomingcall && !vue.calling) {
+                        vue.calleebusy = false
+                        vue.calleereject = false
+                        vue.incomingcall = true
+                        vue.caller = data['user']
+                    } else {
+                        //busy
+                        //send busy
+                        busy(data['user']['id'])
                     }
-                } else {
-                    // the person you are calling is busy
-                    if(data['busy']){
-                        if(data['id'] == '{{request.user.userprofile.id}}'){
-                            vue.calling = false
-                            vue.calleebusy = true
-                        }
+                }
+            } else {
+                // the person you are calling is busy
+                if (data['busy']) {
+                    if (data['id'] == '{{request.user.userprofile.id}}') {
+                        vue.calling = false
+                        vue.calleebusy = true
                     }
-                    if(data['reject']) {
-                        if(data['id'] == '{{request.user.userprofile.id}}'){
-                            vue.calling = false
-                            vue.calleereject = true
-                        }
+                }
+                if (data['reject']) {
+                    if (data['id'] == '{{request.user.userprofile.id}}') {
+                        vue.calling = false
+                        vue.calleereject = true
                     }
-                    // cancel call
-                    else if(data['id'] == '{{request.user.userprofile.id}}'){
-                        vue.incomingcall = false
-                    }
+                }
+                // cancel call
+                else if (data['id'] == '{{request.user.userprofile.id}}') {
+                    vue.incomingcall = false
+                }
 
-                        
-                }
-            } else if (data['type'] == 'session') {
-                console.log('Session accepted!')
-                if(data['caller_id'] == '{{request.user.userprofile.id}}'){
-                    vue.startCall(data['session_id'])
-                }
+
+            }
+        } else if (data['type'] == 'session') {
+            console.log('Session accepted!')
+            if (data['caller_id'] == '{{request.user.userprofile.id}}') {
+                vue.startCall(data['session_id'])
             }
         }
-        socket.onopen = function (e) {
-            console.log("open", e)
-        }
-        socket.onerror= function (e) {
-            console.log("error", e)
-        }
-        socket.onclose= function (e) {
-            console.log("close", e)
-        }
     }
-    function talk(id){
-        socket.send(JSON.stringify({'type': 'talk','id': id, 'connect': true}))
+    socket.onopen = function(e) {
+        console.log("open", e)
     }
+    socket.onerror = function(e) {
+        console.log("error", e)
+    }
+    socket.onclose = function(e) {
+        console.log("close", e)
+    }
+}
 
-    function busy(id){
-        socket.send(JSON.stringify({'type': 'talk','id': id, 'busy': true, 'connect': false}))
-    }
+function talk(id) {
+    socket.send(JSON.stringify({ 'type': 'talk', 'id': id, 'connect': true }))
+}
 
-    function cancel_call(id){
-        socket.send(JSON.stringify({'type': 'talk', 'id': id, 'connect': false}))
-    }
-    function decline_call(id){
-        socket.send(JSON.stringify({'type': 'talk', 'id': id, 'reject': true, 'connect': false}))
-    }
+function busy(id) {
+    socket.send(JSON.stringify({ 'type': 'talk', 'id': id, 'busy': true, 'connect': false }))
+}
 
-    function sendSession(session_id, caller_id){
-        console.log('Sending session....')
-        socket.send(JSON.stringify({'type': 'session', 'session_id': session_id , 'caller_id' : caller_id}))
-        vue.startCall(session_id)
-    }
-    function filterUser(channel_id, name, age, gender){
-        var res = []
-        $.ajax({
-            async: false,
-            url: 'ajax/search_user',
-            data: {
-                'query': name,
-                'age': age,
-                'gender': gender,
-                'channel_id': channel_id
-            },
-            success: function(data) {
-                if (data.users.length > 0) {
-                    res = data.users;
-                }
-                
+function cancel_call(id) {
+    socket.send(JSON.stringify({ 'type': 'talk', 'id': id, 'connect': false }))
+}
+
+function decline_call(id) {
+    socket.send(JSON.stringify({ 'type': 'talk', 'id': id, 'reject': true, 'connect': false }))
+}
+
+function sendSession(session_id, caller_id) {
+    console.log('Sending session....')
+    socket.send(JSON.stringify({ 'type': 'session', 'session_id': session_id, 'caller_id': caller_id }))
+    vue.startCall(session_id)
+}
+
+function filterUser(channel_id, name, age, gender) {
+    var res = []
+    $.ajax({
+        async: false,
+        url: 'ajax/search_user',
+        data: {
+            'query': name,
+            'age': age,
+            'gender': gender,
+            'channel_id': channel_id
+        },
+        success: function(data) {
+            if (data.users.length > 0) {
+                res = data.users;
             }
-        });
-        return res
-    }
+
+        }
+    });
+    return res
+}
 
 url = '{{ channel.url }}';
 title = '{{ channel.title }}'
-console.log( url + " " + url.length)
-if (url.length != 0){
-    PopupCenter(url,title,'1300','800');
+console.log(url + " " + url.length)
+if (url.length != 0) {
+    PopupCenter(url, title, '1300', '800');
 }
 
 function PopupCenter(url, title, w, h) {
@@ -332,4 +337,3 @@ function PopupCenter(url, title, w, h) {
 }
 </script>
 {%endblock js%}
-

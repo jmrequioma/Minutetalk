@@ -1,4 +1,5 @@
 [[{"model":"minutetalk.ChannelType","pk":0,"fields":{"name":"Music"}},
 [{"model":"minutetalk.ChannelType","pk":1,"fields":{"name":"Books"}},
 [{"model":"minutetalk.ChannelType","pk":2,"fields":{"name":"Movies"}},
-[{"model":"minutetalk.ChannelType","pk":3,"fields":{"name":"Others"}}]
+[{"model":"minutetalk.ChannelType","pk":3,"fields":{"name":"Others"}},
+[{"model":"minutetalk.ChannelType","pk":4,"fields":{"name":"Sponsored"}}]

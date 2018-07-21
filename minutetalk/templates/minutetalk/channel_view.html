@@ -1,11 +1,44 @@
 {% extends 'minutetalk/home.html' %} {% block content %} {% load static %}
 <v-content>
     <v-container fluid grid-list-xl>
-        <v-flex xs12 sm6 md3>
-            <v-text-field class="" ref="search" label="Search..." append-icon="search" v-model="channel_search" hide-details color="indigo"></v-text-field>
-        </v-flex>
+<!--         <v-layout align-center justify-start row fill-height>
+            <v-flex xs3 style="padding-top: 0px; padding-bottom: 20px;">
+                <v-text-field class="" ref="search" label="Channel name" append-icon="search" v-model="channel_search" hide-details color="indigo"></v-text-field>
+            </v-flex>
+        </v-layout> -->
+        <div class="search-container" align="right">
+            <div class="search-icon-btn">
+                <i class="fa fa-search"></i>
+            </div>
+            <div class="search-input">
+                <input ref="search" type="search" class="search-bar" v-model="channel_search" hide-details  placeholder="Search...">
+            </div>
+        </div>
+        
         <template v-if="!channel_search.trim()">
-            {% for channeltype in channels_list%}
+            <v-spacer style="margin-top: 50px;">
+                <h1 class="title">{{featured_channels.name}} Channels</h1></v-spacer>
+            <v-layout row wrap>
+                {% for channel in featured_channels.channel_set.all %}
+                <v-flex d-flex xs10 sm3>
+                    <v-card href="{% url 'minutetalk:join_channel' channel.id %}" hover style="max-width: 400px;">
+                        <v-card-media height="200px" src="{{ channel.img_src.url}}">
+                            <v-card-text class="description">
+                                {{ channel.description}}
+                            </v-card-text>
+                        </v-card-media>
+                        <v-card-title primary-title>
+                            <div>
+                                <h3 class="headline mb-0">{{ channel.title}}</h3>
+                                <span>There are {{channel.current_channel.all| length}} users online</span>
+                            </div>
+                        </v-card-title>
+                    </v-card>
+                </v-flex>
+                {% endfor %}
+            </v-layout>
+            <v-divider></v-divider>
+            {% for channeltype in channels_list%} {% if channeltype.channel_set.count %}
             <v-spacer>
                 <h1 class="title">{{channeltype.name}}</h1></v-spacer>
             <v-layout row wrap>
@@ -23,19 +56,17 @@
                                 <span>There are {{channel.current_channel.all| length}} users online</span>
                             </div>
                         </v-card-title>
-<!--                         <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn class="btn2 btn-3" href="{% url 'minutetalk:join_channel' channel.id %}">Join</v-btn>
-                        </v-card-actions> -->
                     </v-card>
                 </v-flex>
                 {% endfor %}
             </v-layout>
+            {% endif %}
+            <v-divider></v-divider>
             {% endfor %}
         </template>
         <div v-if="channel_search.trim()">
             <template>
-                <v-spacer>
+                <v-spacer style="margin-top: 50px;">
                     <h1 class="title">Search Result</h1>
                 </v-spacer>
                 <v-layout row wrap>
@@ -43,19 +74,18 @@
                         <h2 class="result"> No results found.</h2>
                     </v-layout>
                     <v-flex d-flex xs10 sm3 v-for="channel in channel_search_result" :key="channel.id">
-                        <v-card>
+                        <v-card :href="channel.id.toString()">
                             <v-card-media :src="'/media/' + channel.src" height="200px" width="25%">
                                 <v-card-text class="description">
                                     [[channel.description]]
-                                </v-card-text>w
+                                </v-card-text>
                             </v-card-media>
                             <v-card-title primary-title>
-                                <h3 class="headline mb-0">[[channel.title]]</h3>
+                                <div>
+                                    <h3 class="headline mb-0">[[channel.title]]</h3>
+                                    <span>There are [[channel.numberofUsers]] users online</span>
+                                </div>
                             </v-card-title>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn class="btn2 btn-3" :href="channel.id.toString()">Join</v-btn>
-                            </v-card-actions>
                         </v-card>
                     </v-flex>
                 </v-layout>
@@ -63,4 +93,4 @@
         </div>
     </v-container>
 </v-content>
-{% endblock %} 
+{% endblock %}
