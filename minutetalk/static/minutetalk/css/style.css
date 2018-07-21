@@ -304,7 +304,7 @@ img {
   background: transparent;
 }
 
-.question {
+.questionList {
   width: 280px;
   height: 810px;
 }
@@ -890,3 +890,23 @@ img {
   font-family: Digital-7;
 }
 */
+
+
+#questionDisplay: {
+  position: absolute; 
+  z-index: 1; 
+  height: 100%; 
+  width: 100%; 
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+}
+#questionText: {
+  position: absolute; 
+  width: 100%; 
+  color: white; 
+  z-index: 1;
+  top: 50%; 
+  left:50%; 
+  text-align: center; 
+  transform: translate(-50%, -50%);
+}

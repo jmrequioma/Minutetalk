@@ -3,9 +3,19 @@
     <v-container class="videoarea" fluid fill-height>
         <div id="videos">
             <div id="subscriber">
-                <h1 style="color: white; position: absolute; z-index: 1;
-                padding-top: 15px;" id="questionDisplay"></h1>
-            </div>
+                <div  id="videoDisplay">
+                    <h1 id="questionText"></h1>
+                    <div id="ratingDisplay">
+                        <p> {{partner}} finished answering. Please rate {{partner}}'s answer</p>
+                        <i id="thumbs-up" class="fa fa-thumbs-up"></i>
+                        <i id="thumbs-down"  class="fa fa-thumbs-down"></i>
+                    </div>
+                    <div id="rateResult">
+                        <p> {{partner}} rated your answer: </p>
+                    </div>
+                </div>
+                
+            </div> 
             <div id="publisher"></div>
             <v-list>
                 <v-list-tile two-line class="chatname">
@@ -19,7 +29,6 @@
 
                 </v-list-tile>
             </v-list>
-
             <v-spacer></v-spacer>
         </div>
         <v-container class="questions">
@@ -33,7 +42,7 @@
                 <v-navigation-drawer style="width: 100%">
                      <v-list class="questionlist" two-line>
                         <v-subheader>MY QUESTIONS</v-subheader> 
-                        <div id="question">
+                        <div id="questionList">
                         {% for question in questions_list%}
 
                         <v-list-tile  id="{{question.id}}" ripple onclick="sendQuestion('{{question.text}}','{{question.id}}')">
@@ -145,26 +154,32 @@ window.onload = function() {
     socket.onmessage = function(e) {
         var data = JSON.parse(e.data)['message']
         if (data['type'] == 'message'){
-
             if (data['receiver'] == '{{request.user.userprofile.id}}') {
                 if(!answeredQuestion){
                     displayQuestion(data, 'YOUR')
-                    totaltime = 60
+                    totaltime = 5
                     setTimeout(function(){
                         console.log('start time')
                         starttime()
                         setTimeout(function(){
                             answeredQuestion = true 
                             displayTimeEnd()
+                            // setTimeout 2 seconds
+                            // send to partner im done answering, pls rate my answer
+                            // data['type'] = rating, data['reciever'] = partner.id,  data['done'] = data['done']
+
                             setTimeout( function() {
-
-
-                                if(!data['done']) {
-                                    sendMessage(vue.question.text, true)
-                                } else {
-                                    sendDone()
-                                }
+                                console.log('partner rate me now')
+                                sendRating('rating', partner_id, data['done'], null)
                             } , 2000);
+
+                            // setTimeout( function() {
+                            //     if(!data['done']) {
+                            //         sendMessage(vue.question.text, true)
+                            //     } else {
+                            //         sendDone()
+                            //     }
+                            // } , 2000);
 
                         }, totaltime * 1000);    
                     }, 4000);
@@ -172,14 +187,57 @@ window.onload = function() {
                     sendDone()
                 }
             } else {
-                displayQuestion(data, data['name'])
+                displayQuestion(data, '{{partner}}')
             }
-        }
-        else if (data['type'] == 'question_answered'){
+        } else if (data['type'] == 'rating'){
+            if (data['receiver'] == '{{request.user.userprofile.id}}') {
+                console.log('rating....')
+
+                // display rate button
+                // after i rated, send rating
+                document.getElementById("thumbs-up").onclick = function () { sendRating('rateResult', partner_id, data['done'], true) };
+                document.getElementById("thumbs-down").onclick = function () { sendRating('rateResult', partner_id, data['done'], false) };
+
+                document.getElementById('videoDisplay').style.display = 'block'
+                document.getElementById('ratingDisplay').style.display = 'block'
+                // put onclick function of like button sendRating('rateResult', partner_id, data['done'], rating)
+            } 
+
+        } else if (data['type'] == 'rateResult'){
+            if (data['receiver'] == '{{request.user.userprofile.id}}') {
+                // data['rating']
+                document.getElementById('questionText').style.display ='none'
+                var el = document.getElementById('rateResult')
+                var icon = document.createElement('i');
+                el.style.display = 'block'
+                if(data['rating']){
+                    icon.className = "fa fa-thumbs-up"
+                    icon.style.color = "blue"
+                } else {
+                    icon.className = "fa fa-thumbs-down"
+                    icon.style.color = "red"
+                }
+                el.appendChild(icon)
+                
+
+                console.log('{{partner}} rated your question', data['rating'] )
+
+                setTimeout(function(){
+                    el.style.display = 'none'
+                    if(!data['done']) {
+                        sendMessage(vue.question.text, true)
+                    } else {
+                        sendDone()
+                    }
+                }, 2000)
+            } 
+
+        } else if (data['type'] == 'question_answered'){
             console.log("Question is already answered")
+            document.getElementById('videoDisplay').style.display = 'none'
             answeredQuestion = false
             disableButton = false
-            document.getElementById('question').style="opacity:1"
+            document.getElementById('questionList').style="opacity:1"
         } else if (data['type'] == 'disconnect'){
             session.disconnect();
             vue.disconnect = true
@@ -195,36 +253,54 @@ window.onload = function() {
         console.log("close", e)
     }
 }
+
+// display on top of video
 function displayTimeEnd(){
-   var display = document.getElementById('questionDisplay')
-    document.getElementById('question').style="opacity:0.5"
-    display.innerHTML = 'Time is up'
+    var display = document.getElementById('videoDisplay')
+    var text  = document.getElementById('questionText')
+    display.style.display = "block"
+   
+    text.innerHTML = 'Time is up'
+    text.style.display = "block"
+
     setTimeout(function(){
-        display.innerHTML = ''
+        // display.style.display = "none"
+        // text.style.display = "none"
+        text.innerHTML = '{{partner}} is rating your answer'
+
+
     }, 2000);
 }
 
 function displayQuestion(data, name){
     // disable button of question
     disableButton = true
+    document.getElementById('questionList').style="opacity:0.5"
 
     // display question
     var message = data['message']
     vue.question = {"text": message}
-    var display = document.getElementById('questionDisplay')
-    document.getElementById('question').style="opacity:0.5"
-    display.innerHTML = vue.question.text
+    
+    var display = document.getElementById('videoDisplay')
+    var text  = document.getElementById('questionText')
+    display.style.display = "block"
+
+    text.innerHTML = 'It\'s ' + name + ' turn to answer'
+    text.style.display = "block"
 
     // display whose turn is it, after 2 seconds
     setTimeout(function(){
-        display.innerHTML = 'It\'s ' + name + ' turn to answer'
+        text.innerHTML = vue.question.text
+
         setTimeout(function(){
-            display.innerHTML = ''
-            console.log('display end')
+            display.style.display = "none"
+            text.style.display = "none"
 
         }, 2000);
     }, 2000);
 }
+
+
 
 function sendQuestion(question_text, question_id) {
     if(!disableButton){
@@ -243,7 +319,7 @@ function sendMessage(text, done) {
     socket.send(JSON.stringify({
         'type': 'message',
         'receiver': partner_id,
-        'name': '{{partner}}',
+        // 'name': '{{partner}}',
         'done': done,
         'message': text
     }));
@@ -255,7 +331,27 @@ function sendDone(){
     }))
 }
 
-var totaltime = 60;
+// sendRating('rating', partner_id, data['done'])
+function sendRating(socketType, receiver_id, doneValue, rating){
+    socket.send(JSON.stringify({
+        'type': socketType,
+        'receiver': receiver_id,
+        'done': doneValue,
+        'rating': rating
+    }));
+    document.getElementById('ratingDisplay').style.display = 'none'
+
+}
+
+
+
+    
+
+
+
+
+// timer
+var totaltime = 5;
 function update(percent) {
     var deg;
     if (percent < (totaltime / 2)) {
