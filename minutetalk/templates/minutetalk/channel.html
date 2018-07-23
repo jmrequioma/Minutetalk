@@ -21,7 +21,8 @@
                     </v-card>
                 </v-flex>
             </v-layout> -->
-            <v-layout row wrap>
+            <div class="desc_style">
+                <v-layout row wrap>
                 <v-flex xs6>
                     <v-card-media height="350px" src="{{ channel.img_src.url }}">
                     </v-card-media>
@@ -40,43 +41,55 @@
                     </v-card-text>
                 </v-flex>
             </v-layout>
+            </div>
             <v-layout row wrap>
                 <v-layout align-center justify-start row fill-height>
-                    <v-flex xs1 style="height: 30px;">
-                        <v-select outline :items="gender" v-model="genderchoice" label="Gender" single-line color="indigo"></v-select>
+                    <v-flex xs1><p>Filter</p></v-flex>
+                    <v-flex xs3 style="margin-left: 12px;">
+                        <v-select :items="gender" v-model="genderchoice" persistent-hint hint="Pick gender" label="Gender" prepend-icon="person" single-line color="indigo"></v-select>
                     </v-flex>
-                    <v-flex xs1 style="height: 30px;">
-                        <v-select outline :items="age" v-model="agechoice" label="Age Range" single-line color="indigo"></v-select>
+                    <v-flex xs3>
+                        <v-select :items="age" v-model="agechoice" persistent-hint hint="Pick age range" label="Age Range" prepend-icon="child_care" single-line color="indigo"></v-select>
                     </v-flex>
+                    <v-flex xs2>
+                    </v-flex>
+
+                    <v-flex xs3>
+                          <v-text-field color="indigo darken-4" type="text" v-model="user_search" append-icon="search" label="Search...">
+                              <!-- <button type="submit" class="searchButton">
+                                <i class="material-icons">search</i>
+                             </button> -->
+                         </v-text-field>
+                    </v-flex>
+
+
+
                 </v-layout>
-                <div class="search-container">
-                    <div class="search-icon-btn">
-                        <i class="fa fa-search"></i>
-                    </div>
-                    <div class="search-input">
-                        <input ref="search" type="search" class="search-bar" v-model="user_search" hide-details placeholder="Search...">
-                    </div>
-                </div>
+
+
             </v-layout>
             <v-layout v-if="!user_search.trim() && agechoice == 'All' && genderchoice == 'All'" row wrap>
                 {% for user in users %}
                 <v-flex d-flex xs10 sm3>
-                    <div id="{{user.id}}" :key="{{user.id}}">
-                        <v-list-tile-avatar size="200px">
-                            <img src="{{ user.img_src.url }}">
-                            <p class="name">{{user.user.first_name}} {{user.user.last_name}}</p>
+                    <div id="{{user.id}}" :key="{{user.id}}" class="container_avatar">
+                        <v-list-tile-avatar @click="talk({{user.id}}, '{{user.user.first_name}}', '{{user.user.last_name}}', '{{user.img_src}}')" size="200px" class="hover_avatar">
+
+                            <img src="{{ user.img_src.url }}" >
+                            <div class="overlay">
+                                <p style="padding-top: 40%;"><span style="font-weight: bolder;">{{user.user.first_name}} {{user.user.last_name}}</span><br />{{user.gender}}, {{user.age}}</p>
+                            </div>
                         </v-list-tile-avatar>
-                        <v-btn class="btn btn-3" @click="talk({{user.id}}, '{{user.user.first_name}}', '{{user.user.last_name}}', '{{user.img_src}}')">Talk!</v-btn>
                     </div>
                 </v-flex>
                 {%endfor%}
                 <v-flex v-for="user in users" d-flex xs10 sm3>
-                    <div :id="[[user.id]]">
-                        <v-list-tile-avatar size="200px">
-                            <img :src="'/media/' + [[ user.img_src ]]">
-                            <p class="name">[[user.first_name]] [[user.last_name]]</p>
+                    <div :id="[[user.id]]" class="container_avatar">
+                        <v-list-tile-avatar  @click="talk(user.id, user.first_name, user.last_name, user.img_src)" size="200px" class="hover_avatar">
+                            <img :src="'/media/' + [[ user.img_src ]]" >
+                            <div class="overlay">
+                                <p style="padding-top: 40%;">[[user.first_name]] [[user.last_name]]<br /> [[user.gender]], [[user.age]]</p>
+                            </div>
                         </v-list-tile-avatar>
-                        <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
                     </div>
                 </v-flex>
             </v-layout>
@@ -85,12 +98,13 @@
                     <h2 class="result"> No results found.</h2>
                 </v-layout>
                 <v-flex v-for="user in user_search_result" d-flex xs10 sm3>
-                    <div :id="[[user.id]]">
-                        <v-list-tile-avatar size="200px">
+                    <div :id="[[user.id]]" class="container_avatar">
+                        <v-list-tile-avatar size="200px" class="hover_avatar" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">
                             <img :src="'/media/' + [[ user.img_src ]]">
-                            <p class="name">[[user.first_name]] [[user.last_name]]</p>
+                            <div class="overlay">
+                                <p style="padding-top: 40%;">[[user.first_name]] [[user.last_name]]<br /> [[user.gender]], [[user.age]]</p>
+                            </div>
                         </v-list-tile-avatar>
-                        <v-btn class="btn btn-3" @click="talk(user.id, user.first_name, user.last_name, user.img_src)">Talk!</v-btn>
                     </div>
                 </v-flex>
             </v-layout>
@@ -282,6 +296,7 @@ window.onload = function() {
 }
 
 function talk(id) {
+    console.log("here")
     socket.send(JSON.stringify({ 'type': 'talk', 'id': id, 'connect': true }))
 }
 
@@ -333,7 +348,6 @@ function filterUser(channel_id, name, age, gender) {
 
 url = '{{ channel.url }}';
 title = '{{ channel.title }}'
-console.log(url + " " + url.length)
 if (url.length != 0) {
     PopupCenter(url, title, '1300', '800');
 }

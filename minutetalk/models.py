@@ -22,7 +22,9 @@ class UserProfile(models.Model):
                 'first_name': self.user.first_name,
                 'last_name': self.user.last_name,
                 'id': self.id,
-                'img_src': self.img_src.name
+                'img_src': self.img_src.name,
+                'age': self.age,
+                'gender': self.gender
                 }
 
 class ChannelType(models.Model):

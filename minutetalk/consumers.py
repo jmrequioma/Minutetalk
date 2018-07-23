@@ -26,7 +26,9 @@ class ChatConsumer(AsyncConsumer):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'id': user.userprofile.id,
-            'img_src': user.userprofile.img_src.name
+            'img_src': user.userprofile.img_src.name,
+            'age': user.userprofile.age,
+            'gender': user.userprofile.gender,
         }
 
         await self.channel_layer.group_send(
@@ -67,7 +69,6 @@ class ChatConsumer(AsyncConsumer):
                 "type": "channel.quit",
                 "user": json.dumps(user_dict)
             }
-
         )
 
         await self.channel_layer.group_discard(
@@ -99,7 +100,6 @@ class ChatConsumer(AsyncConsumer):
             "text": event['data']
             })
 
-
 class MessageConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
@@ -119,7 +119,8 @@ class MessageConsumer(AsyncWebsocketConsumer):
         # Leave room group
         chatLog = ChatLog.objects.filter(user=self.scope['user'])
         chatLog.delete()
-
+        print("deleeeeete")
+        
         await self.channel_layer.group_send(
             self.room_group_name,
             {

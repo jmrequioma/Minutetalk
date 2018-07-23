@@ -24,4 +24,5 @@ urlpatterns = [
     path('ajax/check_password', views.CheckPassword.as_view(), name='check_password'),
     path('ajax/add_to_favorite', views.AddFavoriteChannel.as_view(), name='favorite'),
     path('ajax/session', views.CreateSession.as_view(), name='create_session'),
+    path('ajax/change_question', views.ChangeQuestion.as_view(), name='change_question'),
 ]

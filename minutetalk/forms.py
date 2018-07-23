@@ -65,33 +65,20 @@ class UserForm(forms.ModelForm):
 
 class ChannelForm(forms.ModelForm):
 
-    channel_type = forms.ModelChoiceField(queryset=ChannelType.objects.all(), to_field_name="name")
     title = forms.CharField()
     description = forms.CharField()
     url = forms.URLField()
 
     class Meta:
         model = Channel
-        fields = ['channel_type', 'description', 'url', 'title']
-
-
-
-    def clean_channel_type(self):
-        channel_type = self.cleaned_data['channel_type']
-        if not ChannelType.objects.filter(name=channel_type).exists():
-            raise forms.ValidationError('Channel Type {} does not exists.'.format(channel_type))
-        return channel_type
+        fields = ['description', 'url', 'title']
 
     def clean_title(self):
         title = self.cleaned_data['title']
-        if 'channel_type' in self.cleaned_data:
-            channel_type = self.cleaned_data['channel_type']
-            channels = get_object_or_404(ChannelType, name__iexact=channel_type).channel_set.all()
-            if channels.filter(title__iexact=title).exists():
-                raise forms.ValidationError('{} already exists in {} Channel Type.'.format(title, channel_type))
-            return title
-        else:
-            raise forms.ValidationError('Channel Type cannot be empty')
+        channels = get_object_or_404(ChannelType, name__iexact="Featured").channel_set.all()
+        if channels.filter(title__iexact=title).exists():
+            raise forms.ValidationError('{} already exists'.format(title))
+        return title
 
 
     def clean_description(self):

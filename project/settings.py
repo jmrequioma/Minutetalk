@@ -25,6 +25,7 @@ SECRET_KEY = ')$*9-ezvp-yu$%(&=qcf8p^1vwt*ea1a82(ut#^)cvzc6y!re$'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
+
 # Opentok API Keys
 
 # api_key = '46151822'

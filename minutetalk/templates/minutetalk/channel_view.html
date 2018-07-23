@@ -1,22 +1,31 @@
 {% extends 'minutetalk/home.html' %} {% block content %} {% load static %}
 <v-content>
     <v-container fluid grid-list-xl>
-<!--         <v-layout align-center justify-start row fill-height>
-            <v-flex xs3 style="padding-top: 0px; padding-bottom: 20px;">
-                <v-text-field class="" ref="search" label="Channel name" append-icon="search" v-model="channel_search" hide-details color="indigo"></v-text-field>
-            </v-flex>
-        </v-layout> -->
-        <div class="search-container" align="right">
+        <!-- <div class="search-container" align="right">
             <div class="search-icon-btn">
                 <i class="fa fa-search"></i>
             </div>
             <div class="search-input">
                 <input ref="search" type="search" class="search-bar" v-model="channel_search" hide-details  placeholder="Search...">
             </div>
-        </div>
+        </div> -->
+        <v-layout row wrap>
+            <v-flex style = "padding:0px" xs1>
+            </v-flex>
+            <v-flex style = "padding:0px" xs3>
+            </v-flex>
+            <v-flex style = "padding:0px" xs3>
+            </v-flex>
+            <v-flex style = "padding:0px" xs2>
+            </v-flex>
+            <v-flex style = "padding:0px" xs3>
+                <v-text-field color="indigo darken-4" type="text" v-model="channel_search" append-icon="search" label="Search...">
+                </v-text-field>
+            </v-flex>
+        </v-layout>
         
         <template v-if="!channel_search.trim()">
-            <v-spacer style="margin-top: 50px;">
+            <v-spacer>
                 <h1 class="title">{{featured_channels.name}} Channels</h1></v-spacer>
             <v-layout row wrap>
                 {% for channel in featured_channels.channel_set.all %}
@@ -66,7 +75,7 @@
         </template>
         <div v-if="channel_search.trim()">
             <template>
-                <v-spacer style="margin-top: 50px;">
+                <v-spacer>
                     <h1 class="title">Search Result</h1>
                 </v-spacer>
                 <v-layout row wrap>

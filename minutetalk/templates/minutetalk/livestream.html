@@ -4,14 +4,15 @@
         <div id="videos">
             <div id="subscriber">
                 <div id="videoDisplay">
-                    <h1 id="questionText"></h1>
+                    <p id="questionText"></p>
                     <div id="ratingDisplay">
-                        <p> {{partner}} finished answering. Please rate {{partner}}'s answer</p>
+                        <p> {{partner.user.first_name}} finished answering. Please rate {{partner.user.first_name}}'s answer</p>
                         <i id="thumbs-up" class="fa fa-thumbs-up"></i>
                         <i id="thumbs-down" class="fa fa-thumbs-down"></i>
                     </div>
                     <div id="rateResult">
                         <p> {{partner}} rated your answer: </p>
+                        <i class="fa fa-thumbs-up"></i>
                     </div>
                 </div>
             </div>
@@ -24,48 +25,57 @@
                     <v-list-tile-content>
                         <v-list-tile-title class="otherusername">{{partner}}</v-list-tile-title>
                     </v-list-tile-content>
-                    <button onclick="vue.alertDisconnect=true"> DISCONNECT</button>
-                    <button onclick="toogleVideo()">Disable Video</button>
-                    <select id="filter">
-                        <option value="none">None</option>
-                        <option value="grayscale">Grayscale</option>
-                        <option value="sepia">Sepia</option>
-                        <option value="invert">Invert</option>
-                    </select>
+                    <v-layout row wrap align-right>
+                        <v-flex xs6 style="z-index:12;">
+                        </v-flex>
+                        <v-flex xs6 style="z-index:12;">
+                            <v-select :items="filters" id="filter" v-model="filter" auto label="Select a filter" hide-details prepend-icon="photo_filter" single-line>
+                            </v-select>
+                        </v-flex>
+                    </v-layout>
+                    <button class="button-live" onclick="vue.alertDisconnect=true">End Call</button>
                 </v-list-tile>
             </v-list>
             <v-spacer></v-spacer>
         </div>
         <v-container class="questions">
-            <div class="pie degree" style="margin-left: 150px;">
-                <span class="block"></span>
-                <span id="time">5</span>
+            <div class="timer">
+                <span id="countdown"> 00:00 </span>
             </div>
-            <div class="question">
-                <v-navigation-drawer style="width: 100%">
-                    <v-list class="questionlist" two-line>
-                        <v-subheader>MY QUESTIONS</v-subheader>
-                        <div id="questionList">
-                            {% for question in questions_list%}
-                            <v-list-tile id="{{question.id}}" ripple onclick="sendQuestion('{{question.text}}','{{question.id}}')">
-                                <v-list-tile-content>
-                                    <p class="myquestion">{{question.text}}</p>
-                                </v-list-tile-content>
-                                <v-list-tile-avatar size="38px">
-                                    <img src="{{user.userprofile.img_src.url}}">
-                                </v-list-tile-avatar>
-                            </v-list-tile>
-                            {% endfor %}
+            <p class="question-header">CURRENT QUESTION</p>
+            <div v-if="question.text">
+                <div id="currQuestionDiv" class="shake-slow shake-constant shake-constant--hover" style="width:100%;">
+                    <div class="question-card" style="padding:20px;">
+                        <div class="question-container" style="width:100%;">
+                            <p id="currQuestionText" style="font-weight: bold;">[[question.text]]</p>
                         </div>
-                        <v-divider></v-divider>
-                        <v-subheader>CURRENT QUESTION</v-subheader>
-                        <v-list-tile v-if="question" two-line>
-                            <v-list-tile-content>
-                                <v-list-tile-title class='myquestion'> [[question.text]] </v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </v-list>
-                </v-navigation-drawer>
+                    </div>
+                </div>
+            </div>
+            <p class="question-header">MY QUESTIONS</p>
+            <v-divider></v-divider>
+            <div id="questionList">
+                {% for question in questions_list%}
+                <div class="question-card" id="{{question.id}}">
+                    <div onclick="sendQuestion('{{question.text}}','{{question.id}}',true)" class="question-container">
+                        <p>{{ question.text }}</p>
+                    </div>
+                    <div class="topright">
+                        <img onclick="sendQuestion('{{question.text}}','{{question.id}}',false)" src="{% static 'images/error.png' %}" alt="error">
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% for question in starter_questions%}
+                <div class="question-card" id="{{question.id}}">
+                    <div onclick="sendQuestion('{{question.text}}','{{question.id}}',true)" class="question-container">
+                        <p>{{ question.text }}</p>
+                    </div>
+                    <div class="topright">
+                        <img onclick="sendQuestion('{{question.text}}','{{question.id}}',false)" src="{% static 'images/error.png' %}" alt="error">
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </v-container>
     </v-container>
@@ -120,9 +130,6 @@
     </v-card>
 </v-dialog>
 {% endblock %} {% block js %}
-<!-- <script type="text/javascript" src="{% static 'minutetalk/js/filter.js' %}"></script> -->
-<!-- <script type="text/javascript" src="{% static 'minutetalk/js/publish.js' %}"></script> -->
-<!-- <script type="text/javascript" src="{% static 'minutetalk/js/app.js' %}"></script> -->
 <script>
 var apiKey = '{{ apikey }}'
 var sessionId = '{{ session_id }}'
@@ -136,6 +143,7 @@ var disableButton = false
 var answeredQuestion = false
 
 var video = true;
+var blur = 30;
 
 var session = OT.initSession(apiKey, sessionId);
 var publisher;
@@ -147,7 +155,7 @@ window.onload = function() {
             if (data['receiver'] == '{{request.user.userprofile.id}}') {
                 if (!answeredQuestion) {
                     displayQuestion(data, 'YOUR')
-                    totaltime = 5
+                    totaltime = 10
                     setTimeout(function() {
                         console.log('start time')
                         starttime()
@@ -185,8 +193,7 @@ window.onload = function() {
                 // data['rating']
                 document.getElementById('questionText').style.display = 'none'
                 var el = document.getElementById('rateResult')
-                var icon = document.createElement('i');
-                el.style.display = 'block'
+                var icon = el.lastChild
                 if (data['rating']) {
                     icon.className = "fa fa-thumbs-up"
                     icon.style.color = "blue"
@@ -194,10 +201,7 @@ window.onload = function() {
                     icon.className = "fa fa-thumbs-down"
                     icon.style.color = "red"
                 }
-                el.appendChild(icon)
-
-
-                console.log('{{partner}} rated your question', data['rating'])
+                el.style.display = 'block'
 
                 setTimeout(function() {
                     el.style.display = 'none'
@@ -206,6 +210,14 @@ window.onload = function() {
                     } else {
                         sendDone()
                     }
+                    if(data['rating']){
+                        var element = document.getElementById('subscriber').children[1]
+                        blur -= 15
+                        if (blur >= 0) {
+                            element.style.filter = "blur(" + blur + "px)"
+                        }
+                    }
+
                 }, 2000)
             }
 
@@ -214,6 +226,8 @@ window.onload = function() {
             document.getElementById('videoDisplay').style.display = 'none'
             answeredQuestion = false
             disableButton = false
+            vue.question.text = 'CHOOSE ANOTHER QUESTION'
+            document.getElementById("currQuestionDiv").className = "shake-slow shake-constant shake-constant--hover"
             document.getElementById('questionList').style = "opacity:1"
         } else if (data['type'] == 'disconnect') {
             session.disconnect();
@@ -232,6 +246,7 @@ window.onload = function() {
 }
 
 
+
 // display on top of video
 function displayTimeEnd() {
     var display = document.getElementById('videoDisplay')
@@ -247,6 +262,7 @@ function displayTimeEnd() {
 }
 
 function displayQuestion(data, name) {
+
     // disable button of question
     disableButton = true
     document.getElementById('questionList').style = "opacity:0.5"
@@ -254,14 +270,17 @@ function displayQuestion(data, name) {
     // display question
     var message = data['message']
     vue.question = { "text": message }
+    
+
 
     var display = document.getElementById('videoDisplay')
     var text = document.getElementById('questionText')
     display.style.display = "block"
 
-    text.innerHTML = 'It\'s ' + name + ' turn to answer'
+    text.innerHTML = 'It\'s ' + name + '\'s turn to answer'
     text.style.display = "block"
 
+    document.getElementById("currQuestionDiv").className = "shake-slow"
     // display whose turn is it, after 2 seconds
     setTimeout(function() {
         text.innerHTML = vue.question.text
@@ -276,15 +295,18 @@ function displayQuestion(data, name) {
 
 
 
-function sendQuestion(question_text, question_id) {
+function sendQuestion(question_text, question_id, send) {
+    console.log('here')
     if (!disableButton) {
         var element = document.getElementById(question_id)
         element.classList.add("fade-out-right");
         setTimeout(function() {
             element.remove()
-
+            changeQuestion()
         }, 900);
-        sendMessage(question_text, false)
+        if (send) {
+            sendMessage(question_text, false)
+        }
     }
 }
 
@@ -298,6 +320,43 @@ function sendMessage(text, done) {
         'message': text
     }));
 }
+
+function changeQuestion() {
+    $.ajax({
+        url: '/ajax/change_question',
+        data: {
+            'channel_id': channel_id,
+        },
+        success: function(data) {
+            var container = document.createElement("div")
+            var textDiv = document.createElement("div")
+            var text = document.createElement("p")
+            var closeDiv = document.createElement("div")
+            var close = document.createElement("img")
+
+            container.className = 'question-card'
+            container.id = data['id']
+
+            textDiv.className = 'question-container'
+            textDiv.onclick = function() { sendQuestion(data['question_text'], data['id'], true) };
+
+            text.innerHTML = data['question_text']
+            textDiv.appendChild(text)
+
+            closeDiv.className = 'topright'
+            close.onclick = function() { sendQuestion(data['question_text'], data['id'], false) };
+            close.src = "{% static 'images/error.png' %}"
+            close.alt = "error"
+            closeDiv.appendChild(close)
+
+            container.appendChild(textDiv)
+            container.appendChild(closeDiv)
+            document.getElementById("questionList").appendChild(container)
+
+        }
+    });
+}
+
 
 function sendDone() {
     socket.send(JSON.stringify({
@@ -314,38 +373,26 @@ function sendRating(socketType, receiver_id, doneValue, rating) {
         'rating': rating
     }));
     document.getElementById('ratingDisplay').style.display = 'none'
-
 }
 
 // timer
-var totaltime = 5;
-
-function update(percent) {
-    var deg;
-    if (percent < (totaltime / 2)) {
-        deg = 90 + (360 * percent / totaltime);
-        $('.pie').css('background-image',
-            'linear-gradient(' + deg + 'deg, transparent 50%, white 50%),linear-gradient(90deg, white 50%, transparent 50%)'
-        );
-    } else if (percent >= (totaltime / 2)) {
-        deg = -90 + (360 * percent / totaltime);
-        $('.pie').css('background-image',
-            'linear-gradient(' + deg + 'deg, transparent 50%, #00b5e8 50%),linear-gradient(90deg, white 50%, transparent 50%)'
-        );
-    }
-}
+var totaltime = 10;
 
 function starttime() {
-    $('#time').text = totaltime;
+    var prependTime = "00:"
+    if (totaltime < 10) {
+        prependTime = "00:0"
+    }
+    $('#countdown').text = prependTime + totaltime;
     var count = totaltime
     myCounter = setInterval(function() {
+        console.log('Updating time')
         count -= 1;
         if (count < 10) {
-            $('#time').html('0' + count);
+            $('#countdown').html('00:0' + count);
         } else {
-            $('#time').html(count);
+            $('#countdown').html('00:' + count);
         }
-        update(count);
         if (count == 0) {
             clearInterval(myCounter);
         }
@@ -393,6 +440,9 @@ function initializeSession() {
             height: '100%'
         };
         session.subscribe(event.stream, 'subscriber', subscriberOptions, handleError);
+        var element = document.getElementById('subscriber').children[1]
+        element.style.filter = "blur(30px)"
+
     });
 
     session.on("streamDestroyed", function(event) {
@@ -597,9 +647,16 @@ var Filters = {
 Filters.selectedFilter = Filters.none;
 
 // When the filter selector changes we update the selectedFilter
-var filterSelector = document.querySelector('#filter');
-filterSelector.addEventListener('change', function change() {
+// var filterSelector = document.querySelector('#filter');
+// filterSelector.addEventListener('change', function change() {
+//     console.log(filterSelector.value)
+//     Filters.selectedFilter = Filters[filterSelector.value];
+// });
+
+function changeFilter(filter) {
+    var filterSelector = document.querySelector('#filter');
+    filterSelector.value = filter;
     Filters.selectedFilter = Filters[filterSelector.value];
-});
+}
 </script>
 {% endblock %}

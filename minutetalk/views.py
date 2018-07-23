@@ -1,5 +1,4 @@
 from .models import UserProfile, ChannelType, Channel, ChatLog, Question
-from .models import UserProfile, ChannelType, Channel, ChatLog
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
@@ -13,7 +12,9 @@ from django.views import generic
 from django.urls import reverse
 from opentok import OpenTok
 from random import sample
+from random import *
 import base64
+import json
 
 api_key = '46156832'
 api_secret = '1c0a02b17eb94595982a488aca6742eabc62997e'
@@ -239,18 +240,17 @@ class AddFavoriteChannel(LoginRequiredMixin, generic.View):
             context['message'] = 'Added to favorites'
             return JsonResponse(context)
 
-
 class VideoChatView(LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         chatlog = ChatLog.objects.filter(user=request.user).last()
         if chatlog is not None:
             partner = ChatLog.objects.filter(session_id=chatlog.session_id).exclude(user=request.user).first()
-            channel = get_object_or_404(Channel,id=11)
+            channel = get_object_or_404(Channel,id=chatlog.channel.id)
             questions_list = Question.objects.filter(channel=channel).order_by('?')[:5]
+            starter_question = Question.objects.filter(channel__title='Starter').order_by('?')[:5]
             my_channels = get_object_or_404(
                 UserProfile, user=request.user).fav_channels.all()
-            featured_channels = Channel.objects.filter(featured=True)
             context = {
                 'apikey' : api_key,
                 'session_id' : chatlog.session_id,
@@ -258,12 +258,13 @@ class VideoChatView(LoginRequiredMixin, generic.View):
                 'message' : 'Enjoy',
                 'partner' : partner.user.userprofile,
                 'questions_list' : questions_list,
+                'starter_questions' : starter_question,
                 'my_channels' : my_channels,
                 'channel_id': chatlog.channel.id,
-                'featured_channels' : featured_channels
             }
             return render(request, 'minutetalk/livestream.html',context)
-        return render(request, 'minutetalk/not_found.html')
+        return render(request, 'minutetalk/notFound.html')
+
 
 class CreateToken(LoginRequiredMixin, generic.View):
     
@@ -318,18 +319,43 @@ class CreateChannel(generic.View):
     def post(self, request):   
         channelForm = ChannelForm(request.POST)
         paymentForm = PaymentForm(request.POST)
-        print(request.POST['channel_type']) 
 
         if channelForm.is_valid() and paymentForm.is_valid():
             channel = channelForm.save()
+            channel.channel_type = get_object_or_404(ChannelType,name="Featured")
+            channel.save()
             if request.POST['img_src']:
                 res = addImage(request.POST['img_src'], channel.title)
                 channel.img_src.save(res['file_name'], res['data'], save=True)
+            questions = request.POST['questions']
+            questions = json.loads(questions)
+            print(questions)
+            print(type(questions))
+            for q in questions:
+                Question(channel=channel, text=q['item']).save()
             return JsonResponse({})
         else:
             if ('title' in channelForm.errors):
                 return JsonResponse({'channel_error': channelForm.errors['title']})
         return JsonResponse({'channel_error': channelForm.errors, 'payment_error': paymentForm.errors})
+
+
+class ChangeQuestion(generic.View):
+
+    def get(self, request):
+        channel_id = request.GET['channel_id']
+        channel = get_object_or_404(Channel,id=channel_id)
+        channel_starter = get_object_or_404(Channel,title='Starter')
+        if randint(0,101) % 2:
+            question = Question.objects.filter(channel=channel).order_by('?').first()
+        else:
+            question = Question.objects.filter(channel=channel_starter).order_by('?').first()
+        print(question)
+        context = {
+            'id' : question.id,
+            'question_text' : question.text,
+        }
+        return JsonResponse(context)
 
 
 def addImage(image_data, name):

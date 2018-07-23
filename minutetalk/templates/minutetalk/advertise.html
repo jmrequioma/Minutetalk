@@ -30,7 +30,7 @@
             <v-app light>
                 <v-toolbar class="white">
                     <v-toolbar-title class="titlename">
-                        <a href="">
+                        <a href="/">
                             <img src="{% static 'images/mt-logo.png' %}" style="width: 150px;"/>
                         </a>
                     </v-toolbar-title>
@@ -43,14 +43,12 @@
                         </v-flex>
                     </v-layout>
                     <v-layout>
-                    <v-flex xs6 >
+                    <v-flex xs2>
+                    </v-flex>
+                    <v-flex xs4 style="margin-right: 5px;">
                         <v-card class="elevation-12 channel_create_wrapper" height="100%">
-<!--                         <v-toolbar>
-                            <v-toolbar-title class=advertise>ADVERTISE FORM</v-toolbar-title>
-                            <v-spacer></v-spacer>
-                        </v-toolbar> -->
                             <v-card-title class="">ADVERTISE FORM</v-card-title>
-                            <v-card-text>
+                            <v-card-text v-if="basic">
                                  <v-alert v-if="!!channelerror" v-model="channelalert" type="error" outline transition="scale-transition"> [[channelerror]] </v-alert>
                                 <form method="post" enctype="multipart/form-data" id='signUpForm' ref="signup_form">
                                     {% csrf_token %}
@@ -64,19 +62,70 @@
                                     </div>
                                     <v-spacer></v-spacer>
                                     <v-text-field outline color="indigo darken-4" v-model="advertise.channelname" :rules="channelnameRules"prepend-icon="tv" label="Channel Name"  type="text"></v-text-field>
-                                    <v-autocomplete outline color="indigo darken-4" prepend-icon="group_work" name="gender" :items="channeltypes" v-model="advertise.channeltype" label="Channel Type"></v-autocomplete>
+                   <!--                  <v-autocomplete outline color="indigo darken-4" prepend-icon="group_work" name="gender" :items="channeltypes" v-model="advertise.channeltype" label="Channel Type"></v-autocomplete> -->
                                     <v-text-field outline color="indigo darken-4" v-model="advertise.url" :rules="urlRules" prepend-icon="public"  label="Url"  type="text"></v-text-field>
                                     <v-textarea outline color="indigo darken-4" v-model="advertise.description" :rules="descriptionRules" counter="100" prepend-icon="description" name="email" label="Description" type="text"></v-textarea>
                                 </form>
                             </v-card-text>
+
+                            <v-card-text v-if="question">
+                                <!-- <form onsubmit="preve"> -->
+                                    <p style="text-align: center; font-size: 14px;">Add Questions that you want users to ask each other in your channel!</p>
+                                    <v-layout justify-space-around row fill-height>
+                                        <v-flex xs12>
+                                            <v-text-field v-model="typequestion" outline color="indigo darken-4" prepend-icon="question_answer" label="Question"  type="text"></v-text-field>
+                                        </v-flex>
+                                    </v-layout>
+                                    <v-layout align-center row fill-height>
+                                        <v-flex xs4 style="margin-left: 25px;">
+                                            <v-btn @click.prevent="addQuestion" :disabled="!typequestion.trim()">Add</v-btn>
+                                        </v-flex>
+                                    </v-layout>
+                                <!-- </form> -->
+                                    <v-list style="height: 205px; overflow: auto;" v-if="addedquestions.length != 0">
+                                        <v-list-tile v-for="addedquestion in addedquestions" :key="addedquestion.id">
+                                            <v-list-tile-content>
+                                              <v-list-tile-title>[[addedquestion.item]]</v-list-tile-title>
+                                            </v-list-tile-content>
+                                            <v-list-tile-action>
+                                              <v-icon @click.prevent="removequestion(addedquestion)">clear</v-icon>
+                                            </v-list-tile-action>
+                                        </v-list-tile>
+                                        <!-- s -->
+                                    </v-list>
+                            </v-card-text>
+
+                            <v-bottom-nav
+                              :active.sync="bottomNav"
+                              :value="true"
+                              absolute
+                              shift
+                              color="transparent"
+                            >
+                              <v-btn
+                                color="indigo darken-4"
+                                flat
+                                @click.native = "basic = true; question = false"
+                                value="basic"
+                              >
+                                <span>Basic</span>
+                                <v-icon>settings</v-icon>
+                              </v-btn>
+
+                              <v-btn
+                                color="indigo darken-4"
+                                flat
+                                @click.native = "basic = false; question = true"
+                                value="questions"
+                              >
+                                <span>Questions</span>
+                                <v-icon>question_answer</v-icon>
+                              </v-btn>
+                            </v-bottom-nav>
                         </v-card>
                     </v-flex>
-                    <v-flex xs6>
+                    <v-flex xs4 style="margin-left: 5px;">
                         <v-card class="elevation-12 payment_wrapper" height="100%">
-<!--                         <v-toolbar>
-                            <v-toolbar-title class=advertise>ADVERTISE FORM</v-toolbar-title>
-                            <v-spacer></v-spacer>
-                        </v-toolbar> -->
                             <v-card-title>PAYMENT FORM</v-card-title>
                             <v-card-text>
                                 <v-alert v-if="!!paymenterror" v-model="paymentalert" type="error" outline transition="scale-transition"> [[paymenterror]] </v-alert>
@@ -113,7 +162,8 @@
                             </v-card-actions>
                         </v-card>
                     </v-flex>
-
+                    <v-flex xs2>
+                    </v-flex>
                     </v-layout>
 
                    </v-container>
@@ -151,9 +201,11 @@
             data() {
                 return {
                     image: '',
+                    basic: true,
+                    question: false,
+                    bottomNav: 3,
                     advertise: {
                         channelname: '',
-                        channeltype: '',
                         url: '',
                         description: '',
                         email: '',
@@ -164,14 +216,14 @@
                     },
                     menu: false,
                     modal: false,
-                    channeltypes: ['Movies', 'Books', 'TV Series', 'Games'],
                     image: '',
                     channelerror: '',
                     paymenterror: '',
                     channelalert: true,
                     paymentalert: true,
                     success: false,
-
+                    addedquestions: [],
+                    typequestion: '',
                     channelnameRules: [
                         v => this.is_valid_field(v) || 'Channel name is required'
                     ],
@@ -202,6 +254,18 @@
                 }
             },
             methods: {
+                removequestion: function(question){
+                    var index = this.addedquestions.indexOf(question);
+                    this.addedquestions.splice(index, 1);
+                },
+                addQuestion: function(){
+                    if(this.typequestion.trim()){
+                        let id=this.addedquestions.length + 1;
+                        const newQuestion = { id: id, item: this.typequestion};
+                        this.addedquestions.push(newQuestion);
+                        this.typequestion = '';
+                    } 
+                },
                 onFileChange(e) {
                     var files = e.target.files || e.dataTransfer.files;
                     if (!files.length)
@@ -242,13 +306,11 @@
                     return v.length == 16
                 },
                 createChannel: function() {
-                    console.log(this.advertise.channeltype)
                     $.ajax({
                         url: 'create_channel',
                         type: 'POST',
                         data: {
                             title: this.advertise.channelname ,
-                            channel_type: this.advertise.channeltype,
                             url: this.advertise.url,
                             description: this.advertise.description,
                             email: this.advertise.email,
@@ -256,7 +318,8 @@
                             cardnumber: this.advertise.cardnumber,
                             expirydate: this.advertise.expirydate,
                             cvc: this.advertise.cvc,
-                            img_src: this.$refs.img_src.src,
+                            questions: JSON.stringify(this.addedquestions),
+                            img_src: this.image,
                             csrfmiddlewaretoken: this.$refs.advertise_form.csrfmiddlewaretoken.value
                         },
                         success: response => {
@@ -280,7 +343,6 @@
                 validate() {
                     var data = this.advertise
                     channelname = data.channelname
-                    channeltype = data.channeltype
                     url = data.url
                     description = data.description
                     email = data.email
@@ -289,7 +351,7 @@
                     expirydate = data.expirydate
                     cvc = data.cvc
 
-                    return !channelname || !channeltype || !url || !description || !email || !cardname || !cardnumber || !expirydate || !cvc || !this.is_valid_email(email) || !this.is_valid_url(url) || !this.is_valid_cvc(cvc) || !this.is_valid_cardnumber(cardnumber) || !this.is_valid_description(description)
+                    return !channelname || !url || !description || !email || !cardname || !cardnumber || !expirydate || !cvc || !this.is_valid_email(email) || !this.is_valid_url(url) || !this.is_valid_cvc(cvc) || !this.is_valid_cardnumber(cardnumber) || !this.is_valid_description(description)
                 }
             }
         });

@@ -5,7 +5,6 @@ var vue = new Vue({
         return {
             advertise: {
                 channelname: '',
-                channeltype: '',
                 url: '',
                 description: '',
                 email: '',
@@ -16,7 +15,6 @@ var vue = new Vue({
             },
             menu: false,
             modal: false,
-            channeltypes: ['Movies', 'Books', 'TV Series', 'Games'],
             image: '',
 
             channelnameRules: [

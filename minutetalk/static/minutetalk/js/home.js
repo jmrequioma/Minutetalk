@@ -15,6 +15,8 @@ var vue = new Vue({
             user_result: [],
             show_channel_result: false,
             queryHTML: null,
+            filters: ['none','sepia','invert','grayscale'],
+            filter: '',
             editformpass: '',
             enterpass: false,
             success: false,
@@ -102,7 +104,7 @@ var vue = new Vue({
                     icon: 'exit_to_app'
                 }
             ],
-            question: {},
+            question: {'text': "CHO0SE A QUESTION"},
             disconnect: false,
             alertDisconnect: false
         }
@@ -284,6 +286,7 @@ var vue = new Vue({
             })
         },
         talk: function(id, first_name, last_name, img_src){
+            console.log("here")
             this.calling = true
             var callee = {
                 'id': id,
@@ -304,6 +307,9 @@ var vue = new Vue({
         }
     },
     watch: {
+        filter: function() {
+            changeFilter(this.filter);
+        },
         channel_search: function() {
             // var res = []
             if (this.channel_search.trim()) {
