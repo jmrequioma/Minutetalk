@@ -276,8 +276,13 @@ function displayQuestion(data, name) {
     var display = document.getElementById('videoDisplay')
     var text = document.getElementById('questionText')
     display.style.display = "block"
-
-    text.innerHTML = 'It\'s ' + name + '\'s turn to answer'
+    
+    var displayName = name
+    if(name != "YOUR"){
+        name += "\'s"
+    }
+    
+    text.innerHTML = 'It\'s ' + name + ' turn to answer'
     text.style.display = "block"
 
     document.getElementById("currQuestionDiv").className = "shake-slow"
