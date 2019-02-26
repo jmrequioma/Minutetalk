@@ -200,4 +200,112 @@ class Signup(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+class UserNav2(unittest.TestCase):
+    def setUp(self):
+        self.driver = webdriver.Firefox()
+        self.driver.implicitly_wait(30)
+        self.base_url = "https://www.katalon.com/"
+        self.verificationErrors = []
+        self.accept_next_alert = True
+    
+    def test_user_nav2(self):
+        driver = self.driver
+        driver.get("http://127.0.0.1:8000/")
+        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)=concat('MinuteTalk! It', \"'\", 's time for a Mini Talk!')])[1]/following::div[1]").click()
+        driver.find_element_by_name("username").click()
+        driver.find_element_by_name("username").clear()
+        driver.find_element_by_name("username").send_keys("root")
+        driver.find_element_by_id("password").clear()
+        driver.find_element_by_id("password").send_keys("12345678")
+        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Sign Up'])[1]/following::div[2]").click()
+        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Featured Channels'])[1]/following::div[7]").click()
+        time.sleep(1)
+        self.assertEqual(driver.find_element_by_xpath("//p").text, "Filter")
+    
+    def is_element_present(self, how, what):
+        try: self.driver.find_element(by=how, value=what)
+        except NoSuchElementException as e: return False
+        return True
+    
+    def is_alert_present(self):
+        try: self.driver.switch_to_alert()
+        except NoAlertPresentException as e: return False
+        return True
+    
+    def close_alert_and_get_its_text(self):
+        try:
+            alert = self.driver.switch_to_alert()
+            alert_text = alert.text
+            if self.accept_next_alert:
+                alert.accept()
+            else:
+                alert.dismiss()
+            return alert_text
+        finally: self.accept_next_alert = True
+    
+    def tearDown(self):
+        self.driver.quit()
+        self.assertEqual([], self.verificationErrors)
 
+if __name__ == "__main__":
+    unittest.main()
+
+class EditProf2(unittest.TestCase):
+    def setUp(self):
+        self.driver = webdriver.Firefox()
+        self.driver.implicitly_wait(30)
+        self.base_url = "https://www.katalon.com/"
+        self.verificationErrors = []
+        self.accept_next_alert = True
+    
+    def test_edit_prof2(self):
+        driver = self.driver
+        driver.get("http://127.0.0.1:8000/")
+        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)=concat('MinuteTalk! It', \"'\", 's time for a Mini Talk!')])[1]/following::div[1]").click()
+        driver.find_element_by_name("username").click()
+        driver.find_element_by_name("username").clear()
+        driver.find_element_by_name("username").send_keys("root")
+        driver.find_element_by_id("password").clear()
+        driver.find_element_by_id("password").send_keys("12345678")
+        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Sign Up'])[1]/following::div[2]").click()
+        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='MY CHANNELS'])[1]/following::img[2]").click()
+        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Male, 20'])[1]/following::div[5]").click()
+        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='EDIT PROFILE'])[1]/following::i[1]").click()
+        driver.find_element_by_name("first_name").click()
+        driver.find_element_by_name("first_name").clear()
+        driver.find_element_by_name("first_name").send_keys("Tim")
+        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Age'])[1]/following::div[18]").click()
+        driver.find_element_by_name("editform_pass").click()
+        driver.find_element_by_name("editform_pass").clear()
+        driver.find_element_by_name("editform_pass").send_keys("12345678")
+        driver.find_element_by_name("editform_pass").send_keys(Keys.ENTER)
+        self.assertEqual(driver.find_element_by_xpath("//h1").text, "FEATURED CHANNELS")
+        time.sleep(3)
+    
+    def is_element_present(self, how, what):
+        try: self.driver.find_element(by=how, value=what)
+        except NoSuchElementException as e: return False
+        return True
+    
+    def is_alert_present(self):
+        try: self.driver.switch_to_alert()
+        except NoAlertPresentException as e: return False
+        return True
+    
+    def close_alert_and_get_its_text(self):
+        try:
+            alert = self.driver.switch_to_alert()
+            alert_text = alert.text
+            if self.accept_next_alert:
+                alert.accept()
+            else:
+                alert.dismiss()
+            return alert_text
+        finally: self.accept_next_alert = True
+    
+    def tearDown(self):
+        self.driver.quit()
+        self.assertEqual([], self.verificationErrors)
+
+if __name__ == "__main__":
+    unittest.main()
